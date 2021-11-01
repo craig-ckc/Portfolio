@@ -336,7 +336,7 @@ path {
 }
 .full-img {
   width: 100vw;
-  transform: translateX(calc(-1 * var(--wide-padding)));
+  margin-left: calc(-1 * var(--wide-padding));
 }
 .img-box {
   --width: 4px;
@@ -577,7 +577,7 @@ header.transparent .scroll-pot{
     width: 100%;
   }
 
-  .intro-text, .story-face, .story-copy {
+  .intro-text, .story-face, .story-copy, .inner {
     margin-left: 0;
   }
 

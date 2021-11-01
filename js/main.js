@@ -6,6 +6,10 @@ $(function () {
     $('html').removeClass("fixed-position")
     $('a').removeClass('active')
     tl.reverse();
+    setTimeout(()=>{
+      window.scrollTo(0, 0)
+    }, 2000);
+    
   })
 
   // do something after the transition finishes
@@ -32,9 +36,15 @@ $(function () {
 
         async enter(data) {
           currentLink()
+          contentFadeIn(".fade-in-project", "body", 70, 0, 100)
+          contentFadeIn(".fade-in", "body", 80, 0, 100)
+          contentFadeIn(".fade-in-left", "body", 80, -60, 0)
         },
         
         async once(data) {
+          contentFadeIn(".fade-in-project", "body", 70, 0, 100)
+          contentFadeIn(".fade-in", "body", 80, 0, 100)
+          contentFadeIn(".fade-in-left", "body", 80, -60, 0)
         },
       },
     ],

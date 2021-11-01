@@ -142,8 +142,12 @@ p {
 .space {
   justify-content: space-between;
 }
-
-
+.vertical{
+  flex-direction: column;
+}
+.inner{
+  margin-left: 12rem;
+}
 i:hover{
   color: var(--white);
   transition: 0.5s cubic-bezier(0.75, -1.27, 0.3, 2.33) color;

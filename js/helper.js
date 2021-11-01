@@ -78,6 +78,27 @@ function intersectionAnim(targets_, trigger_, class_) {
   })
 }
 
+function contentFadeIn(element, scrollWrap, location, left=0, top=0) {
+    var sections = gsap.utils.toArray(element)
+  
+    sections.forEach((section) => {
+      var tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          scroller: scrollWrap,
+          start: `top ${location}%`,
+        },
+      })
+  
+      tl.from(section, {
+        duration: 1,
+        // ease: 'circ.out',
+        x: left,
+        y: top,
+        opacity: 0,
+      })
+    })
+  }
 
 
 $(window).scroll(() => {
