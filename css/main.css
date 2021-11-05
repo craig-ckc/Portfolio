@@ -74,6 +74,7 @@ header {
   display: flex;
   flex-direction: row;
   justify-content: start;
+  margin-bottom: 4.125rem;
 }
 #mobile .social-links ul > li {
   display: inline-block;
@@ -439,9 +440,6 @@ footer .container {
   clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
 }
 
-a {
-  /* transition: all 0.5s cubic-bezier(0.25, 1, 0.3, 1); */
-}
 a > span {
   display: block;
   margin-left: 1px;
@@ -628,6 +626,9 @@ header.transparent .scroll-pot{
     --wide-padding: 1.25rem;
   }
 
+  .fab{
+    font-size: var(--h4-fontsize);
+  }
   /* .container, .copyright {
     flex-direction: column;
   }
