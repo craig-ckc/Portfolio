@@ -423,6 +423,7 @@ footer .container {
 /* Loading Screeb */
 .loading-container {
   position: fixed;
+  background: var(--background);
   bottom: 0;
   left: 0;
   z-index: 999;

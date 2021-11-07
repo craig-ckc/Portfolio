@@ -82,3 +82,20 @@ $(window).scroll(() => {
 	lastScroll = currentScroll;
 })
 // Menu Animation on Scroll Section - Close
+
+function pageTransitiontwo() {
+  var tl = gsap.timeline()
+  tl.to('.loading-screen', {
+    duration: 1.2,
+    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+    ease: 'Expo.easeInOut',
+  })
+  tl.set('.loading-container', { backgroundColor: "transparent", })
+  tl.to('.loading-screen', {
+    duration: 1,
+    delay: 0.5,
+    clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)',
+    ease: 'Expo.easeInOut',
+  })
+  tl.set('.loading-screen', { clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)', })
+}

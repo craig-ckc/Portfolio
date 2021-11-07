@@ -128,7 +128,9 @@ p {
 .blue {
   color: var(--blue);
 }
-
+.center-text{
+  text-align: center;
+}
 /* Layout Config */
 .rek-section {
   padding: 0px var(--wide-padding) 0px;
