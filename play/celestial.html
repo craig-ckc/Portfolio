@@ -30,14 +30,17 @@
 </head>
 
 <body data-barba="wrapper">
+    <!-- <div> section for the loading screen-->
     <div class="loading-container">
         <div class="loading-screen">
         </div>
     </div>
 
+    <!-- <div> section for the custome cursor -->
     <div class="cursor"></div>
     <div class="point"></div>
 
+    <!-- <header> section: desktop view nav bar -->
     <header class="desk-top">
         <nav class="main-nav">
             <div class="social-links">
@@ -64,6 +67,7 @@
         </nav>
     </header>
 
+    <!-- <header> section: mobile view navbar and menu -->
     <header id="mobile">
         <nav class="public-nav">
             <div class="rek-section nav scroll-pot">
@@ -71,11 +75,13 @@
                     <a href="/index.html" class="logo">
                         <h5 class="target">Craig Chihururu</h5>
                     </a>
-                    <div class="menu-btn">
-                        <div class="menu-bar"></div>
-                        <div class="menu-bar"></div>
-                        <div class="menu-bar"></div>
-                    </div>
+                    <a>
+                        <div class="menu-btn">
+                            <div class="menu-bar"></div>
+                            <div class="menu-bar"></div>
+                            <div class="menu-bar"></div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </nav>
@@ -83,19 +89,21 @@
             <div class="rek-section nav">
                 <div class="container nav space">
                     <div class="row space">
-                    <a href="/index.html" class="logo">
-                        <h5 class="white">Craig Chihururu</h5>
-                    </a>
-                    <div class="menu-btn close">
-                        <span class="menu-bar-close one"></span>
-                        <span class="menu-bar-close two"></span>
+                        <a href="/index.html" class="logo">
+                            <h5 class="white">Craig Chihururu</h5>
+                        </a>
+                        <a>
+                            <div class="menu-btn close">
+                                <span class="menu-bar-close one"></span>
+                                <span class="menu-bar-close two"></span>
+                            </div>
+                        </a>
                     </div>
-                </div>
                     <div class="nav-links">
                         <ul>
                             <!-- <li><a href="/about.html" class="white">
-                                    <h2 class="white">About</h2>
-                                </a></li> -->
+                                                    <h2 class="white">About</h2>
+                                                </a></li> -->
                             <li><a href="/work.html" class="white">
                                     <h2 class="white">Work</h2>
                                 </a></li>
@@ -120,7 +128,7 @@
         </nav>
     </header>
 
-
+    <!-- <div> section: locomotive scroll container with the main content of the page -->
     <main data-barba="container" data-barba-namespace="project">
         <div class="welcome-image dark-background project-header">
             <img src="/img/celestial/celestial-brand-identity-poster-mockup.jpg" alt="">
@@ -210,6 +218,7 @@
         </section> -->
     </main>
 
+    <!-- <footer> section: -->
     <footer>
         <section class="rek-section">
             <div class="container">
@@ -217,7 +226,9 @@
                     <div class="line"></div>
                     <div class="copyright">
                         <p class="small-text">© 2021 Craig Chihururu - All Rights Reserved!</p>
-                        <a href="#"><p class="small-text">Back to top</p></a>
+                        <a href="#">
+                            <p class="small-text">Back to top</p>
+                        </a>
                     </div>
                 </div>
             </div>

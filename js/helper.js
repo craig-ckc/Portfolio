@@ -49,6 +49,28 @@ function pageTransitionOne() {
   tl.set('.loading-screen', { clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)', })
 }
 
+function pageTransitionIn() {
+  var tl = gsap.timeline()
+  // tl.set('.loading-container', { backgroundColor: "transparent", })
+  tl.to('.loading-screen', {
+    duration: 1,
+    clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)',
+    ease: 'Expo.easeInOut',
+    delay: 0.3,
+  })
+  tl.set('.loading-screen', { clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)', })
+}
+
+function pageTransitionOut() {
+  var tl = gsap.timeline()
+  tl.to('.loading-screen', {
+    duration: 1.2,
+    clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+    ease: 'Expo.easeInOut',
+  })
+  // tl.set('.loading-container', { backgroundColor: backgroundColor, })
+}
+
 function currentLink() {
   $('a').each(function () {
     if (window.location.pathname.search($(this).attr('href')) != -1 & $(this).hasClass('target')) {

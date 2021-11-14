@@ -1,6 +1,6 @@
 $(function () {
   barba.hooks.beforeOnce(() => {
-    pageTransitiontwo()
+    pageTransitionIn()
   })
 
   // do something before the transition starts
@@ -32,12 +32,13 @@ $(function () {
       {
         async leave(data) {
           const done = this.async()
-          pageTransitionOne()
+          pageTransitionOut()
           await delay(1000)
           done()
         },
 
-        async enter(data) {
+        async enter(data) { 
+          pageTransitionIn()
           currentLink()
           contentFadeIn('.fade-in-project', 'body', 70, 0, 100)
           contentFadeIn('.fade-in', 'body', 80, 0, 50)
