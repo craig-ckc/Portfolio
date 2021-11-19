@@ -106,4 +106,4 @@ $(window).scroll(() => {
   intersectionAnim('header', '.project-header', 'transparent')
 })
 
-copy()
+
