@@ -40,13 +40,13 @@ $(function () {
         async enter(data) { 
           pageTransitionIn()
           currentLink()
-          contentFadeIn('.fade-in-project', 'body', 70, 0, 100)
+          contentFadeIn('.fade-in-project', 'body', 90, 0, 100)
           contentFadeIn('.fade-in', 'body', 80, 0, 50)
           contentFadeIn('.fade-in-left', 'body', 80, -60, 0)
         },
 
         async once(data) {
-          contentFadeIn('.fade-in-project', 'body', 70, 0, 100)
+          contentFadeIn('.fade-in-project', 'body', 90, 0, 100)
           contentFadeIn('.fade-in', 'body', 80, 0, 50)
           contentFadeIn('.fade-in-left', 'body', 80, -60, 0)
         },

@@ -357,6 +357,10 @@ path {
 .img-box img {
   transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
+.project-link{
+  padding-left: 0;
+  padding-right: 0;
+}
 .next-proj,
 .previous-proj {
   transition: all 0.3s 0.1s ease-in-out;
@@ -376,8 +380,10 @@ path {
 }
 .arrow.big.left {
   margin-right: 20px;
+  margin-left: 0;
 }
 .arrow.big.right {
+  margin-right: 0;
   margin-left: 20px;
 }
 .next-proj {
@@ -543,7 +549,10 @@ header.transparent .scroll-pot{
   background: transparent;
   border-bottom-color: transparent;
 }
-
+.invisible-link{
+  opacity: 0;
+  pointer-events: none;
+}
 
 
 @media screen and (max-width: 1200px) /* for large screens like Desktops */ {
