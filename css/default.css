@@ -1,12 +1,18 @@
 :root {
   /* Color */
-  --background: #f3f3f3;
+  --background: #E4E4E4;
   --white: #ffffff;
   --blue: #0084ff;
   --black: #0d0e0e;
   --grey: #c0c0c0;
   --dark-grey: #373737;
   --highlight: #FF3D91;
+  
+  --dark-background: #1E1E1E;
+  --dark-white: #121212;
+  --dark-black: #FAFAFA;
+  --dark-grey: #3F3F3F;
+  --dark-dark-grey: #BDBDBD;
 
   /* Typography */
   --h1-fontsize: 5.25rem; 
