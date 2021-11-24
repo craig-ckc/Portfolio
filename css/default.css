@@ -39,7 +39,7 @@
   margin: 0;
   box-sizing: border-box;
   color: inherit;
-  font-family: 'Objectivity Regular';
+  font-family: 'Objectivity Regular', sans-serif;
   font-weight: normal;
   text-decoration: none;
   pointer-events: auto;
