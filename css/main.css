@@ -553,7 +553,10 @@ header.transparent .scroll-pot{
   opacity: 0;
   pointer-events: none;
 }
-
+a.invisible-link{
+  opacity: 0;
+  pointer-events: none;
+}
 
 @media screen and (max-width: 1200px) /* for large screens like Desktops */ {
 }
