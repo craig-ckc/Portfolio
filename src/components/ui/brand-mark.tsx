@@ -10,7 +10,7 @@ export function BrandMark({ className = '' }: BrandMarkProps) {
       aria-label="Craig Chihururu home"
       data-ui="brand-logo"
     >
-      <img className="size-full max-w-none" src="/figma/logo.svg" alt="Craig." />
+      <span className="block size-full bg-content logo-mask" aria-hidden="true" />
     </a>
   )
 }

@@ -1,6 +1,6 @@
 [
   {
-    "client": "Client Name",
+    "client": "Project Title Here",
     "industry": "Industry",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.",
     "images": [
@@ -19,7 +19,7 @@
     ]
   },
   {
-    "client": "Client Name",
+    "client": "Richard James",
     "industry": "Industry",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.",
     "images": [
@@ -38,7 +38,7 @@
     ]
   },
   {
-    "client": "Client Name",
+    "client": "Designing Minds",
     "industry": "Industry",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.",
     "images": [
@@ -57,7 +57,7 @@
     ]
   },
   {
-    "client": "Client Name",
+    "client": "Preflight",
     "industry": "Industry",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.",
     "images": [
@@ -76,7 +76,7 @@
     ]
   },
   {
-    "client": "Client Name",
+    "client": "Lumacast",
     "industry": "Industry",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.",
     "images": [

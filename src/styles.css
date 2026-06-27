@@ -2,6 +2,7 @@
 
 @custom-variant desktop (@media (min-width: 1200px));
 @custom-variant tablet (@media (max-width: 1199.98px));
+@custom-variant compact (@media (max-width: 979.98px));
 @custom-variant landscape (@media (max-width: 899.98px) and (orientation: landscape));
 @custom-variant portrait (@media (max-width: 599.98px) and (orientation: portrait));
 
@@ -37,10 +38,7 @@
   --spacing-logo-nav: 78.573px;
   --spacing-list-gap: 30px;
   --spacing-hero-top: 58px;
-  --spacing-hero-min: 800px;
-  --spacing-hero-min-tablet: 760px;
-  --spacing-hero-min-landscape: 560px;
-  --spacing-hero-min-portrait: 650px;
+  --spacing-hero-min: 100vh;
   --spacing-hero-image-w: 426px;
   --spacing-hero-image-h: 284px;
   --spacing-project-copy-w: 308px;
@@ -61,6 +59,11 @@
 
 @utility border-primary {
   border-color: var(--theme-border);
+}
+
+@utility logo-mask {
+  mask: url('/figma/logo.svg') center / contain no-repeat;
+  -webkit-mask: url('/figma/logo.svg') center / contain no-repeat;
 }
 
 :root,
