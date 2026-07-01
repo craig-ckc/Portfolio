@@ -1,22 +1,19 @@
 import { PageShell } from '../components/layout/page-shell'
-import { SectionSpacer } from '../components/layout/section-spacer'
-import { FooterCta } from '../components/sections/footer-cta'
+import { AboutSection } from '../components/sections/about-section'
 import { HeroSection } from '../components/sections/hero-section'
 import { ListsSection } from '../components/sections/list-section'
-import { Navbar } from '../components/sections/navbar'
+import { PlaygroundPreviewSection } from '../components/sections/playground-preview-section'
 import { ProjectShowcase } from '../components/sections/project-showcase'
 
 export default function FigmaHomePage() {
   return (
     <PageShell>
-      <Navbar />
-      <main>
-        <HeroSection />
-        <ProjectShowcase />
-        <SectionSpacer />
-        <ListsSection />
-      </main>
-      <FooterCta />
+      <HeroSection />
+      <ProjectShowcase />
+      <AboutSection />
+      <PlaygroundPreviewSection />
+      {/* <SectionSpacer /> */}
+      <ListsSection />
     </PageShell>
   )
 }

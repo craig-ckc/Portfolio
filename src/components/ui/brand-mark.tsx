@@ -1,3 +1,5 @@
+import { cn } from '../../lib/cn'
+
 type BrandMarkProps = {
   className?: string
 }
@@ -5,8 +7,8 @@ type BrandMarkProps = {
 export function BrandMark({ className = '' }: BrandMarkProps) {
   return (
     <a
-      className={`block h-5 w-logo-nav ${className}`}
-      href="#top"
+      className={cn('block h-5 w-logo-nav', className)}
+      href="/"
       aria-label="Craig Chihururu home"
       data-ui="brand-logo"
     >

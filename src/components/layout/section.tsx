@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react'
+import { cn } from '../../lib/cn'
 
 type SectionTheme = 'light' | 'dark'
 
@@ -10,7 +11,7 @@ type SectionProps = {
 
 export function Section({ children, className = '', theme = 'light', ...props }: SectionProps) {
   return (
-    <section className={className} data-theme={theme} {...props}>
+    <section className={cn(className)} data-theme={theme} {...props}>
       {children}
     </section>
   )

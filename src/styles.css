@@ -66,6 +66,11 @@
   -webkit-mask: url('/figma/logo.svg') center / contain no-repeat;
 }
 
+@utility logo-mark-mask {
+  mask: url('/figma/logo-mark.svg') center / contain no-repeat;
+  -webkit-mask: url('/figma/logo-mark.svg') center / contain no-repeat;
+}
+
 :root,
 [data-theme='light'],
 [light] {
@@ -114,3 +119,4 @@ body {
 img {
   display: block;
 }
+

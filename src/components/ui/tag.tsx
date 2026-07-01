@@ -1,5 +1,6 @@
 import { Button } from '@base-ui/react/button'
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
+import { cn } from '../../lib/cn'
 
 type TagTone = 'primary' | 'dark' | 'light' | 'surface'
 
@@ -29,10 +30,10 @@ const toneClasses: Record<TagTone, string> = {
   surface: 'bg-surface text-content',
 }
 
-const baseClasses = 'inline-flex min-h-5 items-center justify-center whitespace-nowrap rounded-tag border-0 px-3 py-1 text-caption leading-copy no-underline normal-case'
+const baseClasses = 'inline-flex min-h-5 items-center justify-center whitespace-nowrap rounded-tag border-0 px-3 py-1 text-xs leading-copy no-underline normal-case'
 
 export function Tag({ as = 'a', children, className = '', tone = 'light', ...props }: TagProps) {
-  const classes = `${baseClasses} ${toneClasses[tone]} ${className}`
+  const classes = cn(baseClasses, toneClasses[tone], className)
 
   if (as === 'button') {
     return (

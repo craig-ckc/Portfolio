@@ -1,4 +1,5 @@
 import type { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react'
+import { cn } from '../../lib/cn'
 
 type ContainerProps<TElement extends ElementType = 'div'> = {
   as?: TElement
@@ -15,7 +16,7 @@ export function Container<TElement extends ElementType = 'div'>({
   const Component = as || 'div'
 
   return (
-    <Component className={`px-4 ${className}`} {...props}>
+    <Component className={cn('px-4', className)} {...props}>
       {children}
     </Component>
   )
