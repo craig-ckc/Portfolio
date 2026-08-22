@@ -1,15 +1,20 @@
 import { useState } from 'react'
 import '../styles/home-page.css'
+import { Cta } from './home/cta'
 import { Footer } from './home/footer'
 import { NavBar } from './home/nav-bar'
 
 /**
  * Shell for the sections that exist in the nav but have no content yet.
  *
- * Reuses the homepage's navbar and footer so these read as the same site rather
- * than as dead ends. Lenis is deliberately not started here: there are no
- * scroll-linked effects on these pages, and the footer's reveal reads from the
- * shared frame loop, which runs with or without it.
+ * Same chrome as the homepage on purpose: navbar (so the appearance switch is
+ * on every page), then the CTA, then the footer. The CTA carries the site nav,
+ * "Say hello" and the socials, so without it these pages had no way to reach
+ * each other.
+ *
+ * Lenis is deliberately not started here: there are no scroll-linked effects on
+ * these pages, and the footer's reveal reads from the shared frame loop, which
+ * runs with or without it.
  */
 export function PlaceholderPage({ title, blurb }: { title: string; blurb: string }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
@@ -30,6 +35,8 @@ export function PlaceholderPage({ title, blurb }: { title: string; blurb: string
             Back to the homepage
           </a>
         </section>
+
+        <Cta />
       </main>
 
       <Footer />

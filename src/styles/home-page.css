@@ -615,12 +615,12 @@
    Placeholder pages (writing, experiments)
    -------------------------------------------------------------------------- */
 
+/* Sized by its padding, not by the viewport. It used to fill the screen because
+   it was the only thing on the page; now the CTA sits underneath it. */
 .hp-placeholder {
   display: flex;
-  min-height: 58svh;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
   padding-top: var(--spacing-hero-top);
   padding-bottom: var(--spacing-section-py);
 }
