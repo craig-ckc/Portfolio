@@ -1174,7 +1174,7 @@
    has no defined behaviour there. Rather than ship a control that does nothing,
    the roles below are reassigned from the nine colours already in the file —
    no new hues are introduced. Delete this block and the `theme` state in
-   home-next.tsx if you'd rather the page stay light-only.
+   src/components/layout/nav-bar.tsx if you'd rather the page stay light-only.
    -------------------------------------------------------------------------- */
 
 .hp[data-theme='dark'] {
