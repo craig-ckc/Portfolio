@@ -1,4 +1,4 @@
-import FigmaHomePage from './pages/home'
+import HomePage from './pages/home-next'
 import PlaygroundItemPage from './pages/playground-item'
 import PlaygroundPage from './pages/playground'
 import { getPlaygroundItem } from './content/playground'
@@ -19,5 +19,5 @@ export default function App() {
     return <PlaygroundPage />
   }
 
-  return <FigmaHomePage />
+  return <HomePage />
 }
