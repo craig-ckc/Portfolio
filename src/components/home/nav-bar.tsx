@@ -1,7 +1,8 @@
+import { contact } from '../../content/home-page'
 import { SunGlyph } from './icons'
 
 /**
- * Overlays the top of the hero, which reserves --spacing-hero-top for it.
+ * Overlays the top of the page, which reserves --spacing-hero-top for it.
  *
  * The frame includes a sun glyph in the trailing slot but does not define what
  * it does or supply a dark variant, so it is wired to the appearance toggle and
@@ -11,21 +12,21 @@ import { SunGlyph } from './icons'
 export function NavBar({
   theme,
   onToggleTheme,
+  homeHref = '#top',
 }: {
   theme: 'light' | 'dark'
   onToggleTheme: () => void
+  /** '#top' on the homepage; '/' anywhere else, where the anchor goes nowhere. */
+  homeHref?: string
 }) {
   return (
     <nav className="hp-nav" aria-label="Primary">
-      <a href="#top" aria-label="Craig Chihururu — home">
+      <a href={homeHref} aria-label="Craig Chihururu — home">
         <span className="hp-nav__logo" />
       </a>
 
       <div className="hp-nav__actions">
-        <a
-          className="hp-chip hp-nav__pill"
-          href="mailto:hello@craigchihururu.com?subject=Hello"
-        >
+        <a className="hp-chip hp-nav__pill" href={contact.href}>
           Contact
         </a>
         <button

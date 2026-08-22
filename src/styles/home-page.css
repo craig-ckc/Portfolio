@@ -1,4 +1,4 @@
-@import './design-tokens.css';
+/* Tokens are imported once globally by src/styles.css. */
 
 /* ==========================================================================
    Homepage — built from the Paper page frame.
@@ -610,6 +610,51 @@
 /* The stickers ride with the pocket coming forward, plus a little of their own. */
 .hp-folder:hover .hp-folder__sticker--stamp { transform: rotate(-10deg) translate(-3px, 2px) scale(1.03); }
 .hp-folder:hover .hp-folder__sticker--torii { transform: rotate(9deg) translate(3px, 3px) scale(1.03); }
+
+/* --------------------------------------------------------------------------
+   Placeholder pages (writing, experiments)
+   -------------------------------------------------------------------------- */
+
+.hp-placeholder {
+  display: flex;
+  min-height: 58svh;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: var(--spacing-hero-top);
+  padding-bottom: var(--spacing-section-py);
+}
+
+.hp-placeholder__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4.8vw, 5.75rem);
+  font-weight: var(--font-weight-bold);
+  font-variation-settings: 'wght' 700;
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-tight);
+}
+
+.hp-placeholder__blurb {
+  max-width: var(--container-caption);
+  margin-top: var(--spacing-xl);
+  color: var(--neutral-700);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+}
+
+.hp-placeholder__back {
+  margin-top: var(--spacing-2xl);
+  padding-bottom: var(--spacing-4xs);
+  border-bottom: 1px solid var(--neutral-600);
+  color: var(--foreground);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  transition: border-color var(--duration-base) var(--ease-standard);
+}
+
+.hp-placeholder__back:hover {
+  border-bottom-color: var(--foreground);
+}
 
 /* --------------------------------------------------------------------------
    Statement — one paragraph at display size between the hero and the work list.

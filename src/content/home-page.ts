@@ -29,11 +29,20 @@ export type FolderCard = {
 const unsplash = (id: string) =>
   `https://images.unsplash.com/photo-${id}?w=440&h=620&fit=crop&q=80&auto=format`
 
+/* Single source for the contact address, so the four call sites cannot drift.
+ *
+ * NOTE(craig): you dictated "craigchihururuu@gmail.com" with a doubled u. This
+ * uses the single-u spelling, which matches your surname and the address listed
+ * on craigchihururu.netlify.app. Say the word if the doubled one is right. */
+export const email = 'craigchihururu@gmail.com'
+
+const mailto = (subject: string) => `mailto:${email}?subject=${encodeURIComponent(subject)}`
+
 export const hero = {
   title: 'I help brands build websites that convert and apps people enjoy.',
   standfirst:
     'Independent designer and front-end developer. Brand, interface, and the code that ships it — usually all three.',
-  cta: { label: 'Start a project', href: 'mailto:hello@craigchihururu.com?subject=New%20project' },
+  cta: { label: 'Start a project', href: mailto('New project') },
   objectCaption: 'Work, and everything around it',
 } as const
 
@@ -75,14 +84,12 @@ export const cta = {
   title: "Design and code\nshouldn't be two separate jobs",
   invitationLead: 'If that sounds interesting to you,',
   /* Brackets are part of the label in the frame, not decoration added in CSS. */
-  invitationLink: { label: "[ let's start your project ]", href: 'mailto:hello@craigchihururu.com?subject=New%20project' },
+  invitationLink: { label: "[ let's start your project ]", href: mailto('New project') },
 } as const
 
 export const siteNav = [
-  { label: 'Work', href: '#work' },
-  { label: 'About', href: '#about' },
-  { label: 'Writing', href: '#writing' },
-  { label: 'Experiments', href: '/playground' },
+  { label: 'Writing', href: '/writing' },
+  { label: 'Experiments', href: '/experiments' },
 ] as const
 
 /* The frame draws X and LinkedIn here, so that is what this renders.
@@ -102,7 +109,7 @@ export const socials = [
    of the hand icon alone, and widens to reveal the label on hover or focus. */
 export const contact = {
   label: 'Say hello',
-  href: 'mailto:hello@craigchihururu.com?subject=Hello',
+  href: mailto('Hello'),
 } as const
 
 /* Sits between the hero and the work list.
