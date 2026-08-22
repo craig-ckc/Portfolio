@@ -1,0 +1,42 @@
+---
+// Document shell, replacing index.html's static <head> plus the CSS imports
+// that used to live in src/main.tsx. Astro supports CSS imports straight from
+// frontmatter, so all of it collapses into one file.
+import '@fontsource/manrope/latin-400.css'
+import '@fontsource/manrope/latin-500.css'
+import '@fontsource/manrope/latin-600.css'
+import '@fontsource/manrope/latin-700.css'
+// Lenis asserts `scroll-behavior: auto` itself; this used to be imported from
+// inside src/lib/smooth-scroll.ts, but that module now runs client-side only
+// (via a page-level <script>) and no longer executes at import time under
+// SSR, so the stylesheet has to be pulled in up here instead.
+import 'lenis/dist/lenis.css'
+import '../styles.css'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title = 'Craig Chihururu — Designer + Developer',
+  description = 'Craig Chihururu is a designer and developer helping brands build thoughtful websites and digital products.',
+} = Astro.props
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
+    <link rel="shortcut icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
+    <meta name="author" content="Craig Chihururu" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#1d4fff" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

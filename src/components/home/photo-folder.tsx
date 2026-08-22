@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { folderCards } from '../../content/home-page'
-import { StampSticker, ToriiSticker } from './icons'
+import { StampSticker, ToriiSticker } from '../icons'
 
 /**
  * The hero object: a folder with a stack of photo cards tucked behind its front

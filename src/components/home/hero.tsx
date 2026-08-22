@@ -1,5 +1,5 @@
 import { hero } from '../../content/home-page'
-import { Sparkle } from './icons'
+import { Sparkle } from '../icons'
 import { PhotoFolder } from './photo-folder'
 
 export function Hero() {

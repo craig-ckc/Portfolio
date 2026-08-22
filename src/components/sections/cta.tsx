@@ -1,5 +1,5 @@
 import { contact, cta, siteNav, socials } from '../../content/home-page'
-import { CtaMark, LinkedInLogo, WavingHand, XLogo } from './icons'
+import { CtaMark, LinkedInLogo, WavingHand, XLogo } from '../icons'
 
 const socialIcons = {
   x: XLogo,

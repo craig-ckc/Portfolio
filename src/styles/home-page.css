@@ -1113,6 +1113,37 @@
   will-change: transform;
 }
 
+/* Deliberately no background-color: the image version's shader runs with a
+   transparent colorBack, and what is meant to show through the dark regions of
+   the dither is the footer's own ground. Each version supplies its own
+   background-image, so the fallback photo cannot drift from the source the
+   shader is sampling. */
+.hp-footer__dither {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-position: center;
+  background-size: cover;
+}
+
+.hp-footer__dither canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Kept in the document as the decoded WebGL texture source, never as a visible
+   layer. The canvas above is the only moving image the footer displays. */
+.hp-footer__video-source {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 @keyframes hp-cloud-drift {
   from {
     transform: translate3d(-1.6%, 0.9%, 0) scale(1.05);
@@ -1143,7 +1174,7 @@
    has no defined behaviour there. Rather than ship a control that does nothing,
    the roles below are reassigned from the nine colours already in the file —
    no new hues are introduced. Delete this block and the `theme` state in
-   home-next.tsx if you'd rather the page stay light-only.
+   src/components/layout/nav-bar.tsx if you'd rather the page stay light-only.
    -------------------------------------------------------------------------- */
 
 .hp[data-theme='dark'] {

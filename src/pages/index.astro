@@ -1,0 +1,14 @@
+---
+import PageShell from '../layouts/page-shell.astro'
+import { Hero } from '../components/home/hero'
+import { Statement } from '../components/home/statement'
+import { Work } from '../components/home/work'
+import { Cta } from '../components/sections/cta'
+---
+
+<PageShell smoothScroll homeHref="#top">
+  <Hero client:load />
+  <Statement />
+  <Work />
+  <Cta />
+</PageShell>
