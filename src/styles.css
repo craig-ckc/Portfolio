@@ -1,0 +1,37 @@
+@import './styles/design-tokens.css';
+
+/*
+ * Global base only. Page styling lives in each page's own stylesheet.
+ *
+ * This file previously carried the Tailwind import, a @theme layer and the
+ * retired homepage's component styles. Nothing left in the project used any of
+ * it: the new pages are all written against the design tokens directly.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  /* Deliberately no `scroll-behavior: smooth` — Lenis owns the scroll position
+     and the two fight each other. Lenis's own stylesheet asserts `auto`. */
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+svg {
+  display: block;
+}
