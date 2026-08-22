@@ -1,0 +1,1213 @@
+@import './design-tokens.css';
+
+/* ==========================================================================
+   Homepage — built from the Paper page frame.
+   All values come from get_computed_styles / get_jsx on that frame, expressed
+   through the token scales rather than as literals.
+   ========================================================================== */
+
+.hp {
+  position: relative;
+  min-width: 320px;
+  /* Shared by the footer and the slot that reserves its scroll distance. */
+  --hp-footer-h: 520px;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: var(--tracking-normal);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.hp *,
+.hp *::before,
+.hp *::after {
+  box-sizing: border-box;
+}
+
+/* Element resets are wrapped in :where() so they carry no specificity and any
+   component class below wins without needing to be written more specifically. */
+:where(.hp p, .hp h1, .hp h2, .hp h3) {
+  margin: 0;
+}
+
+:where(.hp a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+:where(.hp button) {
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.hp-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Shared: the page gutter every section sits inside. */
+.hp-container {
+  width: 100%;
+  max-width: calc(var(--container-page) + var(--spacing-page-gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--spacing-page-gutter);
+}
+
+/* Shared: the dark pill / chip surface used by the nav and hero buttons. */
+.hp-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  border: 1px solid rgb(0 0 0 / 8%);
+  border-radius: var(--radius-xs);
+  background-color: #1a1a1a;
+  background-image: linear-gradient(in oklab 180deg, oklab(22.6% 0 0) 0%, oklab(11.2% 0 0) 100%);
+  background-origin: border-box;
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 2%),
+    0 2px 6px rgb(142 143 143 / 18%);
+  color: #fff;
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    filter var(--duration-fast) var(--ease-standard);
+}
+
+.hp-chip:hover {
+  filter: brightness(1.25);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 6%),
+    0 4px 12px rgb(142 143 143 / 26%);
+}
+
+.hp-chip:active {
+  transform: translateY(1px);
+}
+
+.hp :focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar — overlays the hero, which reserves --spacing-hero-top for it.
+   -------------------------------------------------------------------------- */
+
+.hp-nav {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+}
+
+.hp-nav__logo {
+  display: block;
+  width: 78.57px;
+  height: 20px;
+  background: currentColor;
+  mask: url('/figma/logo.svg') center / contain no-repeat;
+  -webkit-mask: url('/figma/logo.svg') center / contain no-repeat;
+}
+
+.hp-nav__actions {
+  display: flex;
+  gap: 3.3px;
+}
+
+.hp-nav__pill {
+  padding: var(--spacing-4xs) var(--spacing-xs);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-snug);
+}
+
+.hp-nav__icon {
+  width: 24px;
+  height: 24px;
+  padding: var(--spacing-4xs);
+}
+
+.hp-nav__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hp-nav__icon-glyph {
+  transition: transform var(--duration-slow) var(--ease-out-quart);
+}
+
+.hp-nav__icon:hover .hp-nav__icon-glyph {
+  transform: rotate(60deg);
+  transform-origin: center;
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+.hp-hero {
+  position: relative;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  padding-top: var(--spacing-hero-top);
+  padding-bottom: var(--spacing-3xl);
+}
+
+.hp-hero__body {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(var(--spacing-2xl), 5vw, var(--spacing-5xl));
+}
+
+.hp-hero__copy {
+  display: flex;
+  min-width: 0;
+  max-width: var(--container-hero);
+  /* Basis 0 so the object column keeps its share instead of being squeezed out
+     by the headline's max-content width. */
+  flex: 1 1 0;
+  flex-direction: column;
+  align-self: stretch;
+  justify-content: space-between;
+  gap: var(--spacing-xl);
+}
+
+.hp-hero__title {
+  font-family: var(--font-display);
+  /* 4.8vw lands on the frame's 92px at 1920 and scales down from there. */
+  font-size: clamp(2.5rem, 4.8vw, 5.75rem);
+  font-weight: var(--font-weight-bold);
+  font-variation-settings: 'wght' 700;
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+.hp-hero__lower {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.hp-hero__standfirst {
+  max-width: var(--container-caption);
+  margin: 0;
+  color: var(--neutral-700);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+}
+
+.hp-hero__actions {
+  display: flex;
+  align-items: center;
+  padding-top: var(--spacing-lg);
+}
+
+.hp-hero__cta {
+  padding: var(--spacing-xs) var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  background-image: linear-gradient(in oklab 180deg, oklab(31.1% 0 0) 0%, oklab(22.5% 0 0) 100%);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 6%),
+    0 2px 6px rgb(142 143 143 / 18%);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--leading-normal);
+}
+
+.hp-hero__object {
+  display: flex;
+  width: min(var(--container-object), 38%);
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+  justify-content: flex-end;
+  gap: var(--spacing-2xs);
+}
+
+.hp-hero__caption {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--neutral-700);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--leading-normal);
+}
+
+.hp-hero__caption svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: var(--neutral-700);
+}
+
+@media (max-width: 1199.98px) {
+  .hp-hero__body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-4xl);
+  }
+
+  .hp-hero__copy,
+  .hp-hero__object {
+    width: 100%;
+    max-width: none;
+  }
+
+  .hp-hero__object {
+    align-items: flex-start;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Hero object — the photo folder.
+
+   Built FLAT on purpose. An earlier version rotated the front panel in 3D on
+   hover, which read as the flap caving in and clipping rather than opening —
+   a coplanar panel rotating under perspective always collapses toward its
+   hinge. The reference this is modelled on uses no 3D at all: its pocket is a
+   thin bar with a hard inset shadow and the card only moves on Y behind it.
+
+   So: layers are stacked with z-index, not translateZ, and every inner move is
+   2D. "Coming forward" is expressed as down + slightly larger + a deeper
+   shadow; "kicking out" as up + slightly larger. The only 3D left is the
+   pointer tilt on the stage, which tips the whole composed object as one plane.
+
+   Depth order: shadow 0 < back 1 < cards 2 < front 3 < stickers 4.
+
+   Idle: cards tucked behind the folder front.
+   Hover: cards fan and rise out of the pocket; front comes forward; back kicks
+          out behind; pointer tilts the whole object.
+   Open (click): the cards clear the pocket entirely.
+   -------------------------------------------------------------------------- */
+
+.hp-folder {
+  display: block;
+  width: 100%;
+  max-width: var(--container-object);
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hp-folder__scene {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 640 / 520;
+  perspective: 1400px;
+}
+
+.hp-folder__stage {
+  position: absolute;
+  inset: 0;
+  /* No preserve-3d: the children flatten into this plane, so z-index governs
+     their stacking and the tilt applies to the object as a whole. */
+  transform:
+    rotateY(calc(var(--px, 0) * 5deg))
+    rotateX(calc(var(--py, 0) * -4deg))
+    scale(var(--lift, 1));
+  transition: transform var(--duration-base) var(--ease-out-quint);
+}
+
+/* The whole object comes up a little as it is handled. */
+.hp-folder:hover .hp-folder__stage,
+.hp-folder:focus-visible .hp-folder__stage {
+  --lift: 1.012;
+}
+
+.hp-folder.is-open .hp-folder__stage {
+  --lift: 1.022;
+}
+
+/* The soft ground shadow the object sits on. */
+.hp-folder__shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  width: 66%;
+  height: 46px;
+  border-radius: var(--radius-full);
+  background: radial-gradient(50% 50% at 50% 50%, rgb(21 21 21 / 16%), transparent 72%);
+  filter: blur(6px);
+  z-index: 0;
+  transform: translateX(-50%);
+  transition:
+    transform var(--duration-base) var(--ease-out-quint),
+    opacity var(--duration-base) var(--ease-out-quint);
+}
+
+.hp-folder:hover .hp-folder__shadow,
+.hp-folder.is-open .hp-folder__shadow {
+  opacity: 0.75;
+  transform: translateX(-50%) scaleX(1.08);
+}
+
+/* Folder back panel + tab.
+   Geometry derived from the source PNG's visible crop: the folder occupies
+   x 13%-86% and y 20%-93% of the 640x520 stage. */
+.hp-folder__back {
+  position: absolute;
+  left: 50%;
+  bottom: 7%;
+  width: 73%;
+  /* Squat on purpose — a folder is wider than it is tall. Dropping this from
+     73% took the silhouette from roughly square to about 1.4:1. */
+  height: 65%;
+  border-radius: var(--radius-lg) var(--radius-lg) 14px 14px;
+  /* Deliberately a step darker than the front. In a real folder the back sits
+     in the front's shadow, and on a near-white page that tonal step is the only
+     thing that makes the silhouette — and the tab — readable at all. */
+  background: linear-gradient(170deg, #efefef, #e2e2e2);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    0 0 0 1px rgb(21 21 21 / 5%),
+    0 8px 20px rgb(21 21 21 / 8%);
+  z-index: 1;
+  transform: translateX(-50%);
+  transition: transform var(--duration-base) var(--ease-out-quint);
+}
+
+/* Kicks up and out behind the pocket as it opens. */
+.hp-folder:hover .hp-folder__back,
+.hp-folder:focus-visible .hp-folder__back {
+  transform: translate(-50%, -1.6%) scale(1.006);
+}
+
+.hp-folder.is-open .hp-folder__back {
+  transform: translate(-50%, -3.2%) scale(1.012);
+}
+
+/* The tab. This is what makes the silhouette read as a folder rather than a
+   pocket, so it is sized to stay visible to the left of the card fan. */
+.hp-folder__back::before {
+  position: absolute;
+  top: -8%;
+  left: 0;
+  width: 28%;
+  height: 13%;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: linear-gradient(170deg, #efefef, #e6e6e6);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    0 0 0 1px rgb(21 21 21 / 5%);
+  content: '';
+}
+
+/* Photo cards. Per-card --x / --y / --r are set in the state blocks below. */
+/* Offset right of centre so the folder tab stays clear on the left — the card
+   stack sitting slightly right of the tab is what reads as a folder. */
+.hp-folder__cards {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transform: translateX(3%);
+}
+
+.hp-folder__card {
+  position: absolute;
+  left: calc(50% - 13.2%);
+  /* Follows the folder down: tops land at ~21%, just clearing the back panel's
+     28% top edge. Only the top strip shows at rest, which is what makes the
+     hover feel like pulling them out. */
+  bottom: 33%;
+  width: 26.4%;
+  aspect-ratio: 165 / 235;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #d4d4d4;
+  box-shadow:
+    0 0 0 5px #fff,
+    0 6px 18px rgb(21 21 21 / 14%);
+  transform: translate(var(--x), var(--y)) rotate(var(--r));
+  transform-origin: 50% 100%;
+  will-change: transform;
+  transition: transform var(--duration-base) var(--ease-out-quint);
+  /* No delay at rest, so leaving hover brings every card back together instead
+     of unwinding in a stagger that reads as a snap. The stagger is applied in
+     the hover and open states only. */
+  transition-delay: 0ms;
+}
+
+.hp-folder__card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Fallback for a card authored without a src — a night scene in keeping with
+   the rest of the stack, rather than a flat grey box. */
+.hp-folder__card--placeholder {
+  background-image:
+    radial-gradient(9px 9px at 24% 22%, rgb(255 197 92 / 85%), transparent 70%),
+    radial-gradient(7px 7px at 62% 34%, rgb(255 176 74 / 75%), transparent 70%),
+    radial-gradient(11px 11px at 40% 58%, rgb(255 214 130 / 60%), transparent 72%),
+    linear-gradient(200deg, #2b2724, #100e0d 72%);
+}
+
+/* Offsets are percentages of the card box, not pixels, so the whole fan scales
+   with the stage instead of blowing out of it on a narrower column. */
+
+/* Idle — a narrow, barely-splayed stack. Kept tight on the left so the folder
+   tab stays visible beside it. */
+.hp-folder__card:nth-child(1) { --i: 3; --x: -50%; --y: 3%; --r: -7deg; }
+.hp-folder__card:nth-child(2) { --i: 1; --x: -18%; --y: -1%; --r: -3deg; }
+.hp-folder__card:nth-child(3) { --i: 0; --x: 16%; --y: -1%; --r: 3deg; }
+.hp-folder__card:nth-child(4) { --i: 2; --x: 44%; --y: 3%; --r: 6deg; }
+
+/* Hover — a slightly wider fan and a small lift. Deliberately restrained: the
+   cards stay tucked in the folder, they just breathe. Opening is the big move. */
+.hp-folder:hover .hp-folder__card,
+.hp-folder:focus-visible .hp-folder__card,
+.hp-folder.is-open .hp-folder__card {
+  transition-delay: calc(var(--i, 0) * 35ms);
+}
+
+/* The splay comes from ROTATION, not translation. Because each card pivots on
+   its bottom edge, rotation swings the top out past the pocket (which is what
+   you want) while the bottom stays inside it (which keeps the bottoms hidden).
+   Translation moves the whole card, bottom included — push it too far and the
+   bottom corner clears the pocket's side edge and the card reads as floating
+   beside the folder. So x is bounded and r carries the fan. */
+.hp-folder:hover .hp-folder__card:nth-child(1),
+.hp-folder:focus-visible .hp-folder__card:nth-child(1) { --x: -84%; --y: -22%; --r: -17deg; }
+.hp-folder:hover .hp-folder__card:nth-child(2),
+.hp-folder:focus-visible .hp-folder__card:nth-child(2) { --x: -33%; --y: -30%; --r: -6deg; }
+.hp-folder:hover .hp-folder__card:nth-child(3),
+.hp-folder:focus-visible .hp-folder__card:nth-child(3) { --x: 31%; --y: -30%; --r: 6deg; }
+.hp-folder:hover .hp-folder__card:nth-child(4),
+.hp-folder:focus-visible .hp-folder__card:nth-child(4) { --x: 70%; --y: -22%; --r: 15deg; }
+
+/* Open — the cards arc clear of the folder. The one place expo earns its keep:
+   it's a one-shot move, not a state that reverses under the cursor. */
+.hp-folder.is-open .hp-folder__card {
+  transition-timing-function: var(--ease-out-expo);
+}
+
+.hp-folder.is-open .hp-folder__card:nth-child(1) { --x: -145%; --y: -40%; --r: -22deg; }
+.hp-folder.is-open .hp-folder__card:nth-child(2) { --x: -54%; --y: -54%; --r: -8deg; }
+.hp-folder.is-open .hp-folder__card:nth-child(3) { --x: 50%; --y: -54%; --r: 8deg; }
+.hp-folder.is-open .hp-folder__card:nth-child(4) { --x: 140%; --y: -40%; --r: 20deg; }
+
+/* The pocket. It never rotates — it comes forward, which in 2D means down a
+   touch, marginally larger, and a deeper cast shadow. The top edge carries a
+   crisp lip so the cards read as sliding in behind a real edge. */
+.hp-folder__front {
+  position: absolute;
+  left: 50%;
+  bottom: 7%;
+  width: 73%;
+  height: 57%;
+  border-radius: 14px;
+  /* Opaque: with photographs on the cards behind it, even 2% translucency
+     ghosted them through the panel and read as a rendering fault. */
+  background: linear-gradient(168deg, #fdfdfd, #eeeeee);
+  box-shadow:
+    /* the lip: a hard, shallow shadow just inside the top edge */
+    inset 0 3px 4px -3px rgb(21 21 21 / 34%),
+    inset 0 1px 0 rgb(255 255 255 / 90%),
+    0 -1px 0 rgb(21 21 21 / 6%),
+    0 18px 34px rgb(21 21 21 / 12%);
+  z-index: 3;
+  transform: translateX(-50%);
+  will-change: transform;
+  transition:
+    transform var(--duration-base) var(--ease-out-quint),
+    box-shadow var(--duration-base) var(--ease-out-quint);
+}
+
+.hp-folder:hover .hp-folder__front,
+.hp-folder:focus-visible .hp-folder__front {
+  box-shadow:
+    inset 0 3px 4px -3px rgb(21 21 21 / 34%),
+    inset 0 1px 0 rgb(255 255 255 / 90%),
+    0 -1px 0 rgb(21 21 21 / 6%),
+    0 26px 44px rgb(21 21 21 / 16%);
+  transform: translate(-50%, 1.4%) scale(1.012);
+}
+
+.hp-folder.is-open .hp-folder__front {
+  box-shadow:
+    inset 0 3px 4px -3px rgb(21 21 21 / 34%),
+    inset 0 1px 0 rgb(255 255 255 / 90%),
+    0 -1px 0 rgb(21 21 21 / 6%),
+    0 34px 56px rgb(21 21 21 / 20%);
+  transform: translate(-50%, 3%) scale(1.022);
+}
+
+/* The two ruled lines near the bottom of the front panel. */
+.hp-folder__rules {
+  position: absolute;
+  inset: auto 9% 13% 9%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xs);
+}
+
+.hp-folder__rules span {
+  height: 1px;
+  border-radius: var(--radius-full);
+  background: rgb(21 21 21 / 9%);
+}
+
+.hp-folder__rules span:last-child {
+  width: 88%;
+}
+
+/* Stickers — lift and counter-rotate slightly on hover. */
+.hp-folder__sticker {
+  position: absolute;
+  filter: drop-shadow(0 4px 8px rgb(21 21 21 / 18%));
+  z-index: 4;
+  transform: rotate(var(--r));
+  transition: transform var(--duration-base) var(--ease-out-quint);
+}
+
+.hp-folder__sticker svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Positioned onto the folder front, which spans 36%-93% of the stage height. */
+.hp-folder__sticker--stamp {
+  --r: -7deg;
+  top: 44%;
+  left: 21%;
+  width: 17%;
+}
+
+.hp-folder__sticker--torii {
+  --r: 6deg;
+  top: 54%;
+  left: 58%;
+  width: 16%;
+}
+
+/* The stickers ride with the pocket coming forward, plus a little of their own. */
+.hp-folder:hover .hp-folder__sticker--stamp { transform: rotate(-10deg) translate(-3px, 2px) scale(1.03); }
+.hp-folder:hover .hp-folder__sticker--torii { transform: rotate(9deg) translate(3px, 3px) scale(1.03); }
+
+/* --------------------------------------------------------------------------
+   Statement — one paragraph at display size between the hero and the work list.
+   -------------------------------------------------------------------------- */
+
+.hp-statement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: var(--spacing-section-y);
+}
+
+.hp-statement__text {
+  width: 100%;
+  max-width: var(--container-work);
+  font-family: var(--font-display);
+  /* 1.67vw lands on the frame's 32px at 1920. */
+  font-size: clamp(1.25rem, 1.67vw, 2rem);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-normal);
+  text-wrap: pretty;
+}
+
+/* --------------------------------------------------------------------------
+   Work
+   -------------------------------------------------------------------------- */
+
+.hp-work {
+  padding-block: var(--spacing-section-py);
+}
+
+.hp-work__list {
+  display: flex;
+  max-width: var(--container-work);
+  flex-direction: column;
+  margin-inline: auto;
+  gap: var(--spacing-section-y);
+}
+
+.hp-work__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.hp-work__tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-md);
+}
+
+.hp-work__tile {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--neutral-600);
+}
+
+.hp-work__tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slower) var(--ease-out-quart);
+}
+
+.hp-work__item:hover .hp-work__tile img {
+  transform: scale(1.03);
+}
+
+.hp-work__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xs);
+}
+
+.hp-work__title {
+  margin: 0;
+  font-family: var(--font-display);
+  /* Dropped from 24px in the frame — the work rows shrank to match. */
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  font-variation-settings: 'wght' 600;
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-tight);
+}
+
+.hp-work__description {
+  max-width: 62ch;
+  margin: 0;
+  color: var(--neutral-700);
+  font-family: var(--font-display);
+  font-size: var(--text-body);
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-normal);
+}
+
+@media (max-width: 899.98px) {
+  .hp-work__tiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hp-work__tile {
+    height: auto;
+    aspect-ratio: 542 / 320;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   CTA
+   -------------------------------------------------------------------------- */
+
+.hp-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: var(--spacing-section-py);
+}
+
+.hp-cta__mark {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.hp-cta__mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hp-cta__title {
+  padding-top: var(--spacing-2xl);
+  white-space: pre-line;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.9vw, 3.75rem);
+  font-weight: var(--font-weight-bold);
+  font-variation-settings: 'wght' 700;
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-tight);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.hp-cta__invitation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding-top: var(--spacing-3xl);
+  color: var(--neutral-700);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+}
+
+.hp-cta__link {
+  display: inline-flex;
+  align-items: center;
+  padding-bottom: var(--spacing-4xs);
+  border-bottom: 1px solid var(--neutral-600);
+  color: var(--foreground);
+  font-weight: var(--font-weight-normal);
+  transition: border-color var(--duration-base) var(--ease-standard);
+}
+
+.hp-cta__link:hover {
+  border-bottom-color: var(--foreground);
+}
+
+/* The bracketed label shimmers on its own every few seconds — a periodic hint
+   that this is clickable, since it carries no button chrome. The gradient's
+   base stop is the text colour, so the label stays legible if the animation
+   never runs. */
+.hp-cta__label {
+  /* A wide, soft band peaking near the page colour, so the pass is legible
+     rather than a faint grey flicker. Narrow bands read as noise at this text
+     size. The base stop is the text colour, so the label stays readable if the
+     animation never runs. */
+  background-image: linear-gradient(
+    100deg,
+    var(--foreground) 0%,
+    var(--foreground) 24%,
+    var(--neutral-600) 40%,
+    var(--neutral-300) 50%,
+    var(--neutral-600) 60%,
+    var(--foreground) 76%,
+    var(--foreground) 100%
+  );
+  background-size: 250% 100%;
+  background-position: 130% 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  /* Linear, so the sweep travels at a constant speed — easing made it look
+     like it darted across. */
+  animation: hp-shimmer 6s linear infinite;
+}
+
+@keyframes hp-shimmer {
+  /* Holds ~2.7s, then sweeps across over ~3.3s. */
+  0%,
+  45% {
+    background-position: 130% 0;
+  }
+
+  100% {
+    background-position: -30% 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Site footer row (inside the CTA section, as in the frame)
+   -------------------------------------------------------------------------- */
+
+.hp-siteline {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4xl);
+  padding-top: var(--spacing-5xl);
+}
+
+.hp-siteline__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2xl);
+}
+
+.hp-siteline__nav a {
+  /* Was --neutral-600, which measured 1.9:1 against the page. The frame moved
+     it to --neutral-700 (5.6:1), which clears AA. */
+  color: var(--neutral-700);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--leading-normal);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.hp-siteline__nav a:hover {
+  color: var(--foreground);
+}
+
+.hp-siteline__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+/* Replaces the newsletter field. Collapsed it is exactly the hand icon wide;
+   on hover or focus it widens to reveal the label. The label — not the
+   container — carries the animation, so the container's width simply follows
+   its content and there is no fixed target width to keep in sync with the
+   copy. Animating max-width rather than width is what makes that possible:
+   width has no transitionable value for `auto`. */
+.hp-hello {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-3xs) var(--spacing-3xs) var(--spacing-2xs);
+  border-bottom: 1px solid var(--neutral-600);
+  color: var(--neutral-900);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  white-space: nowrap;
+  transition: border-color var(--duration-base) var(--ease-standard);
+}
+
+.hp-hello:hover,
+.hp-hello:focus-visible {
+  border-bottom-color: var(--foreground);
+}
+
+.hp-hello__label {
+  display: inline-block;
+  max-width: 0;
+  overflow: clip;
+  opacity: 0;
+  transition:
+    max-width 320ms var(--ease-out-quint),
+    padding-left 320ms var(--ease-out-quint),
+    opacity 200ms var(--ease-standard);
+}
+
+.hp-hello:hover .hp-hello__label,
+.hp-hello:focus-visible .hp-hello__label {
+  /* Comfortably past the label's natural width; the container still sizes to
+     the text, so this only needs to not clip it. */
+  max-width: 8rem;
+  padding-left: var(--spacing-3xs);
+  opacity: 1;
+}
+
+.hp-hello__hand {
+  display: inline-flex;
+  width: 20px;
+  height: 24px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--neutral-900);
+}
+
+/* Waves on its own every few seconds, and again on hover. */
+.hp-hello__hand svg {
+  width: 100%;
+  height: 100%;
+  /* Pivot at the wrist, bottom-left, so this reads as a hand waving rather
+     than a shape rotating about its middle. */
+  transform-origin: 30% 85%;
+  animation: hp-wave 6s var(--ease-standard) infinite;
+}
+
+.hp-hello:hover .hp-hello__hand svg {
+  animation: hp-wave 1.1s var(--ease-standard) 1;
+}
+
+@keyframes hp-wave {
+  0%,
+  74%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  79% {
+    transform: rotate(13deg);
+  }
+
+  84% {
+    transform: rotate(-9deg);
+  }
+
+  89% {
+    transform: rotate(11deg);
+  }
+
+  94% {
+    transform: rotate(-5deg);
+  }
+}
+
+.hp-social {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.hp-social a {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-md);
+  background: var(--neutral-300);
+  color: var(--neutral-700);
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.hp-social a:hover {
+  color: var(--foreground);
+  transform: translateY(-1px);
+}
+
+.hp-social svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 899.98px) {
+  .hp-siteline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2xl);
+  }
+
+  .hp-siteline__actions {
+    flex-wrap: wrap;
+  }
+
+  .hp-hello {
+    margin-left: calc(var(--spacing-3xs) * -1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Footer — pinned to the viewport bottom with the page scrolling over it, so
+   the CTA rides on top and the footer is uncovered on the way down.
+
+   The slot reserves the scroll distance; the footer itself is fixed, so it
+   holds still while the content slides up. `--reveal` (0 -> 1) is set by the
+   Footer component and drives the backdrop drift.
+   -------------------------------------------------------------------------- */
+
+.hp-content {
+  position: relative;
+  z-index: 2;
+  /* Must be opaque — this is what covers the fixed footer until you reach it. */
+  background: var(--background);
+}
+
+.hp-footer-slot {
+  position: relative;
+  z-index: 1;
+  height: var(--hp-footer-h);
+}
+
+.hp-footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  height: var(--hp-footer-h);
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: clip;
+  padding: var(--spacing-4xl) var(--spacing-page-gutter) 40px;
+  background: #0b0b0b;
+  color: var(--background);
+  isolation: isolate;
+}
+
+/* Oversized so there is room to drift, and moved at a fraction of the reveal
+   rate — the parallax.
+
+   Sign matters: as you scroll DOWN the backdrop must travel UP, the same
+   direction as the page. Starting at +13% and easing to 0 does that. The
+   inverse (starting negative) makes the image slide down against the scroll,
+   which reads as the whole footer fighting you. */
+.hp-footer__shader {
+  position: absolute;
+  inset: -18% 0;
+  z-index: -1;
+  pointer-events: none;
+  transform: translateY(calc((1 - var(--reveal, 1)) * 13%));
+  will-change: transform;
+}
+
+/* Slow autonomous drift, so the backdrop is never completely static even when
+   the page is not moving. Alternating rather than looping, so it never jumps.
+   Scaled up slightly so the translate cannot expose an edge. */
+.hp-footer__drift {
+  width: 100%;
+  height: 100%;
+  animation: hp-cloud-drift 52s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes hp-cloud-drift {
+  from {
+    transform: translate3d(-1.6%, 0.9%, 0) scale(1.05);
+  }
+
+  to {
+    transform: translate3d(1.6%, -0.9%, 0) scale(1.05);
+  }
+}
+
+.hp-footer__baseline {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2xl);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  opacity: clamp(0, calc((var(--reveal, 1) - 0.4) * 2.6), 1);
+  transform: translateY(calc((1 - var(--reveal, 1)) * 14px));
+}
+
+/* --------------------------------------------------------------------------
+   Dark appearance.
+
+   BEYOND THE FRAME: the Paper page is light-only, and the navbar's sun glyph
+   has no defined behaviour there. Rather than ship a control that does nothing,
+   the roles below are reassigned from the nine colours already in the file —
+   no new hues are introduced. Delete this block and the `theme` state in
+   home-next.tsx if you'd rather the page stay light-only.
+   -------------------------------------------------------------------------- */
+
+.hp[data-theme='dark'] {
+  --background: #151515;
+  --foreground: #f9f9f9;
+  --neutral-900: #f1f1f1;
+  --neutral-800: #d6d6d6;
+  --neutral-700: #b8b8b8;
+  --neutral-600: #616161;
+  --neutral-300: #2c2c2c;
+  --neutral-100: #090a0a;
+}
+
+.hp[data-theme='dark'] .hp-chip {
+  border-color: rgb(255 255 255 / 10%);
+  background-color: #ededed;
+  background-image: linear-gradient(in oklab 180deg, oklab(96% 0 0) 0%, oklab(88% 0 0) 100%);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 45%),
+    0 2px 6px rgb(0 0 0 / 32%);
+  color: #151515;
+}
+
+.hp[data-theme='dark'] .hp-chip:hover {
+  filter: brightness(1.04);
+}
+
+.hp[data-theme='dark'] .hp-social a {
+  border-color: var(--neutral-300);
+}
+
+.hp[data-theme='dark'] .hp-folder__back,
+.hp[data-theme='dark'] .hp-folder__back::before {
+  background: linear-gradient(170deg, #333, #232323);
+}
+
+.hp[data-theme='dark'] .hp-folder__front {
+  background: linear-gradient(168deg, rgb(58 58 58 / 92%), rgb(40 40 40 / 88%));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 8%),
+    0 18px 34px rgb(0 0 0 / 40%);
+}
+
+.hp[data-theme='dark'] .hp-folder__rules span {
+  background: rgb(255 255 255 / 10%);
+}
+
+.hp[data-theme='dark'] .hp-folder__shadow {
+  background: radial-gradient(50% 50% at 50% 50%, rgb(0 0 0 / 46%), transparent 72%);
+}
+
+.hp[data-theme='dark'] .hp-folder__card {
+  box-shadow:
+    0 0 0 5px #f4f4f4,
+    0 6px 18px rgb(0 0 0 / 40%);
+}
+
+/* --------------------------------------------------------------------------
+   Motion preferences
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .hp *,
+  .hp *::before,
+  .hp *::after {
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+    animation-duration: 1ms !important;
+  }
+
+  .hp-folder__stage {
+    transform: none !important;
+  }
+
+  .hp-folder__front,
+  .hp-folder:hover .hp-folder__front,
+  .hp-folder.is-open .hp-folder__front,
+  .hp-folder__back,
+  .hp-folder:hover .hp-folder__back,
+  .hp-folder.is-open .hp-folder__back {
+    transform: translateX(-50%) !important;
+  }
+
+  .hp-footer__shader,
+  .hp-footer__baseline {
+    transform: none !important;
+  }
+
+  .hp-footer__drift {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* The shimmer is a hint, not information — drop it and restore a flat colour
+     rather than leaving the label clipped to a static gradient. */
+  .hp-cta__label {
+    background: none;
+    color: var(--foreground);
+    animation: none !important;
+  }
+
+  .hp-hello__hand svg {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .hp {
+    --hp-footer-h: 380px;
+  }
+}
