@@ -1,8 +1,8 @@
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'astro/config'
+import react from '@astrojs/react'
 
 export default defineConfig({
-  plugins: [react()],
+  integrations: [react()],
   server: {
     // Bind all interfaces so the dev server is reachable from other devices
     // (phone, tablet) over Tailscale. Note this also exposes it to any local
