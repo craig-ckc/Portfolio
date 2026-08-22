@@ -1,5 +1,5 @@
 import { contact } from '../../content/home-page'
-import { SunGlyph } from './icons'
+import { SunGlyph } from '../icons'
 
 /**
  * Overlays the top of the page, which reserves --spacing-hero-top for it.

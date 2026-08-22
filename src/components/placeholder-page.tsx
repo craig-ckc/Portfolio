@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import '../styles/home-page.css'
-import { Cta } from './home/cta'
-import { Footer } from './home/footer'
-import { NavBar } from './home/nav-bar'
+import { Cta } from './sections/cta'
+import { Footer } from './layout/footer'
+import { NavBar } from './layout/nav-bar'
 
 /**
  * Shell for the sections that exist in the nav but have no content yet.
