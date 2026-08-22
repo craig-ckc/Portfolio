@@ -1,0 +1,46 @@
+---
+// Chrome shared by every page in the site: the `.hp` wrapper, the navbar, the
+// fixed footer. Lifted out of home-next.tsx and placeholder-page.tsx, which
+// both hand-rolled the same shell.
+import '../styles/home-page.css'
+import Base from './base.astro'
+import { NavBar } from '../components/layout/nav-bar'
+import { Footer } from '../components/layout/footer'
+
+interface Props {
+  title?: string
+  description?: string
+  /** '#top' on the homepage; '/' anywhere else, where the anchor goes nowhere. */
+  homeHref?: string
+  /**
+   * Homepage-only. The placeholder pages have no scroll-linked effects, and
+   * the footer's `--reveal` reads from the shared frame loop in
+   * src/lib/smooth-scroll.ts, which runs with or without Lenis — so there is
+   * nothing for them to gain by paying for it.
+   */
+  smoothScroll?: boolean
+}
+
+const { title, description, homeHref = '#top', smoothScroll = false } = Astro.props
+---
+
+<Base title={title} description={description}>
+  <div class="hp" data-theme="light">
+    <NavBar client:load homeHref={homeHref} />
+    {/* Opaque and above the footer — the footer is fixed and revealed as this
+        scrolls past it. */}
+    <main class="hp-content">
+      <slot />
+    </main>
+    <Footer client:visible />
+  </div>
+</Base>
+
+{
+  smoothScroll && (
+    <script>
+      import { startSmoothScroll } from '../lib/smooth-scroll'
+      startSmoothScroll()
+    </script>
+  )
+}

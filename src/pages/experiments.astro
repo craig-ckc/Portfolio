@@ -1,0 +1,19 @@
+---
+// Replaces the '/experiments' case in the old switch router (src/App.tsx) —
+// file routing gives this page its own <title> for free, which the SPA couldn't do.
+import PageShell from '../layouts/page-shell.astro'
+import { Cta } from '../components/sections/cta'
+
+const title = 'Experiments'
+const blurb = "Prototypes, half-built tools, and whatever I'm poking at this month. Nothing here to show yet."
+---
+
+<PageShell title="Experiments — Craig Chihururu" homeHref="/">
+  <section class="hp-placeholder hp-container">
+    <h1 class="hp-placeholder__title">{title}</h1>
+    <p class="hp-placeholder__blurb">{blurb}</p>
+    <a class="hp-placeholder__back" href="/">Back to the homepage</a>
+  </section>
+
+  <Cta />
+</PageShell>

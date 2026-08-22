@@ -1,5 +1,8 @@
 import Lenis from 'lenis'
-import 'lenis/dist/lenis.css'
+
+// The stylesheet is loaded by the Astro layout instead of here: this module is
+// pulled into the SSR graph (footer.tsx imports it for `onFrame`), and a CSS
+// import at module scope would otherwise run through the server render too.
 
 type FrameCallback = (time: number) => void
 
