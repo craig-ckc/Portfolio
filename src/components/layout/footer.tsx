@@ -1,19 +1,35 @@
-import { useEffect, useRef } from 'react'
-import { ImageDithering } from '@paper-design/shaders-react'
+import { useEffect, useRef, useState } from 'react'
 import { footer } from '../../content/home-page'
 import { onFrame } from '../../lib/smooth-scroll'
+import { DitheredImageBackground } from '../backgrounds/dithered-image-background'
+import { DitheredVideoBackground } from '../backgrounds/dithered-video-background'
 
-/* The exact shader the frame uses, read off the design node:
- *
- *   <ImageDithering originalColors={false} inverted={false} type="4x4"
- *     size={2.4} colorSteps={2} scale={1} fit="cover"
- *     colorBack="#00000000" colorFront="#1F1F1F" colorHighlight="#313131" />
- *
- * Same package (@paper-design/shaders-react), same props, so the footer is the
- * design rather than an approximation of it.
- */
-const DITHER_IMAGE =
-  'https://app.paper.design/file-assets/01M0F2SSGA0QC11HPY8HZFYHAQ/01M0K7Q84Y7RM5FW1TSXA5F9ZA.webp'
+/* Which backdrop the footer mounts. The still image is the original design; the
+   video arrived later and drives the same shader from decoded frames. Neither
+   supersedes the other, so both stay wired and this is the only line that
+   decides which one ships. */
+const FOOTER_DITHER_VARIANT: 'image' | 'video' = 'image'
+
+const CLOUD_VIDEO = '/video/footer-clouds.mp4'
+const CLOUD_POSTER = '/video/footer-clouds-poster.webp'
+const FOOTER_IMAGE = '/img/footer-dither.webp'
+
+/* Read off the design node, unchanged. colorBack is fully transparent on
+   purpose: the dark regions of the dither are meant to be the footer's own
+   ground rather than a colour of the shader's own. */
+const DITHER_PALETTE_IMAGE = {
+  back: '#00000000',
+  front: '#1F1F1F',
+  highlight: '#313131',
+}
+
+/* The video's own palette, opaque where the image's is transparent — a moving
+   texture behind translucent dither reads as smeared rather than as clouds. */
+const DITHER_PALETTE_VIDEO = {
+  back: '#000000',
+  front: '#2A2A2A',
+  highlight: '#707070',
+}
 
 /**
  * The footer is pinned to the bottom of the viewport and the page content
@@ -28,6 +44,7 @@ const DITHER_IMAGE =
 export function Footer() {
   const slotRef = useRef<HTMLDivElement>(null)
   const footerRef = useRef<HTMLElement>(null)
+  const [videoActive, setVideoActive] = useState(false)
 
   useEffect(() => {
     const slot = slotRef.current
@@ -36,10 +53,12 @@ export function Footer() {
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       target.style.setProperty('--reveal', '1')
+      if (FOOTER_DITHER_VARIANT === 'video') setVideoActive(false)
       return
     }
 
     let last = -1
+    let wasActive = false
 
     // Driven per frame rather than by a scroll listener: Lenis moves the page
     // every frame, and a scroll listener lags a frame or two behind it, which
@@ -48,6 +67,13 @@ export function Footer() {
       const box = slot.getBoundingClientRect()
       const progress = (window.innerHeight - box.top) / Math.max(1, box.height)
       const reveal = Math.min(1, Math.max(0, progress))
+      if (FOOTER_DITHER_VARIANT === 'video') {
+        const isActive = reveal > 0.01
+        if (isActive !== wasActive) {
+          wasActive = isActive
+          setVideoActive(isActive)
+        }
+      }
       if (Math.abs(reveal - last) < 0.0005) return
       last = reveal
       target.style.setProperty('--reveal', reveal.toFixed(4))
@@ -62,20 +88,25 @@ export function Footer() {
             own so the backdrop is never completely still. */}
         <div className="hp-footer__shader" aria-hidden="true">
           <div className="hp-footer__drift">
-            <ImageDithering
-              image={DITHER_IMAGE}
-              originalColors={false}
-              inverted={false}
-              type="4x4"
-              size={2.4}
-              colorSteps={2}
-              scale={1}
-              fit="cover"
-              colorBack="#00000000"
-              colorFront="#1F1F1F"
-              colorHighlight="#313131"
-              style={{ width: '100%', height: '100%' }}
-            />
+            {FOOTER_DITHER_VARIANT === 'video' ? (
+              <DitheredVideoBackground
+                active={videoActive}
+                className="hp-footer__dither"
+                colorBack={DITHER_PALETTE_VIDEO.back}
+                colorFront={DITHER_PALETTE_VIDEO.front}
+                colorHighlight={DITHER_PALETTE_VIDEO.highlight}
+                poster={CLOUD_POSTER}
+                src={CLOUD_VIDEO}
+              />
+            ) : (
+              <DitheredImageBackground
+                className="hp-footer__dither"
+                colorBack={DITHER_PALETTE_IMAGE.back}
+                colorFront={DITHER_PALETTE_IMAGE.front}
+                colorHighlight={DITHER_PALETTE_IMAGE.highlight}
+                src={FOOTER_IMAGE}
+              />
+            )}
           </div>
         </div>
         <p className="hp-footer__baseline">{footer.copyright}</p>
