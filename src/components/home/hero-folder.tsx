@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { folderItems, type FolderItem } from '../../content/home-page'
 import { folderMetrics, folderShape } from '../../lib/folder-shape'
 import { getLenis } from '../../lib/smooth-scroll'
@@ -9,9 +9,9 @@ import { StampSticker, ToriiSticker } from '../icons'
  * reference shot, a client mark, a note, a palette. Three layers, back to
  * front:
  *
- *   back   the silhouette, one SVG path generated from src/lib/folder-shape.ts
- *   items  the contents
- *   flap   a frosted panel carrying the stickers
+ *   back   a flat-topped panel, the plainer of the two generated paths
+ *   items  the contents, showing in the notch the front leaves
+ *   flap   the front, which is where the tab and its angled shoulder live
  *
  * Three states:
  *
@@ -163,6 +163,12 @@ export function HeroFolder({ caption }: { caption: string }) {
   const [stage, setStage] = useState<Stage>('closed')
   const [focused, setFocused] = useState<string | null>(null)
   const active = stage !== 'closed'
+
+  /* One per instance, since both are referenced by id from CSS and from an
+     attribute rather than scoped the way a class would be. */
+  const ids = useId()
+  const clipId = `${ids}-front`
+  const fillId = `${ids}-face`
 
   const rootRef = useRef<HTMLDivElement>(null)
   const stackRef = useRef<HTMLSpanElement>(null)
@@ -318,14 +324,27 @@ export function HeroFolder({ caption }: { caption: string }) {
         style={
           {
             aspectRatio: metrics.aspectRatio,
-            '--hp-folder-body-top': metrics.bodyTop,
-            '--hp-folder-flap-top': metrics.flapTop,
-            '--hp-folder-flap-radius': metrics.flapRadius,
+            '--hp-folder-contents-top': metrics.contentsTop,
           } as CSSProperties
         }
       >
+        {/* The front's edge, twice over: once as the clip that shapes the
+            frosted layer, once as the gradient that fills the drawn face. Both
+            come off the same path in src/lib/folder-shape.ts. */}
+        <svg className="hp-folder__defs" aria-hidden="true" focusable="false">
+          <defs>
+            <clipPath id={clipId} clipPathUnits="objectBoundingBox">
+              <path d={metrics.frontClip} />
+            </clipPath>
+            <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="var(--hp-folder-face-top)" />
+              <stop offset="1" stopColor="var(--hp-folder-face-bottom)" />
+            </linearGradient>
+          </defs>
+        </svg>
+
         <svg className="hp-folder__back" viewBox={metrics.viewBox} aria-hidden="true">
-          <path d={metrics.path} />
+          <path d={metrics.back} />
         </svg>
 
         <span className="hp-folder__stack" ref={stackRef} inert={inFolder}>
@@ -346,9 +365,21 @@ export function HeroFolder({ caption }: { caption: string }) {
           ))}
         </span>
 
-        {/* Where the reference site puts a label, this carries the stickers.
-            They are children of the flap, so they tip with it. */}
+        {/* The front. Two layers, because no one element can be both shapes at
+            once: a div carries the frost, since backdrop-filter needs a real
+            box to blur behind, and is cut to the edge with a clip; the drawn
+            face over it carries the fill, the hairline and the cast shadow,
+            since a clip would have taken a box-shadow off with it.
+
+            The stickers ride here rather than on the stage, so they tip with
+            the front — which is most of the reason to put them on it. */}
         <span className="hp-folder__flap" aria-hidden="true">
+          <span className="hp-folder__frost" style={{ clipPath: `url(#${clipId})` }} />
+
+          <svg className="hp-folder__face" viewBox={metrics.viewBox}>
+            <path d={metrics.front} fill={`url(#${fillId})`} />
+          </svg>
+
           <span className="hp-folder__sticker hp-folder__sticker--stamp">
             <StampSticker />
           </span>

@@ -298,22 +298,25 @@
      - the back never moves. No lift, no scale, no tilting the whole object
      - the click is not a larger hover. It empties the folder onto the screen
 
-   Geometry comes from src/lib/folder-shape.ts. That file draws the silhouette
-   and hands this stylesheet three values as custom properties on the stage:
+   Geometry comes from src/lib/folder-shape.ts, which draws two paths. The back
+   is a plain rounded rectangle with a flat top; the front carries the tab and
+   the angled shoulder that drops off it, and the contents show in the notch
+   that leaves. The tab belongs to the front and not the back on purpose — on
+   the back it takes the back's colour, and the folder reads as a dark tab with
+   a pale panel clipped across it rather than as one continuous face.
 
-     --hp-folder-body-top     top edge of the folder body
-     --hp-folder-flap-top     top edge of the flap, one peek lower
-     --hp-folder-flap-radius  the flap's corners, matching the silhouette's
-
-   So every radius is tuned in that one file and all three layers follow. The
-   knobs below are the ones the silhouette has no opinion about: how far the
-   flap tips, how the contents fan, and where they land when it opens.
+   The only thing that file hands to this stylesheet is where the contents sit,
+   as --hp-folder-contents-top on the stage. Everything else about the two
+   shapes is in the paths themselves. So every radius is tuned in that one file
+   and both layers follow, and the knobs below are the ones neither path has an
+   opinion about: how far the front tips, how the contents fan, and where they
+   land when it opens.
 
    PAINT ORDER is what makes the whole thing work, so it is worth reading
    before anything else here. There is one copy of each card and it is the one
    that travels — nothing is cloned, nothing cross-fades. Within the stage:
 
-     0  back        the silhouette
+     0  back        the flat panel behind everything
      1  contents    under the flap, which is how they slide out from beneath it
      2  flap
      3  veil        the blurred layer that takes the page out of focus
@@ -385,9 +388,23 @@
     drop-shadow(0 1px 2px rgb(21 21 21 / 6%))
     drop-shadow(0 8px 20px rgb(21 21 21 / 8%));
 
+  /* The front's cast shadow. On a filter rather than a box-shadow, because a
+     box-shadow follows the element's box and the front is not a box — this one
+     follows the drawn edge, notch and all. */
+  --hp-folder-face-drop:
+    drop-shadow(0 -1px 1px rgb(21 21 21 / 5%))
+    drop-shadow(0 6px 16px rgb(21 21 21 / 10%));
+  --hp-folder-face-drop-raised:
+    drop-shadow(0 -1px 1px rgb(21 21 21 / 5%))
+    drop-shadow(0 2px 6px rgb(142 143 143 / 18%))
+    drop-shadow(0 16px 30px rgb(21 21 21 / 14%));
+
   --hp-folder-paper: #ebe9e4;
   --hp-folder-paper-edge: rgb(255 255 255 / 82%);
-  --hp-folder-flap-face: linear-gradient(rgb(255 255 255 / 80%), rgb(246 246 245 / 68%));
+  /* Two stops rather than a gradient string: the fill is an SVG gradient now,
+     and its stops read these directly. */
+  --hp-folder-face-top: rgb(255 255 255 / 80%);
+  --hp-folder-face-bottom: rgb(246 246 245 / 68%);
   --hp-folder-flap-edge: rgb(255 255 255 / 76%);
   --hp-folder-veil: rgb(249 249 249 / 82%);
   --hp-folder-chrome: rgb(255 255 255 / 82%);
@@ -472,7 +489,7 @@
    aim it with a plain difference of centres. */
 .hp-folder__item {
   position: absolute;
-  top: var(--hp-folder-body-top);
+  top: var(--hp-folder-contents-top);
   left: calc(50% - var(--hp-folder-card) / 2);
   z-index: 1;
   width: var(--hp-folder-card);
@@ -527,48 +544,80 @@
 
 /* --- The flap ----------------------------------------------------------- */
 
-/* Frosted, so the contents behind it read as a blur through the panel rather
-   than as nothing at all. Hinged on its bottom edge and tipped toward the
-   viewer, never away — away is what makes a coplanar panel collapse into its
-   own hinge and look like a fault.
+/* The front. It spans the whole stage — its own top edge is the folder's, and
+   the notch on the right is cut out of it — so it is the layer that hinges on
+   its bottom edge and tips toward the viewer. Never away: away is what makes a
+   coplanar panel collapse into its own hinge and look like a fault.
 
    The perspective is on this transform rather than on the stage, which puts the
    vanishing point on the hinge where it belongs, and leaves the stage free of
-   the transform that would otherwise capture the veil's `position: fixed`. */
+   the transform that would otherwise capture the veil's `position: fixed`.
+
+   Decorative to the last pixel, so it takes no pointer events — the shut
+   folder's hit target sits above it, and once open the contents do. */
 .hp-folder__flap {
   position: absolute;
-  inset: var(--hp-folder-flap-top) 0 0;
+  inset: 0;
   z-index: 2;
-  border-radius: var(--hp-folder-flap-radius);
-  background-image: var(--hp-folder-flap-face);
-  box-shadow:
-    inset 0 0 0 1px var(--hp-folder-flap-edge),
-    0 -2px 8px -2px rgb(21 21 21 / 12%),
-    var(--hp-folder-shadow-rest);
-  /* Enough blur that what is behind reads as tone rather than as objects. The
-     panel is a third larger than the one this is modelled on, so the same 16px
-     left the cards behind it recognisable and the flap looked smudged rather
-     than frosted. */
-  backdrop-filter: blur(26px) saturate(140%);
+  pointer-events: none;
   transform: perspective(var(--hp-folder-perspective)) rotateX(0deg);
   transform-origin: center bottom;
   will-change: transform;
-  transition:
-    transform var(--duration-base) var(--ease-out-cubic),
-    box-shadow var(--duration-base) var(--ease-standard);
+  transition: transform var(--duration-base) var(--ease-out-cubic);
 }
 
 .hp-folder:hover .hp-folder__flap,
 .hp-folder:has(:focus-visible) .hp-folder__flap,
 .hp-folder.is-open .hp-folder__flap {
-  box-shadow:
-    inset 0 0 0 1px var(--hp-folder-flap-edge),
-    0 -2px 8px -2px rgb(21 21 21 / 12%),
-    var(--hp-folder-shadow-raised);
   transform: perspective(var(--hp-folder-perspective)) rotateX(calc(var(--hp-folder-tilt) * -1));
-  transition:
-    transform var(--duration-slow) var(--ease-spring-out),
-    box-shadow var(--duration-base) var(--ease-standard);
+  transition: transform var(--duration-slow) var(--ease-spring-out);
+}
+
+/* The frost, cut to the front's edge. It has to be a real box: backdrop-filter
+   blurs what is behind an element's own background, and an SVG path has no
+   background to blur behind. So the shape arrives as a clip instead — which is
+   also why the fill, the hairline and the shadow are on the face above rather
+   than here. A clip takes a box-shadow off with it.
+
+   Blur chosen so what is behind reads as tone rather than as objects: at 16px
+   the cards were still recognisable through it and the panel looked smudged
+   rather than frosted. */
+.hp-folder__frost {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(26px) saturate(140%);
+  /* clip-path is set inline, off the same path the face is drawn from. */
+}
+
+/* The drawn front: the gradient over the frost, the hairline on the edge, and
+   the cast shadow. */
+.hp-folder__face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: var(--hp-folder-face-drop);
+  transition: filter var(--duration-base) var(--ease-standard);
+}
+
+.hp-folder__face path {
+  stroke: var(--hp-folder-flap-edge);
+  stroke-width: 1;
+}
+
+.hp-folder:hover .hp-folder__face,
+.hp-folder:has(:focus-visible) .hp-folder__face,
+.hp-folder.is-open .hp-folder__face {
+  filter: var(--hp-folder-face-drop-raised);
+}
+
+/* Definitions only. Never drawn, and kept out of the layout. */
+.hp-folder__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 /* Stickers. Children of the flap, so they tip with it — which is most of the
@@ -586,16 +635,19 @@
   height: auto;
 }
 
+/* Placed on the stage, not on the drawn front, since the layer they sit in
+   spans the whole object while the shape inside it starts a quarter of the way
+   down. So these are stage percentages that happen to land on the front. */
 .hp-folder__sticker--stamp {
   --r: -7deg;
-  top: 24%;
+  top: 41%;
   left: 12%;
   width: 22%;
 }
 
 .hp-folder__sticker--torii {
   --r: 6deg;
-  top: 40%;
+  top: 53%;
   left: 62%;
   width: 20%;
 }
@@ -1682,7 +1734,15 @@
 .hp[data-theme='dark'] .hp-folder {
   --hp-folder-paper: #2b2b2b;
   --hp-folder-paper-edge: rgb(255 255 255 / 13%);
-  --hp-folder-flap-face: linear-gradient(rgb(45 45 45 / 82%), rgb(29 29 29 / 72%));
+  --hp-folder-face-top: rgb(45 45 45 / 82%);
+  --hp-folder-face-bottom: rgb(29 29 29 / 72%);
+  --hp-folder-face-drop:
+    drop-shadow(0 -1px 1px rgb(0 0 0 / 24%))
+    drop-shadow(0 6px 16px rgb(0 0 0 / 34%));
+  --hp-folder-face-drop-raised:
+    drop-shadow(0 -1px 1px rgb(0 0 0 / 24%))
+    drop-shadow(0 2px 6px rgb(0 0 0 / 30%))
+    drop-shadow(0 16px 30px rgb(0 0 0 / 44%));
   --hp-folder-flap-edge: rgb(255 255 255 / 8%);
   --hp-folder-shadow-rest:
     0 1px 2px rgb(0 0 0 / 30%),
