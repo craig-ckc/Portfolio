@@ -256,9 +256,12 @@ export function HeroFolder({ caption }: { caption: string }) {
     host?.setAttribute('data-scatter', 'open')
     const releaseInert = root ? inertOutside(root) : undefined
 
-    /* Lenis owns the scroll position, so stopping it is the lock. Deliberately
-       not `overflow: hidden` on the body: that takes the scrollbar away and
-       shifts the entire page sideways underneath the blur. */
+    /* Lenis owns the scroll position, so stopping it is the lock. Nothing here
+       touches overflow, and lenis.css's own attempt at it is overridden in
+       styles.css: hiding or clipping the document takes the scrollbar away, and
+       the page then jumps sideways by its width the moment the folder opens.
+       The bar stays where it was, real and untouched, and simply does not
+       move. */
     const lenis = getLenis()
     lenis?.stop()
 
@@ -273,12 +276,25 @@ export function HeroFolder({ caption }: { caption: string }) {
       if (SCROLL_KEYS.has(event.key)) event.preventDefault()
     }
 
-    /* Covers the case where Lenis is not running at all — under reduced motion
-       it never starts, and the page would otherwise scroll out from under a
-       scatter pinned to wherever the folder happens to be. */
+    /* The wheel and the keys, which Lenis being stopped does not cover on its
+       own: under reduced motion it never starts at all, and the page would
+       otherwise scroll out from under a scatter pinned to wherever the folder
+       happens to be. */
     window.addEventListener('wheel', blockWheel, { passive: false })
     window.addEventListener('touchmove', blockWheel, { passive: false })
     window.addEventListener('keydown', onKeyDown)
+
+    /* And the one path left, now that the scrollbar is still there to be used:
+       a drag on the bar itself, which is not an event anything can cancel. So
+       it is not cancelled — the position is just put back, which reads as a bar
+       that will not be dragged rather than a page that scrolled and returned.
+       Read once here rather than per event, so a drag cannot walk it along. */
+    const pinned = window.scrollY
+    const repin = () => {
+      if (window.scrollY !== pinned) window.scrollTo(0, pinned)
+    }
+
+    window.addEventListener('scroll', repin, { passive: true })
 
     return () => {
       host?.removeAttribute('data-scatter')
@@ -287,6 +303,7 @@ export function HeroFolder({ caption }: { caption: string }) {
       window.removeEventListener('wheel', blockWheel)
       window.removeEventListener('touchmove', blockWheel)
       window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('scroll', repin)
     }
   }, [active, dismiss])
 

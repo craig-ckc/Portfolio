@@ -20,6 +20,29 @@ html {
      and the two fight each other. Lenis's own stylesheet asserts `auto`. */
 }
 
+/* Undoing one rule from lenis.css, which clips the document for as long as
+   scrolling is stopped:
+
+     .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip }
+
+   Clipping takes the scrollbar away, and a scrollbar that comes and goes moves
+   the whole page sideways under whatever was worth locking the scroll for.
+   Reserving the gutter instead only fixes half of it: `scrollbar-gutter: stable`
+   holds the column still, but the bar itself still blinks out and leaves an
+   empty channel where it was.
+
+   Nothing is lost by dropping it. Stopping Lenis is the lock: it stops driving
+   the scroll and stops answering the wheel. Anything that reaches the document
+   anyway — a drag on the bar itself, most of all — is caught by whoever asked
+   for the lock, which is the honest place for it: they are the ones who know
+   what they pinned their layout to.
+
+   Weighted to win: three classes and an element beats the three classes it is
+   overriding, and this file is imported after lenis.css in base.astro. */
+html.lenis.lenis-stopped:not(.lenis-autoToggle) {
+  overflow: visible;
+}
+
 body {
   margin: 0;
   min-width: 320px;
