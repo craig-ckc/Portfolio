@@ -15,19 +15,28 @@ export function Sparkle() {
   )
 }
 
-/* The sun / appearance glyph in the navbar. */
-export function SunGlyph() {
+/**
+ * The appearance glyph in the navbar: a sun in light, a crescent in dark.
+ *
+ * Both are drawn, always. Which one shows is a matter of opacity and a twist,
+ * handled in home-page.css off the `data-theme` on the `.hp` wrapper — so the
+ * two cross over rather than one being swapped out for the other, and nothing
+ * has to be mounted or unmounted mid-transition.
+ *
+ * The rotation on hover belongs to the svg and not to either path, which is why
+ * the shared class sits out here. Both are on the same 12 unit grid as the box,
+ * and the sun's dots are zero-length segments with round caps.
+ */
+export function AppearanceGlyph() {
   return (
-    <svg viewBox="0 0 12 12" aria-hidden="true">
-      <path
-        className="hp-nav__icon-glyph"
-        d="M6 2H6.005M10 6H10.005M6 10H6.005M2 6H2.005M8.829 3.171H8.834M8.829 8.829H8.834M3.171 8.829H3.176M3.171 3.171H3.176M8 6C8 7.105 7.105 8 6 8C4.895 8 4 7.105 4 6C4 4.895 4.895 4 6 4C7.105 4 8 4.895 8 6Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg className="hp-nav__icon-glyph" viewBox="0 0 12 12" aria-hidden="true">
+      <g fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+        <path
+          className="hp-nav__glyph hp-nav__glyph--sun"
+          d="M6 2H6.005M10 6H10.005M6 10H6.005M2 6H2.005M8.829 3.171H8.834M8.829 8.829H8.834M3.171 8.829H3.176M3.171 3.171H3.176M8 6C8 7.105 7.105 8 6 8C4.895 8 4 7.105 4 6C4 4.895 4.895 4 6 4C7.105 4 8 4.895 8 6Z"
+        />
+        <path className="hp-nav__glyph hp-nav__glyph--moon" d="M6 1.5a3 3 0 0 0 4.5 4.5 4.5 4.5 0 1 1-4.5-4.5Z" />
+      </g>
     </svg>
   )
 }

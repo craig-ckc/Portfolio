@@ -167,34 +167,87 @@
 
 .hp-nav__actions {
   display: flex;
-  gap: 3.3px;
+  gap: var(--spacing-3xs);
+}
+
+/* One height for both, off the frame, where the trailing group is 26px tall and
+   the icon button is the square 26 at the end of it.
+
+   Named rather than left to add up. The pill's own padding and leading land
+   within a pixel of 26 on their own, but a pixel out is visible on two
+   buttons sitting side by side, and the square has to be told its width from
+   somewhere: aspect-ratio does not get it, since a flex item takes its main
+   size from its content before any ratio is applied. */
+.hp-nav__pill,
+.hp-nav__icon {
+  height: 26px;
 }
 
 .hp-nav__pill {
-  padding: var(--spacing-4xs) var(--spacing-xs);
+  padding: var(--spacing-3xs) var(--spacing-xs);
   font-size: var(--text-body);
-  line-height: var(--leading-normal);
+  line-height: var(--leading-tight);
   letter-spacing: var(--tracking-snug);
 }
 
 .hp-nav__icon {
-  width: 24px;
-  height: 24px;
-  padding: var(--spacing-4xs);
+  width: 26px;
+  padding: 0;
 }
 
+/* Drawn at its own scale rather than filling the button. The glyphs are on a
+   12 unit grid, so at 12px their 1px strokes land on whole pixels — at 16 they
+   fell between them and the dots around the sun read as smudges. What is left
+   of the button is the padding. */
 .hp-nav__icon svg {
-  width: 100%;
-  height: 100%;
+  width: 12px;
+  height: 12px;
 }
 
+/* The rotation is on the svg, not on the paths inside it. An svg element has an
+   ordinary CSS box, so transform-origin resolves to its centre without being
+   asked; on a path it resolves against the view box and starts at the corner.
+   Only the hover rule used to name an origin, so the glyph turned about its
+   centre on the way in and about its top-left corner on the way out — which is
+   the swing out of the button and back that this fixes.
+
+   border-box and not the default view-box, so the centre stays the centre if the
+   drawing and the box it is drawn at ever stop being the same 12 units. */
 .hp-nav__icon-glyph {
+  transform-box: border-box;
+  transform-origin: center;
   transition: transform var(--duration-slow) var(--ease-out-quart);
 }
 
 .hp-nav__icon:hover .hp-nav__icon-glyph {
   transform: rotate(60deg);
+}
+
+/* Sun for light, crescent for dark, and one turns into the other: the outgoing
+   glyph twists away and shrinks, the incoming one arrives from the other side.
+   Both are drawn and only their opacity and transform change, so there is no
+   swap of one element for another to go wrong half way through. */
+.hp-nav__glyph {
+  transform-box: view-box;
   transform-origin: center;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-out-cubic);
+}
+
+.hp-nav__glyph--moon {
+  opacity: 0;
+  transform: rotate(-80deg) scale(0.5);
+}
+
+.hp[data-theme='dark'] .hp-nav__glyph--sun {
+  opacity: 0;
+  transform: rotate(80deg) scale(0.5);
+}
+
+.hp[data-theme='dark'] .hp-nav__glyph--moon {
+  opacity: 1;
+  transform: none;
 }
 
 /* --------------------------------------------------------------------------

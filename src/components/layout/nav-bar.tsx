@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { contact } from '../../content/home-page'
-import { SunGlyph } from '../icons'
+import { AppearanceGlyph } from '../icons'
 
 /**
  * Overlays the top of the page, which reserves --spacing-hero-top for it.
  *
  * The frame includes a sun glyph in the trailing slot but does not define what
- * it does or supply a dark variant, so it is wired to the appearance toggle and
- * the dark palette is derived from the existing neutral ramp. See the
- * `.hp[data-theme='dark']` block in home-page.css.
+ * it does or supply a dark variant, so it is wired to the appearance toggle,
+ * the crescent it turns into is drawn to match it, and the dark palette is
+ * derived from the existing neutral ramp. See the `.hp[data-theme='dark']`
+ * block in home-page.css.
  *
  * NavBar owns the theme state itself rather than reading it as a prop: each
  * `client:*` island hydrates as its own React root, so a value that used to
@@ -47,7 +48,7 @@ export function NavBar({
           aria-label={theme === 'dark' ? 'Switch to light appearance' : 'Switch to dark appearance'}
           onClick={() => setTheme((current) => (current === 'light' ? 'dark' : 'light'))}
         >
-          <SunGlyph />
+          <AppearanceGlyph />
         </button>
       </div>
     </nav>
