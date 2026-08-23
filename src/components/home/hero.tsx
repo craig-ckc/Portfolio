@@ -1,6 +1,6 @@
 import { hero } from '../../content/home-page'
 import { Sparkle } from '../icons'
-import { PhotoFolder } from './photo-folder'
+import { HeroFolder } from './hero-folder'
 
 export function Hero() {
   return (
@@ -8,7 +8,7 @@ export function Hero() {
       <div className="hp-hero__body">
         <div className="hp-hero__copy">
           <h1 className="hp-hero__title" id="hp-hero-title">
-            {hero.title}
+            I help <span>brands</span> build <span>websites</span> that convert and <span>apps</span> people enjoy.
           </h1>
 
           <div className="hp-hero__lower">
@@ -23,7 +23,7 @@ export function Hero() {
         </div>
 
         <div className="hp-hero__object">
-          <PhotoFolder caption={hero.objectCaption} />
+          <HeroFolder caption={hero.objectCaption} />
           <p className="hp-hero__caption">
             <Sparkle />
             {hero.objectCaption}

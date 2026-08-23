@@ -16,18 +16,43 @@ export type WorkEntry = {
   tiles: [WorkTile, WorkTile]
 }
 
-export type FolderCard = {
+/**
+ * One thing tucked in the hero folder.
+ *
+ * `kind` decides how the face is drawn, so the folder can hold a photograph, a
+ * client mark, a note off a project and a palette side by side — which is what
+ * a real working folder holds. Fields not used by a kind are simply left off.
+ */
+export type FolderItem = {
   id: string
-  /** Optional. Without a src the card renders its CSS stand-in artwork. */
+  kind: 'photo' | 'logo' | 'note' | 'swatch'
+  /** Read out by the overlay caption and by assistive tech. Keep it short. */
+  label: string
+  /** A second line in the overlay caption. What the thing actually is. */
+  note?: string
+  /** photo */
   src?: string
   alt?: string
+  /** logo — a monogram, plus the name underneath it. */
+  mark?: string
+  /** note — the line of text on the card. */
+  body?: string
+  /** swatch — chips down the card, in order. */
+  colors?: string[]
+  /** Mixed stock reads as a real folder. Defaults to portrait. */
+  ratio?: 'portrait' | 'landscape' | 'square'
 }
 
 /* Placeholder photography for the hero folder, matching the night-street mood of
    the design's object. Served from the Unsplash CDN, which is built for this —
-   swap in self-hosted files under public/img before launch. */
-const unsplash = (id: string) =>
-  `https://images.unsplash.com/photo-${id}?w=440&h=620&fit=crop&q=80&auto=format`
+   swap in self-hosted files under public/img before launch.
+
+   Cropped to the ratio the card is drawn at, so a landscape card is not a
+   portrait file letterboxed by object-fit. */
+const unsplash = (id: string, ratio: 'portrait' | 'landscape' | 'square' = 'portrait') => {
+  const box = ratio === 'landscape' ? 'w=600&h=450' : ratio === 'square' ? 'w=520&h=520' : 'w=450&h=600'
+  return `https://images.unsplash.com/photo-${id}?${box}&fit=crop&q=80&auto=format`
+}
 
 /* Single source for the contact address, so the four call sites cannot drift.
  *
@@ -46,11 +71,65 @@ export const hero = {
   objectCaption: 'Work, and everything around it',
 } as const
 
-export const folderCards: FolderCard[] = [
-  { id: 'alley', src: unsplash('1564284369929-026ba231f89b'), alt: 'A narrow lantern-lit alley at night' },
-  { id: 'lanterns', src: unsplash('1573455494060-c5595004fb6c'), alt: 'Red paper lanterns on a dark wall' },
-  { id: 'neon', src: unsplash('1528360983277-13d401cdc186'), alt: 'A neon-lit street after dark' },
-  { id: 'festival', src: unsplash('1617870314635-fc819547ec11'), alt: 'Festival lanterns strung overhead' },
+/* The order here is the order they sit in the folder, left to right, and the
+   order they take their places on screen when it opens. Six is what the fan and
+   the scatter are tuned for; add a seventh and both need a new slot in
+   home-page.css.
+
+   Deliberately mixed: two photographs, two client marks, a note and a palette.
+   TODO(craig): the photographs and the note are placeholders. Swap in real
+   process shots and a real client line before launch. */
+export const folderItems: FolderItem[] = [
+  {
+    id: 'alley',
+    kind: 'photo',
+    label: 'Kagurazaka, 02:10',
+    note: 'Reference shot',
+    ratio: 'portrait',
+    src: unsplash('1564284369929-026ba231f89b'),
+    alt: 'A narrow lantern-lit alley at night',
+  },
+  {
+    id: 'designing-minds',
+    kind: 'logo',
+    label: 'Designing Minds',
+    note: 'Identity, 2025',
+    ratio: 'square',
+    mark: 'DM',
+  },
+  {
+    id: 'neon',
+    kind: 'photo',
+    label: 'Shinjuku, after rain',
+    note: 'Reference shot',
+    ratio: 'landscape',
+    src: unsplash('1528360983277-13d401cdc186', 'landscape'),
+    alt: 'A neon-lit street after dark',
+  },
+  {
+    id: 'note',
+    kind: 'note',
+    label: 'From the Preflight kickoff',
+    note: 'Project note',
+    ratio: 'square',
+    body: 'Design it and build it in the same week, or it is two projects.',
+  },
+  {
+    id: 'palette',
+    kind: 'swatch',
+    label: 'Neutral ramp',
+    note: 'Design tokens',
+    ratio: 'portrait',
+    colors: ['#090a0a', '#434242', '#b8b8b8', '#f1f1f1'],
+  },
+  {
+    id: 'preflight',
+    kind: 'logo',
+    label: 'Preflight',
+    note: 'Product, 2024',
+    ratio: 'square',
+    mark: 'PF',
+  },
 ]
 
 export const work: WorkEntry[] = [

@@ -200,6 +200,11 @@
   letter-spacing: var(--tracking-snug);
   line-height: var(--leading-tight);
   text-wrap: balance;
+  color: var(--neutral-700);
+}
+
+.hp-hero__title span {
+  color: var(--foreground);
 }
 
 .hp-hero__lower {
@@ -282,308 +287,297 @@
 }
 
 /* --------------------------------------------------------------------------
-   Hero object — the photo folder.
+   Hero object — the folder.
 
-   Built FLAT on purpose. An earlier version rotated the front panel in 3D on
-   hover, which read as the flap caving in and clipping rather than opening —
-   a coplanar panel rotating under perspective always collapses toward its
-   hinge. The reference this is modelled on uses no 3D at all: its pocket is a
-   thin bar with a hard inset shadow and the card only moves on Y behind it.
+   The arrangement is taken from the "Selected case studies" folder on
+   muhraufan.com, which gets the layering right: a silhouette behind, the
+   contents in the middle, and a frosted panel in front hinged on its bottom
+   edge. Three things are different here.
 
-   So: layers are stacked with z-index, not translateZ, and every inner move is
-   2D. "Coming forward" is expressed as down + slightly larger + a deeper
-   shadow; "kicking out" as up + slightly larger. The only 3D left is the
-   pointer tilt on the stage, which tips the whole composed object as one plane.
+     - the front panel carries the stickers, where the reference puts a label
+     - the back never moves. No lift, no scale, no tilting the whole object
+     - the click is not a larger hover. It empties the folder onto the screen
 
-   Depth order: shadow 0 < back 1 < cards 2 < front 3 < stickers 4.
+   Geometry comes from src/lib/folder-shape.ts. That file draws the silhouette
+   and hands this stylesheet three values as custom properties on the stage:
 
-   Idle: cards tucked behind the folder front.
-   Hover: cards fan and rise out of the pocket; front comes forward; back kicks
-          out behind; pointer tilts the whole object.
-   Open (click): the cards clear the pocket entirely.
+     --hp-folder-body-top     top edge of the folder body
+     --hp-folder-flap-top     top edge of the flap, one peek lower
+     --hp-folder-flap-radius  the flap's corners, matching the silhouette's
+
+   So every radius is tuned in that one file and all three layers follow. The
+   knobs below are the ones the silhouette has no opinion about: how far the
+   flap tips, how the contents fan, and where they land when it opens.
+
+   PAINT ORDER is what makes the whole thing work, so it is worth reading
+   before anything else here. There is one copy of each card and it is the one
+   that travels — nothing is cloned, nothing cross-fades. Within the stage:
+
+     0  back        the silhouette
+     1  contents    under the flap, which is how they slide out from beneath it
+     2  flap
+     3  veil        the blurred layer that takes the page out of focus
+     4  contents    once clear of the folder, they step over the veil
+     5  chrome      close and caption
+
+   The step from 1 to 4 happens part way through the move. z-index animates as
+   an integer, so it is a transition with a delay and not a timer in JavaScript:
+   see --hp-folder-handover below. Nothing about it shows, because by then the
+   cards have left the folder and the veil is still completely transparent.
+
+   Coming back is the same in reverse: they hold their high layer until they are
+   nearly home, then drop under the flap for the last of it and slide into the
+   pocket. No fade, no handover between one element and another — the card that
+   goes in is the card that came out.
    -------------------------------------------------------------------------- */
 
 .hp-folder {
+  /* How far the flap tips toward the viewer. Its hinge is its own bottom edge,
+     so this is also how much more of the contents comes into view. */
+  --hp-folder-tilt: 32deg;
+  /* Long focal length on purpose: at 600px the flap's top edge balloons as it
+     comes forward and the panel reads as a ramp rather than a lid. */
+  --hp-folder-perspective: 1200px;
+
+  /* How much of its column the object takes. The stage, the silhouette, the
+     cards and the fan are all proportional, so this one number scales the whole
+     object without anything needing to be re-tuned.
+
+     Bounded by the viewport height as well as its column. It is a width, but
+     the shape turns a width into a height, and on a short window the object
+     would otherwise take so much of the screen that there is nowhere left above
+     it for its own contents to land. 47svh of width is about a third of the
+     height. */
+  --hp-folder-size: min(75%, 47svh);
+
+  /* Width of one card, as a share of the stage. */
+  --hp-folder-card: 40%;
+
+  /* When the contents step over the veil on the way out: at the very end of
+     the journey, once each has stopped.
+
+     Not part way through, which was the first attempt at this. A card whose
+     travel still crosses the flap when it changes layer goes from half hidden
+     to whole in one frame, and that jump is far more noticeable than the
+     occlusion it was meant to resolve. Leaving it until they have arrived means
+     the change lands on cards that are not moving and, since none of them comes
+     to rest over the folder, are not touching the flap either — so there is
+     nothing to see. Per card, because the fan leaves in a stagger and each one
+     should hand over at the end of its own flight. */
+  --hp-folder-handover: calc(var(--duration-slow) * 0.95);
+  /* And straight back down on the way in, so the whole return happens under
+     the flap. They start out clear of it, so there is nothing to jump. Just
+     long enough that the veil has gone: drop below it while it still has any
+     opacity and the cards get washed out for the rest of the way home. */
+  --hp-folder-handback: calc(var(--duration-fast) + 20ms);
+
+  /* Two shadows, built from the ones already on this page — the chip's close
+     2/6 and the old folder front's 18/34. Rest sits the object on the paper;
+     raised is the flap being handled. drop-shadow takes one blur per call, so
+     the silhouette gets its own spelling of the same thing. */
+  --hp-folder-shadow-rest:
+    0 1px 2px rgb(21 21 21 / 6%),
+    0 8px 20px rgb(21 21 21 / 8%);
+  --hp-folder-shadow-raised:
+    0 2px 6px rgb(142 143 143 / 18%),
+    0 18px 34px rgb(21 21 21 / 12%);
+  --hp-folder-drop:
+    drop-shadow(0 1px 2px rgb(21 21 21 / 6%))
+    drop-shadow(0 8px 20px rgb(21 21 21 / 8%));
+
+  --hp-folder-paper: #ebe9e4;
+  --hp-folder-paper-edge: rgb(255 255 255 / 82%);
+  --hp-folder-flap-face: linear-gradient(rgb(255 255 255 / 80%), rgb(246 246 245 / 68%));
+  --hp-folder-flap-edge: rgb(255 255 255 / 76%);
+  --hp-folder-veil: rgb(249 249 249 / 82%);
+  --hp-folder-chrome: rgb(255 255 255 / 82%);
+  --hp-folder-chrome-edge: rgb(21 21 21 / 10%);
+
   display: block;
-  width: 100%;
+  width: var(--hp-folder-size);
   max-width: var(--container-object);
-  padding: 0;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.hp-folder__scene {
+/* While the contents are out, this object owns the screen: the layer has to
+   clear the sections below it in the page, and .hp-content has to clear the
+   navbar. Only then does a veil pinned to the viewport actually cover
+   everything. Set from hero-folder.tsx, which is also what makes the rest of
+   the page inert. */
+.hp-folder.is-open,
+.hp-folder.is-closing {
+  position: relative;
+  z-index: 10;
+}
+
+.hp[data-scatter] .hp-content {
+  z-index: 60;
+}
+
+/* A stacking context of its own, so the layer numbers above mean what they say
+   locally and do not have to be reconciled with the rest of the page. Note
+   `isolation` and not a transform: a transform here would make the veil's
+   `position: fixed` resolve against this box instead of the viewport, and the
+   whole overlay would be trapped inside the folder. Same reason the flap
+   carries its own `perspective()` rather than taking one from here. */
+.hp-folder__stage {
   position: relative;
   display: block;
   width: 100%;
-  aspect-ratio: 640 / 520;
-  perspective: 1400px;
+  isolation: isolate;
+  /* aspect-ratio and the three --hp-folder-* metrics are set inline from
+     folderMetrics(), so the shape file stays the single source. */
 }
 
-.hp-folder__stage {
-  position: absolute;
-  inset: 0;
-  /* No preserve-3d: the children flatten into this plane, so z-index governs
-     their stacking and the tilt applies to the object as a whole. */
-  transform:
-    rotateY(calc(var(--px, 0) * 5deg))
-    rotateX(calc(var(--py, 0) * -4deg))
-    scale(var(--lift, 1));
-  transition: transform var(--duration-base) var(--ease-out-quint);
-}
-
-/* The whole object comes up a little as it is handled. */
-.hp-folder:hover .hp-folder__stage,
-.hp-folder:focus-visible .hp-folder__stage {
-  --lift: 1.012;
-}
-
-.hp-folder.is-open .hp-folder__stage {
-  --lift: 1.022;
-}
-
-/* The soft ground shadow the object sits on. */
-.hp-folder__shadow {
-  position: absolute;
-  left: 50%;
-  bottom: 4%;
-  width: 66%;
-  height: 46px;
-  border-radius: var(--radius-full);
-  background: radial-gradient(50% 50% at 50% 50%, rgb(21 21 21 / 16%), transparent 72%);
-  filter: blur(6px);
-  z-index: 0;
-  transform: translateX(-50%);
-  transition:
-    transform var(--duration-base) var(--ease-out-quint),
-    opacity var(--duration-base) var(--ease-out-quint);
-}
-
-.hp-folder:hover .hp-folder__shadow,
-.hp-folder.is-open .hp-folder__shadow {
-  opacity: 0.75;
-  transform: translateX(-50%) scaleX(1.08);
-}
-
-/* Folder back panel + tab.
-   Geometry derived from the source PNG's visible crop: the folder occupies
-   x 13%-86% and y 20%-93% of the 640x520 stage. */
+/* The silhouette. One generated path, and the only shadow that touches the
+   page — which is why it is a drop-shadow on the path and not a box-shadow on
+   a rectangle: the tab has to cast a shadow too. */
 .hp-folder__back {
   position: absolute;
-  left: 50%;
-  bottom: 7%;
-  width: 73%;
-  /* Squat on purpose — a folder is wider than it is tall. Dropping this from
-     73% took the silhouette from roughly square to about 1.4:1. */
-  height: 65%;
-  border-radius: var(--radius-lg) var(--radius-lg) 14px 14px;
-  /* Deliberately a step darker than the front. In a real folder the back sits
-     in the front's shadow, and on a near-white page that tonal step is the only
-     thing that makes the silhouette — and the tab — readable at all. */
-  background: linear-gradient(170deg, #efefef, #e2e2e2);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 70%),
-    0 0 0 1px rgb(21 21 21 / 5%),
-    0 8px 20px rgb(21 21 21 / 8%);
-  z-index: 1;
-  transform: translateX(-50%);
-  transition: transform var(--duration-base) var(--ease-out-quint);
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: var(--hp-folder-drop);
+  /* No transform, no transition. This layer is nailed down. */
 }
 
-/* Kicks up and out behind the pocket as it opens. */
-.hp-folder:hover .hp-folder__back,
-.hp-folder:focus-visible .hp-folder__back {
-  transform: translate(-50%, -1.6%) scale(1.006);
+.hp-folder__back path {
+  fill: var(--hp-folder-paper);
+  stroke: var(--hp-folder-paper-edge);
+  stroke-width: 1;
 }
 
-.hp-folder.is-open .hp-folder__back {
-  transform: translate(-50%, -3.2%) scale(1.012);
-}
+/* --- The contents ------------------------------------------------------- */
 
-/* The tab. This is what makes the silhouette read as a folder rather than a
-   pocket, so it is sized to stay visible to the left of the card fan. */
-.hp-folder__back::before {
-  position: absolute;
-  top: -8%;
-  left: 0;
-  width: 28%;
-  height: 13%;
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
-  background: linear-gradient(170deg, #efefef, #e6e6e6);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 70%),
-    0 0 0 1px rgb(21 21 21 / 5%);
-  content: '';
-}
-
-/* Photo cards. Per-card --x / --y / --r are set in the state blocks below. */
-/* Offset right of centre so the folder tab stays clear on the left — the card
-   stack sitting slightly right of the tab is what reads as a folder. */
-.hp-folder__cards {
+/* No z-index of its own, deliberately: the cards have to be able to move
+   between layers 1 and 4, and a positioned parent with a z-index would trap
+   them in one of its own. */
+.hp-folder__stack {
   position: absolute;
   inset: 0;
-  z-index: 2;
-  transform: translateX(3%);
 }
 
-.hp-folder__card {
+/* Every card hangs from the body's top edge, so they all peek by the same
+   amount however tall they are, and the taller ones simply reach further down
+   into the folder where nothing sees them.
+
+   The fan comes from rotation about each card's bottom edge, which swings the
+   top out past the flap while the bottom stays inside it. --x is a share of the
+   card's own width, so the fan scales with the object instead of blowing out
+   of it in a narrower column.
+
+   Positioned by `left` alone rather than centred with a translate, so that the
+   transform below is nothing but the move — which is what lets hero-folder.tsx
+   aim it with a plain difference of centres. */
+.hp-folder__item {
   position: absolute;
-  left: calc(50% - 13.2%);
-  /* Follows the folder down: tops land at ~21%, just clearing the back panel's
-     28% top edge. Only the top strip shows at rest, which is what makes the
-     hover feel like pulling them out. */
-  bottom: 33%;
-  width: 26.4%;
-  aspect-ratio: 165 / 235;
-  overflow: hidden;
-  border-radius: 10px;
-  background: #d4d4d4;
-  box-shadow:
-    0 0 0 5px #fff,
-    0 6px 18px rgb(21 21 21 / 14%);
-  transform: translate(var(--x), var(--y)) rotate(var(--r));
+  top: var(--hp-folder-body-top);
+  left: calc(50% - var(--hp-folder-card) / 2);
+  z-index: 1;
+  width: var(--hp-folder-card);
+  padding: 0;
+  /* The container the card's cqw type sizes read from. It has to be the card's
+     parent, not the card: an element queries its nearest ANCESTOR container,
+     never itself. */
+  container-type: inline-size;
+  cursor: pointer;
+  transform: translate(var(--x, 0%), var(--y, 0%)) rotate(var(--r, 0deg));
   transform-origin: 50% 100%;
-  will-change: transform;
-  transition: transform var(--duration-base) var(--ease-out-quint);
-  /* No delay at rest, so leaving hover brings every card back together instead
-     of unwinding in a stagger that reads as a snap. The stagger is applied in
-     the hover and open states only. */
+  /* Coming back is a plain ease. The spring is for going out only: transitions
+     take their timing from the state being entered, so the two directions can
+     differ just by declaring it in both rules. */
+  transition: transform var(--duration-base) var(--ease-out-cubic);
   transition-delay: 0ms;
 }
 
-.hp-folder__card img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* Resting fan: barely splayed, tucked to the right of the tab. */
+.hp-folder__item:nth-child(1) { --i: 2; --x: -36%; --y: 2%; --r: -7deg; }
+.hp-folder__item:nth-child(2) { --i: 1; --x: -21%; --y: 0%; --r: -4deg; }
+.hp-folder__item:nth-child(3) { --i: 0; --x: -7%; --y: -1%; --r: -1.5deg; }
+.hp-folder__item:nth-child(4) { --i: 0; --x: 7%; --y: -1%; --r: 1.5deg; }
+.hp-folder__item:nth-child(5) { --i: 1; --x: 21%; --y: 0%; --r: 4deg; }
+.hp-folder__item:nth-child(6) { --i: 2; --x: 36%; --y: 2%; --r: 7deg; }
+
+/* Hover: wider fan, small rise. The stagger runs outward from the middle, and
+   only in this direction — coming back, everything eases home together, since a
+   staggered retreat under a cursor that keeps crossing the edge reads as a
+   stutter. */
+/* Keyboard focus and not :focus-within, which would also match the focus a
+   mouse click leaves behind — and then the folder would sit there open after
+   being closed with the pointer. */
+.hp-folder:hover .hp-folder__item,
+.hp-folder:has(:focus-visible) .hp-folder__item {
+  transition: transform var(--duration-slow) var(--ease-spring-out);
+  transition-delay: calc(var(--i, 0) * 40ms);
 }
 
-/* Fallback for a card authored without a src — a night scene in keeping with
-   the rest of the stack, rather than a flat grey box. */
-.hp-folder__card--placeholder {
-  background-image:
-    radial-gradient(9px 9px at 24% 22%, rgb(255 197 92 / 85%), transparent 70%),
-    radial-gradient(7px 7px at 62% 34%, rgb(255 176 74 / 75%), transparent 70%),
-    radial-gradient(11px 11px at 40% 58%, rgb(255 214 130 / 60%), transparent 72%),
-    linear-gradient(200deg, #2b2724, #100e0d 72%);
-}
+.hp-folder:hover .hp-folder__item:nth-child(1),
+.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(1) { --x: -64%; --y: -18%; --r: -14deg; }
+.hp-folder:hover .hp-folder__item:nth-child(2),
+.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(2) { --x: -38%; --y: -21%; --r: -8.5deg; }
+.hp-folder:hover .hp-folder__item:nth-child(3),
+.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(3) { --x: -13%; --y: -23%; --r: -3deg; }
+.hp-folder:hover .hp-folder__item:nth-child(4),
+.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(4) { --x: 13%; --y: -23%; --r: 3deg; }
+.hp-folder:hover .hp-folder__item:nth-child(5),
+.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(5) { --x: 38%; --y: -21%; --r: 8.5deg; }
+.hp-folder:hover .hp-folder__item:nth-child(6),
+.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(6) { --x: 64%; --y: -18%; --r: 14deg; }
 
-/* Offsets are percentages of the card box, not pixels, so the whole fan scales
-   with the stage instead of blowing out of it on a narrower column. */
+/* --- The flap ----------------------------------------------------------- */
 
-/* Idle — a narrow, barely-splayed stack. Kept tight on the left so the folder
-   tab stays visible beside it. */
-.hp-folder__card:nth-child(1) { --i: 3; --x: -50%; --y: 3%; --r: -7deg; }
-.hp-folder__card:nth-child(2) { --i: 1; --x: -18%; --y: -1%; --r: -3deg; }
-.hp-folder__card:nth-child(3) { --i: 0; --x: 16%; --y: -1%; --r: 3deg; }
-.hp-folder__card:nth-child(4) { --i: 2; --x: 44%; --y: 3%; --r: 6deg; }
+/* Frosted, so the contents behind it read as a blur through the panel rather
+   than as nothing at all. Hinged on its bottom edge and tipped toward the
+   viewer, never away — away is what makes a coplanar panel collapse into its
+   own hinge and look like a fault.
 
-/* Hover — a slightly wider fan and a small lift. Deliberately restrained: the
-   cards stay tucked in the folder, they just breathe. Opening is the big move. */
-.hp-folder:hover .hp-folder__card,
-.hp-folder:focus-visible .hp-folder__card,
-.hp-folder.is-open .hp-folder__card {
-  transition-delay: calc(var(--i, 0) * 35ms);
-}
-
-/* The splay comes from ROTATION, not translation. Because each card pivots on
-   its bottom edge, rotation swings the top out past the pocket (which is what
-   you want) while the bottom stays inside it (which keeps the bottoms hidden).
-   Translation moves the whole card, bottom included — push it too far and the
-   bottom corner clears the pocket's side edge and the card reads as floating
-   beside the folder. So x is bounded and r carries the fan. */
-.hp-folder:hover .hp-folder__card:nth-child(1),
-.hp-folder:focus-visible .hp-folder__card:nth-child(1) { --x: -84%; --y: -22%; --r: -17deg; }
-.hp-folder:hover .hp-folder__card:nth-child(2),
-.hp-folder:focus-visible .hp-folder__card:nth-child(2) { --x: -33%; --y: -30%; --r: -6deg; }
-.hp-folder:hover .hp-folder__card:nth-child(3),
-.hp-folder:focus-visible .hp-folder__card:nth-child(3) { --x: 31%; --y: -30%; --r: 6deg; }
-.hp-folder:hover .hp-folder__card:nth-child(4),
-.hp-folder:focus-visible .hp-folder__card:nth-child(4) { --x: 70%; --y: -22%; --r: 15deg; }
-
-/* Open — the cards arc clear of the folder. The one place expo earns its keep:
-   it's a one-shot move, not a state that reverses under the cursor. */
-.hp-folder.is-open .hp-folder__card {
-  transition-timing-function: var(--ease-out-expo);
-}
-
-.hp-folder.is-open .hp-folder__card:nth-child(1) { --x: -145%; --y: -40%; --r: -22deg; }
-.hp-folder.is-open .hp-folder__card:nth-child(2) { --x: -54%; --y: -54%; --r: -8deg; }
-.hp-folder.is-open .hp-folder__card:nth-child(3) { --x: 50%; --y: -54%; --r: 8deg; }
-.hp-folder.is-open .hp-folder__card:nth-child(4) { --x: 140%; --y: -40%; --r: 20deg; }
-
-/* The pocket. It never rotates — it comes forward, which in 2D means down a
-   touch, marginally larger, and a deeper cast shadow. The top edge carries a
-   crisp lip so the cards read as sliding in behind a real edge. */
-.hp-folder__front {
+   The perspective is on this transform rather than on the stage, which puts the
+   vanishing point on the hinge where it belongs, and leaves the stage free of
+   the transform that would otherwise capture the veil's `position: fixed`. */
+.hp-folder__flap {
   position: absolute;
-  left: 50%;
-  bottom: 7%;
-  width: 73%;
-  height: 57%;
-  border-radius: 14px;
-  /* Opaque: with photographs on the cards behind it, even 2% translucency
-     ghosted them through the panel and read as a rendering fault. */
-  background: linear-gradient(168deg, #fdfdfd, #eeeeee);
+  inset: var(--hp-folder-flap-top) 0 0;
+  z-index: 2;
+  border-radius: var(--hp-folder-flap-radius);
+  background-image: var(--hp-folder-flap-face);
   box-shadow:
-    /* the lip: a hard, shallow shadow just inside the top edge */
-    inset 0 3px 4px -3px rgb(21 21 21 / 34%),
-    inset 0 1px 0 rgb(255 255 255 / 90%),
-    0 -1px 0 rgb(21 21 21 / 6%),
-    0 18px 34px rgb(21 21 21 / 12%);
-  z-index: 3;
-  transform: translateX(-50%);
+    inset 0 0 0 1px var(--hp-folder-flap-edge),
+    0 -2px 8px -2px rgb(21 21 21 / 12%),
+    var(--hp-folder-shadow-rest);
+  /* Enough blur that what is behind reads as tone rather than as objects. The
+     panel is a third larger than the one this is modelled on, so the same 16px
+     left the cards behind it recognisable and the flap looked smudged rather
+     than frosted. */
+  backdrop-filter: blur(26px) saturate(140%);
+  transform: perspective(var(--hp-folder-perspective)) rotateX(0deg);
+  transform-origin: center bottom;
   will-change: transform;
   transition:
-    transform var(--duration-base) var(--ease-out-quint),
-    box-shadow var(--duration-base) var(--ease-out-quint);
+    transform var(--duration-base) var(--ease-out-cubic),
+    box-shadow var(--duration-base) var(--ease-standard);
 }
 
-.hp-folder:hover .hp-folder__front,
-.hp-folder:focus-visible .hp-folder__front {
+.hp-folder:hover .hp-folder__flap,
+.hp-folder:has(:focus-visible) .hp-folder__flap,
+.hp-folder.is-open .hp-folder__flap {
   box-shadow:
-    inset 0 3px 4px -3px rgb(21 21 21 / 34%),
-    inset 0 1px 0 rgb(255 255 255 / 90%),
-    0 -1px 0 rgb(21 21 21 / 6%),
-    0 26px 44px rgb(21 21 21 / 16%);
-  transform: translate(-50%, 1.4%) scale(1.012);
+    inset 0 0 0 1px var(--hp-folder-flap-edge),
+    0 -2px 8px -2px rgb(21 21 21 / 12%),
+    var(--hp-folder-shadow-raised);
+  transform: perspective(var(--hp-folder-perspective)) rotateX(calc(var(--hp-folder-tilt) * -1));
+  transition:
+    transform var(--duration-slow) var(--ease-spring-out),
+    box-shadow var(--duration-base) var(--ease-standard);
 }
 
-.hp-folder.is-open .hp-folder__front {
-  box-shadow:
-    inset 0 3px 4px -3px rgb(21 21 21 / 34%),
-    inset 0 1px 0 rgb(255 255 255 / 90%),
-    0 -1px 0 rgb(21 21 21 / 6%),
-    0 34px 56px rgb(21 21 21 / 20%);
-  transform: translate(-50%, 3%) scale(1.022);
-}
-
-/* The two ruled lines near the bottom of the front panel. */
-.hp-folder__rules {
-  position: absolute;
-  inset: auto 9% 13% 9%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2xs);
-}
-
-.hp-folder__rules span {
-  height: 1px;
-  border-radius: var(--radius-full);
-  background: rgb(21 21 21 / 9%);
-}
-
-.hp-folder__rules span:last-child {
-  width: 88%;
-}
-
-/* Stickers — lift and counter-rotate slightly on hover. */
+/* Stickers. Children of the flap, so they tip with it — which is most of the
+   reason to put them there rather than on the stage. */
 .hp-folder__sticker {
   position: absolute;
   filter: drop-shadow(0 4px 8px rgb(21 21 21 / 18%));
-  z-index: 4;
   transform: rotate(var(--r));
-  transition: transform var(--duration-base) var(--ease-out-quint);
+  transition: transform var(--duration-base) var(--ease-out-cubic);
 }
 
 .hp-folder__sticker svg {
@@ -592,24 +586,499 @@
   height: auto;
 }
 
-/* Positioned onto the folder front, which spans 36%-93% of the stage height. */
 .hp-folder__sticker--stamp {
   --r: -7deg;
-  top: 44%;
-  left: 21%;
-  width: 17%;
+  top: 24%;
+  left: 12%;
+  width: 22%;
 }
 
 .hp-folder__sticker--torii {
   --r: 6deg;
-  top: 54%;
-  left: 58%;
-  width: 16%;
+  top: 40%;
+  left: 62%;
+  width: 20%;
 }
 
-/* The stickers ride with the pocket coming forward, plus a little of their own. */
-.hp-folder:hover .hp-folder__sticker--stamp { transform: rotate(-10deg) translate(-3px, 2px) scale(1.03); }
-.hp-folder:hover .hp-folder__sticker--torii { transform: rotate(9deg) translate(3px, 3px) scale(1.03); }
+/* A touch of their own on top of the flap's move, so they read as stuck on
+   rather than printed. */
+.hp-folder:hover .hp-folder__sticker--stamp,
+.hp-folder.is-open .hp-folder__sticker--stamp { transform: rotate(-11deg) scale(1.04); }
+.hp-folder:hover .hp-folder__sticker--torii,
+.hp-folder.is-open .hp-folder__sticker--torii { transform: rotate(10deg) scale(1.04); }
+
+/* --- The hit target while it is shut ------------------------------------ */
+
+/* Over the whole object, above the flap, so a click anywhere on the folder —
+   the flap, the tab, a card — opens it. Made inert once it is open, which takes
+   it out of both the tab order and the pointer's way in one word. */
+.hp-folder__open {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  padding: 0;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+}
+
+.hp-folder__open:focus-visible {
+  outline-offset: 6px;
+}
+
+/* Clear of the card's own shadow, so the ring reads as a ring. */
+.hp-folder__item:focus-visible {
+  outline-offset: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   The scatter — where the contents go when the folder is opened.
+
+   Only two things change: the cards get a transform that puts them on their
+   targets, and the layer they paint in. They are the same elements throughout.
+
+   --out-x / --out-y / --out-scale are written by hero-folder.tsx, measured
+   against the target boxes below. The half-height shift either side of the
+   scale and rotation moves their pivot to the middle of the card, which is what
+   lets that offset be a plain difference of centres despite the fan turning
+   these same cards about their bottom edge.
+   -------------------------------------------------------------------------- */
+
+.hp-folder.is-open .hp-folder__item {
+  z-index: 4;
+  cursor: zoom-in;
+  transform:
+    translate(var(--out-x, 0px), var(--out-y, 0px))
+    translateY(-50%)
+    scale(var(--out-scale, 1))
+    rotate(var(--slot-r, 0deg))
+    translateY(50%);
+  transition:
+    transform var(--duration-slow) var(--ease-spring-out),
+    z-index 1ms linear;
+  transition-delay: calc(var(--i, 0) * 40ms), calc(var(--hp-folder-handover) + var(--i, 0) * 40ms);
+}
+
+/* The return. Nothing to aim: dropping .is-open puts the fan values back, and
+   the fan is where these cards live. All this rule does is hold them in the
+   upper layer until they are nearly home, and give the move the same duration
+   as the folder's own close so the two are one movement. */
+.hp-folder.is-closing .hp-folder__item {
+  /* The delay is what holds them up: the value here is the layer under the
+     flap, and the transition puts off arriving at it. Naming the upper layer
+     instead would leave nothing for the transition to do, and the drop would
+     not happen until this class came off — by which time they are home, and
+     back under the flap in one jump rather than sliding in. */
+  z-index: 1;
+  /* Not an ease-out. An ease-out spends nearly all of its travel in the first
+     third, so the cards were home before the handback had happened and the
+     slide in under the flap was over before it could be seen. The symmetric
+     curve leaves about a fifth of the journey still to make at that point,
+     which is the part that reads as being put away. */
+  transition:
+    transform var(--duration-slow) var(--ease-standard),
+    z-index 1ms linear var(--hp-folder-handback);
+}
+
+/* Closing after the scatter is a different move from a pointer leaving, and the
+   flap has to keep time with the contents coming back. Left at the hover's own
+   duration the lid is down long before they arrive, and the folder reads as
+   snapping shut on nothing. */
+.hp-folder.is-closing .hp-folder__flap {
+  transition: transform var(--duration-slow) var(--ease-standard);
+}
+
+/* One card at a time, in the middle, at the size the work deserves. The offset
+   to the centre of the screen is arithmetic on the target's own coordinates,
+   which is the reason those are written in vw and svh rather than percentages. */
+.hp-folder.is-open .hp-folder__item.is-focused {
+  z-index: 5;
+  cursor: zoom-out;
+  transform:
+    translate(var(--out-x, 0px), var(--out-y, 0px))
+    translate(calc(50vw - var(--slot-x)), calc(50svh - var(--slot-y)))
+    translateY(-50%)
+    scale(calc(var(--out-scale, 1) * var(--slot-focus, 2) * var(--hp-folder-zoom, 1)))
+    rotate(0deg)
+    translateY(50%);
+}
+
+/* The others stay legible but stop competing. */
+.hp-folder.is-open:has(.is-focused) .hp-folder__item:not(.is-focused) {
+  opacity: 0.28;
+}
+
+/* --- Target boxes ------------------------------------------------------- */
+
+/* Never painted and never touched by the pointer. They are here to be measured:
+   the arrangement, its sizes and its breakpoints stay in this stylesheet, and
+   the cards are sent to wherever these end up. */
+.hp-folder__targets {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hp-folder__target {
+  position: absolute;
+  left: var(--slot-x);
+  top: var(--slot-y);
+  width: var(--slot-w);
+  height: 1px;
+  transform: translate(-50%, -50%);
+}
+
+/* Places on screen, and the rotation and zoom each card takes there. Widths
+   vary with what the card is, so a landscape frame gets the room it needs;
+   rotations are small and alternate, which is what reads as set down by hand
+   rather than laid out on a grid.
+
+   One hard constraint: nothing comes to rest over the flap. The contents travel
+   underneath it and only step over it once they have arrived, so a card that
+   settled on top of the folder would have to change layer while still touching
+   the flap — and that is the jump from half hidden to whole that the handover
+   above exists to avoid. Which is why these sweep up and to the left, away from
+   the folder in the lower right, and leave it visible under the blur.
+
+   --slot-focus is the extra scale a card takes when it is the one being looked
+   at, picked so that every card arrives at about the same 28vw however small it
+   sits here. --hp-folder-zoom scales all of them at once, for viewports with
+   less room to grow into.
+
+   Each entry is read by two rules: the target box takes the position and width,
+   the card itself takes the rotation and the zoom. */
+.hp-folder__target:nth-child(1),
+.hp-folder__item:nth-child(1) { --slot-x: 14vw; --slot-y: 42svh; --slot-w: 15vw; --slot-r: -7deg; --slot-focus: 1.87; }
+.hp-folder__target:nth-child(2),
+.hp-folder__item:nth-child(2) { --slot-x: 31vw; --slot-y: 24svh; --slot-w: 13vw; --slot-r: 5deg; --slot-focus: 2.15; }
+.hp-folder__target:nth-child(3),
+.hp-folder__item:nth-child(3) { --slot-x: 55vw; --slot-y: 22svh; --slot-w: 20vw; --slot-r: -3deg; --slot-focus: 1.4; }
+.hp-folder__target:nth-child(4),
+.hp-folder__item:nth-child(4) { --slot-x: 22vw; --slot-y: 74svh; --slot-w: 14vw; --slot-r: 8deg; --slot-focus: 2; }
+.hp-folder__target:nth-child(5),
+.hp-folder__item:nth-child(5) { --slot-x: 44vw; --slot-y: 62svh; --slot-w: 13vw; --slot-r: -5deg; --slot-focus: 2.15; }
+.hp-folder__target:nth-child(6),
+.hp-folder__item:nth-child(6) { --slot-x: 80vw; --slot-y: 30svh; --slot-w: 15vw; --slot-r: 6deg; --slot-focus: 1.87; }
+
+/* --- The veil and the chrome -------------------------------------------- */
+
+/* Fixed to the viewport from inside the folder, which only works because
+   nothing between here and the root has a transform. It sits above the flap and
+   below the cards, and comes up on the handover — by which time the cards are
+   out, so there is no moment where a half-opaque veil crosses them. */
+.hp-folder__veil {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background: var(--hp-folder-veil);
+  backdrop-filter: blur(28px) saturate(125%);
+  cursor: zoom-out;
+  opacity: 0;
+  /* Quick on the way out, so it has cleared before the contents drop back
+     under the flap — see --hp-folder-handback. */
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+
+/* Waits for the contents rather than travelling with them. It has to: until
+   they have changed layer they are underneath this, and a veil coming up over
+   cards in flight would take them with it. The last of them hands over one
+   stagger step after the first, hence the extra wait. */
+.hp-folder.is-open .hp-folder__veil {
+  opacity: 1;
+  transition-duration: var(--duration-base);
+  transition-delay: calc(var(--hp-folder-handover) + 80ms);
+}
+
+.hp-folder__close,
+.hp-folder__caption {
+  position: fixed;
+  z-index: 5;
+  border: 1px solid var(--hp-folder-chrome-edge);
+  background: var(--hp-folder-chrome);
+  box-shadow: var(--hp-folder-shadow-rest);
+  backdrop-filter: blur(12px) saturate(150%);
+  opacity: 0;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-out-cubic);
+}
+
+.hp-folder__close {
+  top: var(--spacing-xl);
+  right: var(--spacing-xl);
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  padding: 0;
+  border-radius: var(--radius-full);
+  color: var(--foreground);
+  cursor: pointer;
+  transform: scale(0.92);
+}
+
+.hp-folder__close svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-width: 1.4;
+}
+
+.hp-folder__close:hover {
+  background: var(--hp-folder-chrome);
+  filter: brightness(1.04);
+}
+
+.hp-folder.is-open .hp-folder__close {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: calc(var(--hp-folder-handover) + 80ms);
+}
+
+.hp-folder__caption {
+  bottom: var(--spacing-2xl);
+  left: 50%;
+  display: flex;
+  max-width: min(90vw, 30rem);
+  align-items: baseline;
+  gap: var(--spacing-xs);
+  margin: 0;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-full);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  transform: translate(-50%, var(--spacing-xs));
+  pointer-events: none;
+}
+
+.hp-folder__caption > span {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+}
+
+.hp-folder__caption > span[hidden] {
+  display: none;
+}
+
+.hp-folder__caption strong {
+  overflow: hidden;
+  color: var(--foreground);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-snug);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hp-folder__caption span span {
+  flex-shrink: 0;
+  color: var(--neutral-700);
+}
+
+.hp-folder.is-open:has(.is-focused) .hp-folder__caption {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Breakpoints matched to the hero's own, not picked. Below 1200px the hero
+   stacks and the object column goes full width, which moves the folder from the
+   lower right to the bottom left — and, left at 75% of a column that is now the
+   whole page, made it larger than it is on a desktop. Both of those change
+   where the contents are allowed to settle, so the arrangement follows.
+
+   Two bands below the desktop one, because the folder moving and the viewport
+   narrowing are separate problems. Between 900 and 1200 the screen is still
+   wide, so the desktop arrangement works as it is — just mirrored, sweeping up
+   and to the right now that the folder is on the left. Below 900 there is no
+   room to scatter at all and it becomes two columns stacked above the folder. */
+@media (max-width: 1199.98px) {
+  .hp-folder {
+    /* Capped, so a full-width column does not blow the object up. Lands within
+       a few pixels of its desktop size right across the range. Same height
+       bound as above. */
+    --hp-folder-size: min(88%, 380px, 47svh);
+  }
+
+  .hp-folder__target:nth-child(1),
+  .hp-folder__item:nth-child(1) { --slot-x: 86vw; --slot-y: 42svh; --slot-r: 7deg; }
+  .hp-folder__target:nth-child(2),
+  .hp-folder__item:nth-child(2) { --slot-x: 69vw; --slot-y: 24svh; --slot-r: -5deg; }
+  .hp-folder__target:nth-child(3),
+  .hp-folder__item:nth-child(3) { --slot-x: 45vw; --slot-y: 22svh; --slot-r: 3deg; }
+  .hp-folder__target:nth-child(4),
+  .hp-folder__item:nth-child(4) { --slot-x: 78vw; --slot-y: 74svh; --slot-r: -8deg; }
+  .hp-folder__target:nth-child(5),
+  .hp-folder__item:nth-child(5) { --slot-x: 59vw; --slot-y: 62svh; --slot-r: 5deg; }
+  .hp-folder__target:nth-child(6),
+  .hp-folder__item:nth-child(6) { --slot-x: 20vw; --slot-y: 30svh; --slot-r: -6deg; }
+}
+
+@media (max-width: 899.98px) {
+  /* Two columns, three rows, all of them above the folder. Cards are much wider
+     here in viewport terms, so the rows sit high: a portrait card at 24vw is
+     still a third of the height of a phone screen.
+
+     And each width is capped against the height as well, because a width in vw
+     is a height in disguise once the ratio is applied — a portrait card at 24vw
+     stands 32vw tall, which on a short wide window is most of the screen and
+     runs off the top of it. The svh half of each min() is what that card's
+     height can afford, worked back through its own ratio. */
+  .hp-folder__target:nth-child(1),
+  .hp-folder__item:nth-child(1) { --slot-x: 27vw; --slot-y: 14svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .hp-folder__target:nth-child(2),
+  .hp-folder__item:nth-child(2) { --slot-x: 73vw; --slot-y: 14svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .hp-folder__target:nth-child(3),
+  .hp-folder__item:nth-child(3) { --slot-x: 30vw; --slot-y: 34svh; --slot-w: min(32vw, 23svh); --slot-focus: 2.06; }
+  .hp-folder__target:nth-child(4),
+  .hp-folder__item:nth-child(4) { --slot-x: 74vw; --slot-y: 34svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .hp-folder__target:nth-child(5),
+  .hp-folder__item:nth-child(5) { --slot-x: 27vw; --slot-y: 50svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .hp-folder__target:nth-child(6),
+  .hp-folder__item:nth-child(6) { --slot-x: 73vw; --slot-y: 50svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+
+  .hp-folder__close {
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+  }
+
+  .hp-folder__caption {
+    bottom: var(--spacing-md);
+  }
+}
+
+/* A portrait card blown up twice over needs height that a laptop in a shallow
+   window does not have. */
+@media (max-height: 760px) {
+  .hp-folder {
+    --hp-folder-zoom: 0.78;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Cards
+
+   The face sizes itself in cqw, off the card's own width, so the same card
+   reads correctly at 80px in the folder and at 400px under the cursor. The
+   container is the item, since an element cannot be its own.
+   -------------------------------------------------------------------------- */
+
+.hp-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  border-radius: 1.5cqw;
+  background: #fdfdfd;
+  box-shadow:
+    0 0 0 1px rgb(21 21 21 / 8%),
+    0 3px 8px rgb(21 21 21 / 10%);
+}
+
+.hp-card[data-ratio='portrait'] { aspect-ratio: 3 / 4; }
+.hp-card[data-ratio='landscape'] { aspect-ratio: 4 / 3; }
+.hp-card[data-ratio='square'] { aspect-ratio: 1; }
+
+.hp-folder__item.is-focused .hp-card {
+  box-shadow:
+    0 0 0 1px rgb(21 21 21 / 8%),
+    0 10px 30px rgb(21 21 21 / 18%);
+}
+
+.hp-face__photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hp-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 9cqw;
+  gap: 4cqw;
+  font-family: var(--font-display);
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-snug);
+  text-align: left;
+}
+
+/* The line under a mark or a palette: what the thing is. */
+.hp-face__name {
+  color: #616161;
+  font-size: 7cqw;
+  font-weight: var(--font-weight-medium);
+}
+
+.hp-face--logo {
+  align-items: flex-start;
+  justify-content: space-between;
+  background:
+    radial-gradient(120% 90% at 15% 0%, #ffffff, transparent 60%),
+    linear-gradient(165deg, #f4f3f1, #e7e6e3);
+}
+
+.hp-face__mark {
+  display: grid;
+  width: 27cqw;
+  height: 27cqw;
+  place-items: center;
+  border-radius: 50%;
+  background: #151515;
+  color: #f9f9f9;
+  font-size: 10.5cqw;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0;
+}
+
+.hp-face--note {
+  justify-content: space-between;
+  background: linear-gradient(170deg, #fffdf6, #f6f2e6);
+}
+
+.hp-face__body {
+  color: #2c2c2c;
+  font-size: 9cqw;
+  font-weight: var(--font-weight-medium);
+  text-wrap: pretty;
+}
+
+.hp-face__rule {
+  height: 1px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: rgb(21 21 21 / 14%);
+}
+
+.hp-face--swatch {
+  justify-content: space-between;
+  padding: 6cqw;
+  gap: 5cqw;
+}
+
+.hp-face__chips {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 1.25cqw;
+}
+
+.hp-face__chips span {
+  flex: 1;
+}
+
+.hp-face--swatch .hp-face__name {
+  padding-left: 2cqw;
+}
 
 /* --------------------------------------------------------------------------
    Placeholder pages (writing, experiments)
@@ -1206,30 +1675,28 @@
   border-color: var(--neutral-300);
 }
 
-.hp[data-theme='dark'] .hp-folder__back,
-.hp[data-theme='dark'] .hp-folder__back::before {
-  background: linear-gradient(170deg, #333, #232323);
-}
+/* The folder is a paper object, so only its own surfaces change: the
+   silhouette and the flap go dark, the shadows go black instead of grey. The
+   cards stay paper — a folder full of dark rectangles stops reading as
+   contents, and the photographs in it are dark to begin with. */
+.hp[data-theme='dark'] .hp-folder {
+  --hp-folder-paper: #2b2b2b;
+  --hp-folder-paper-edge: rgb(255 255 255 / 13%);
+  --hp-folder-flap-face: linear-gradient(rgb(45 45 45 / 82%), rgb(29 29 29 / 72%));
+  --hp-folder-flap-edge: rgb(255 255 255 / 8%);
+  --hp-folder-shadow-rest:
+    0 1px 2px rgb(0 0 0 / 30%),
+    0 8px 20px rgb(0 0 0 / 34%);
+  --hp-folder-shadow-raised:
+    0 2px 6px rgb(0 0 0 / 34%),
+    0 18px 34px rgb(0 0 0 / 44%);
+  --hp-folder-drop:
+    drop-shadow(0 1px 2px rgb(0 0 0 / 30%))
+    drop-shadow(0 8px 20px rgb(0 0 0 / 36%));
 
-.hp[data-theme='dark'] .hp-folder__front {
-  background: linear-gradient(168deg, rgb(58 58 58 / 92%), rgb(40 40 40 / 88%));
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 8%),
-    0 18px 34px rgb(0 0 0 / 40%);
-}
-
-.hp[data-theme='dark'] .hp-folder__rules span {
-  background: rgb(255 255 255 / 10%);
-}
-
-.hp[data-theme='dark'] .hp-folder__shadow {
-  background: radial-gradient(50% 50% at 50% 50%, rgb(0 0 0 / 46%), transparent 72%);
-}
-
-.hp[data-theme='dark'] .hp-folder__card {
-  box-shadow:
-    0 0 0 5px #f4f4f4,
-    0 6px 18px rgb(0 0 0 / 40%);
+  --hp-folder-veil: rgb(15 15 15 / 78%);
+  --hp-folder-chrome: rgb(38 38 38 / 82%);
+  --hp-folder-chrome-edge: rgb(255 255 255 / 10%);
 }
 
 /* --------------------------------------------------------------------------
@@ -1245,18 +1712,12 @@
     animation-duration: 1ms !important;
   }
 
-  .hp-folder__stage {
-    transform: none !important;
-  }
-
-  .hp-folder__front,
-  .hp-folder:hover .hp-folder__front,
-  .hp-folder.is-open .hp-folder__front,
-  .hp-folder__back,
-  .hp-folder:hover .hp-folder__back,
-  .hp-folder.is-open .hp-folder__back {
-    transform: translateX(-50%) !important;
-  }
+  /* The folder needs nothing of its own here. The blanket rule above takes
+     every duration and delay to nothing, so the flap, the fan and the scatter
+     all still change state — they just arrive rather than travel, which is the
+     distinction this preference is actually about. It also collapses the
+     folder's z-index handover to the same instant, which is correct: with no
+     flight, there is no journey for the contents to make under the flap. */
 
   .hp-footer__shader,
   .hp-footer__baseline {
