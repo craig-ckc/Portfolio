@@ -8,7 +8,7 @@ export function Hero() {
       <div className="hp-hero__body">
         <div className="hp-hero__copy">
           <h1 className="hp-hero__title" id="hp-hero-title">
-            I help <span>brands</span> build <span>websites</span> that convert and <span>apps</span> people enjoy.
+            I help <span>brands</span> build <span>websites</span> worth visiting and <span>apps</span> worth using.
           </h1>
 
           <div className="hp-hero__lower">

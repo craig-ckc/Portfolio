@@ -66,7 +66,7 @@ const mailto = (subject: string) => `mailto:${email}?subject=${encodeURIComponen
 export const hero = {
   title: 'I help brands build websites that convert and apps people enjoy.',
   standfirst:
-    'Independent designer and front-end developer. Brand, interface, and the code that ships it — usually all three.',
+    'Independent designer and front-end developer. Usually taking what’s already there, turning it into an interface, then staying with it until it ships.',
   cta: { label: 'Start a project', href: mailto('New project') },
   objectCaption: 'Work, and everything around it',
 } as const
@@ -205,7 +205,7 @@ export const contact = {
  */
 export const statement = {
   body:
-    "I've spent my career in brand and product design, and I learned to build what I draw. Doing both changed how I design. Now I'm moving further into design engineering, using AI to take an idea from a file to something running without it changing hands.",
+    "I tend to stay with an idea longer than my job title requires. I’ll work out the interface and keep going until it’s running in the browser, then spend probably too long making the details feel right. That overlap between design and engineering is where I do my best work, and AI is one of the things I’m testing there, seeing how much more of the original intent I can keep intact from design through implementation.",
 } as const
 
 export const footer = {
