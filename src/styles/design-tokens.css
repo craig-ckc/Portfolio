@@ -117,6 +117,19 @@
      long settle — reads as a physical object being handled. */
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* A spring, for one-shot moves that should read as an object being thrown
+     rather than eased into place — the folder tipping open, its contents
+     landing on screen. Overshoots by 5% and settles. Sampled from a damped
+     spring (zeta 0.68, omega 9), so the tail is a real settle and not a guess.
+     Keep it off reversible states: a hover that crosses the edge repeatedly
+     turns an overshoot into a wobble. */
+  --ease-spring-out: linear(
+    0, 0.059 4.2%, 0.197 8.3%, 0.367 12.5%, 0.538 16.7%,
+    0.691 20.8%, 0.817 25.0%, 0.912 29.2%, 0.979 33.3%, 1.021 37.5%,
+    1.044 41.7%, 1.054 45.8%, 1.053 50.0%, 1.047 54.2%, 1.038 58.3%,
+    1.029 62.5%, 1.02 66.7%, 1.013 70.8%, 1.007 75.0%, 1.003 79.2%,
+    1.0 83.3%, 0.998 87.5%, 0.997 91.7%, 0.997 95.8%, 1
+  );
   --duration-fast: 180ms;
   --duration-base: 320ms;
   --duration-slow: 560ms;
