@@ -795,12 +795,15 @@
    rotations are small and alternate, which is what reads as set down by hand
    rather than laid out on a grid.
 
-   One hard constraint: nothing comes to rest over the flap. The contents travel
-   underneath it and only step over it once they have arrived, so a card that
-   settled on top of the folder would have to change layer while still touching
-   the flap — and that is the jump from half hidden to whole that the handover
-   above exists to avoid. Which is why these sweep up and to the left, away from
-   the folder in the lower right, and leave it visible under the blur.
+   These used to sweep up and to the left, clear of the folder, because a card
+   settling on it would have had to change layer while touching the flap. The
+   layer change is immediate now and the veil covers it on the way back, so that
+   constraint is gone — and the arrangement should not still be shaped by it.
+   The corner the folder sits in was the largest empty region on the screen, and
+   an empty region where the thing you just clicked used to be does not read as
+   composition. It reads as a piece that failed to load. So one card comes to
+   rest over the folder and the rest spread out from there, and what is left
+   over is spread around the edges instead of pooled in one place.
 
    --slot-focus is the extra scale a card takes when it is the one being looked
    at, picked so that every card arrives at about the same 28vw however small it
@@ -810,24 +813,26 @@
    Each entry is read by two rules: the target box takes the position and width,
    the card itself takes the rotation and the zoom. */
 .hp-folder__target:nth-child(1),
-.hp-folder__item:nth-child(1) { --slot-x: 14vw; --slot-y: 42svh; --slot-w: 15vw; --slot-r: -7deg; --slot-focus: 1.87; }
+.hp-folder__item:nth-child(1) { --slot-x: 12vw; --slot-y: 42svh; --slot-w: 15vw; --slot-r: -7deg; --slot-focus: 1.87; }
 .hp-folder__target:nth-child(2),
-.hp-folder__item:nth-child(2) { --slot-x: 31vw; --slot-y: 24svh; --slot-w: 13vw; --slot-r: 5deg; --slot-focus: 2.15; }
+.hp-folder__item:nth-child(2) { --slot-x: 30vw; --slot-y: 17svh; --slot-w: 13vw; --slot-r: 5deg; --slot-focus: 2.15; }
 .hp-folder__target:nth-child(3),
-.hp-folder__item:nth-child(3) { --slot-x: 55vw; --slot-y: 22svh; --slot-w: 20vw; --slot-r: -3deg; --slot-focus: 1.4; }
+.hp-folder__item:nth-child(3) { --slot-x: 60vw; --slot-y: 22svh; --slot-w: 20vw; --slot-r: -3deg; --slot-focus: 1.4; }
 .hp-folder__target:nth-child(4),
-.hp-folder__item:nth-child(4) { --slot-x: 22vw; --slot-y: 74svh; --slot-w: 14vw; --slot-r: 8deg; --slot-focus: 2; }
+.hp-folder__item:nth-child(4) { --slot-x: 20vw; --slot-y: 76svh; --slot-w: 14vw; --slot-r: 8deg; --slot-focus: 2; }
 .hp-folder__target:nth-child(5),
-.hp-folder__item:nth-child(5) { --slot-x: 44vw; --slot-y: 62svh; --slot-w: 13vw; --slot-r: -5deg; --slot-focus: 2.15; }
+.hp-folder__item:nth-child(5) { --slot-x: 45vw; --slot-y: 64svh; --slot-w: 14vw; --slot-r: -5deg; --slot-focus: 2; }
+/* The one on the folder. Wider than it was, because it has the least distance
+   to travel of the six and the growth is most of what reads as it moving. */
 .hp-folder__target:nth-child(6),
-.hp-folder__item:nth-child(6) { --slot-x: 80vw; --slot-y: 30svh; --slot-w: 15vw; --slot-r: 6deg; --slot-focus: 1.87; }
+.hp-folder__item:nth-child(6) { --slot-x: 79vw; --slot-y: 62svh; --slot-w: 18vw; --slot-r: 6deg; --slot-focus: 1.56; }
 
 /* --- The veil and the chrome -------------------------------------------- */
 
 /* Fixed to the viewport from inside the folder, which only works because
-   nothing between here and the root has a transform. It sits above the flap and
-   below the cards, and comes up on the handover — by which time the cards are
-   out, so there is no moment where a half-opaque veil crosses them. */
+   nothing between here and the root has a transform. Above the flap and below
+   the contents, so the folder goes soft with the page while the cards that came
+   out of it stay sharp over the top. */
 .hp-folder__veil {
   position: fixed;
   inset: 0;
@@ -967,23 +972,29 @@
   }
 
   .hp-folder__target:nth-child(1),
-  .hp-folder__item:nth-child(1) { --slot-x: 86vw; --slot-y: 42svh; --slot-r: 7deg; }
+  .hp-folder__item:nth-child(1) { --slot-x: 88vw; --slot-y: 42svh; --slot-r: 7deg; }
   .hp-folder__target:nth-child(2),
-  .hp-folder__item:nth-child(2) { --slot-x: 69vw; --slot-y: 24svh; --slot-r: -5deg; }
+  .hp-folder__item:nth-child(2) { --slot-x: 70vw; --slot-y: 17svh; --slot-r: -5deg; }
   .hp-folder__target:nth-child(3),
-  .hp-folder__item:nth-child(3) { --slot-x: 45vw; --slot-y: 22svh; --slot-r: 3deg; }
+  .hp-folder__item:nth-child(3) { --slot-x: 40vw; --slot-y: 22svh; --slot-r: 3deg; }
   .hp-folder__target:nth-child(4),
-  .hp-folder__item:nth-child(4) { --slot-x: 78vw; --slot-y: 74svh; --slot-r: -8deg; }
+  .hp-folder__item:nth-child(4) { --slot-x: 80vw; --slot-y: 76svh; --slot-r: -8deg; }
   .hp-folder__target:nth-child(5),
-  .hp-folder__item:nth-child(5) { --slot-x: 59vw; --slot-y: 62svh; --slot-r: 5deg; }
+  .hp-folder__item:nth-child(5) { --slot-x: 55vw; --slot-y: 64svh; --slot-r: 5deg; }
+  /* On the folder, which down here is in the bottom left. */
   .hp-folder__target:nth-child(6),
-  .hp-folder__item:nth-child(6) { --slot-x: 20vw; --slot-y: 30svh; --slot-r: -6deg; }
+  .hp-folder__item:nth-child(6) { --slot-x: 21vw; --slot-y: 62svh; --slot-r: -6deg; }
 }
 
 @media (max-width: 899.98px) {
-  /* Two columns, three rows, all of them above the folder. Cards are much wider
-     here in viewport terms, so the rows sit high: a portrait card at 24vw is
-     still a third of the height of a phone screen.
+  /* Two columns, three rows, the last of them over the folder. Cards are much
+     wider here in viewport terms, so the rows have to be spaced generously: a
+     portrait card at 24vw is still a third of the height of a phone screen.
+
+     The rows used to stop above the folder and left the bottom third of the
+     screen bare, which on a phone is the part of it in your thumb's reach. The
+     last row sits on the folder now, for the same reason the desktop
+     arrangement does.
 
      And each width is capped against the height as well, because a width in vw
      is a height in disguise once the ratio is applied — a portrait card at 24vw
@@ -991,17 +1002,17 @@
      runs off the top of it. The svh half of each min() is what that card's
      height can afford, worked back through its own ratio. */
   .hp-folder__target:nth-child(1),
-  .hp-folder__item:nth-child(1) { --slot-x: 27vw; --slot-y: 14svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .hp-folder__item:nth-child(1) { --slot-x: 27vw; --slot-y: 16svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
   .hp-folder__target:nth-child(2),
-  .hp-folder__item:nth-child(2) { --slot-x: 73vw; --slot-y: 14svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .hp-folder__item:nth-child(2) { --slot-x: 73vw; --slot-y: 16svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
   .hp-folder__target:nth-child(3),
-  .hp-folder__item:nth-child(3) { --slot-x: 30vw; --slot-y: 34svh; --slot-w: min(32vw, 23svh); --slot-focus: 2.06; }
+  .hp-folder__item:nth-child(3) { --slot-x: 30vw; --slot-y: 42svh; --slot-w: min(32vw, 23svh); --slot-focus: 2.06; }
   .hp-folder__target:nth-child(4),
-  .hp-folder__item:nth-child(4) { --slot-x: 74vw; --slot-y: 34svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .hp-folder__item:nth-child(4) { --slot-x: 74vw; --slot-y: 42svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
   .hp-folder__target:nth-child(5),
-  .hp-folder__item:nth-child(5) { --slot-x: 27vw; --slot-y: 50svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .hp-folder__item:nth-child(5) { --slot-x: 27vw; --slot-y: 68svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
   .hp-folder__target:nth-child(6),
-  .hp-folder__item:nth-child(6) { --slot-x: 73vw; --slot-y: 50svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .hp-folder__item:nth-child(6) { --slot-x: 73vw; --slot-y: 68svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
 
   .hp-folder__close {
     top: var(--spacing-md);
