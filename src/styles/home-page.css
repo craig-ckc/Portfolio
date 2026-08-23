@@ -11,6 +11,31 @@
   min-width: 320px;
   /* Shared by the footer and the slot that reserves its scroll distance. */
   --hp-footer-h: 520px;
+
+  /* How long the folder's veil takes to come up over the page, and how long it
+     takes to go. Up here rather than with the folder's own knobs because the
+     navbar answers it too, and is not inside the folder to read them from
+     there.
+
+     Not the same value either way, and the asymmetry is the point.
+
+     Coming up it is short — a third of the contents' flight, over long before
+     it ends. It is the page losing focus, not a thing arriving, and anything
+     slower reads as a lag between the click and the folder answering it. Not
+     instant either: a hard cut to a blurred page is a flash. 180ms sits
+     between the two.
+
+     Going, it has longer, and it is doing two things at once. It is most of
+     what says the scatter is being put away — opening announces itself, six
+     cards leaving a folder, and closing does not; at 180ms the page snaps back
+     into focus while the cards are still most of the way out, which reads as
+     the blur being switched off rather than lifted. And it is the cover for
+     their drop back under the flap, which happens beneath it: without that
+     cover a card resting on the folder would be cut in half in one frame.
+     320ms covers the first half of the return and lets go of it gradually;
+     longer, and it is still there once the folder has already shut. */
+  --hp-veil-fade: var(--duration-fast);
+  --hp-veil-clear: var(--duration-base);
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
@@ -114,6 +139,21 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-md);
+  /* Going, which is the slower of the veil's two timings. */
+  transition: opacity var(--hp-veil-clear) var(--ease-standard);
+}
+
+/* Out of the way while the folder's contents are out. It cannot be put under
+   the veil — see the note on .hp-folder.is-open — so it goes on the veil's own
+   timings instead, out as the blur arrives and back as it lifts.
+
+   Keyed off the folder's own class and not the page's data-scatter attribute,
+   even though that is the obvious hook and is already there. The attribute
+   stays on for the whole return, so the navbar would have come back only once
+   the cards were home — which is the fault this is fixing, a beat later. */
+.hp:has(.hp-folder.is-open) .hp-nav {
+  opacity: 0;
+  transition-duration: var(--hp-veil-fade);
 }
 
 .hp-nav__logo {
@@ -335,7 +375,7 @@
 
    Opening, the step is covered by the move — the cards are leaving as they come
    whole. Closing, it is covered by the veil, which is still up when they drop
-   and takes --hp-folder-veil-clear to go: long enough that a card resting over
+   and takes --hp-veil-clear to go: long enough that a card resting over
    the folder can pass behind the flap out of sight. That is what the fade-out is
    for as much as the blur, and it is why the arrangement below is free to put a
    card on the folder at all.
@@ -362,26 +402,6 @@
 
   /* Width of one card, as a share of the stage. */
   --hp-folder-card: 40%;
-
-  /* How long the veil takes to come up, and how long it takes to go. Not the
-     same value, and the asymmetry is the point.
-
-     Coming up it is short — a third of the flight, over long before it ends. It
-     is the page losing focus, not a thing arriving, and anything slower reads
-     as a lag between the click and the folder answering it. Not instant either:
-     a hard cut to a blurred page is a flash. 180ms sits between the two.
-
-     Going, it has longer, and it is doing two things at once. It is most of
-     what says the scatter is being put away — opening announces itself, six
-     cards leaving a folder, and closing does not; at 180ms the page snaps back
-     into focus while the cards are still most of the way out, which reads as
-     the blur being switched off rather than lifted. And it is the cover for the
-     drop back to layer 1, which happens under it: without that cover a card
-     sitting on the folder would be cut in half by the flap in one frame.
-     320ms covers the first half of the return and lets go of it gradually;
-     longer, and it is still there once the folder has already shut. */
-  --hp-folder-veil-fade: var(--duration-fast);
-  --hp-folder-veil-clear: var(--duration-base);
 
   /* Two shadows, built from the ones already on this page — the chip's close
      2/6 and the old folder front's 18/34. Rest sits the object on the paper;
@@ -425,18 +445,20 @@
 }
 
 /* While the contents are out, this object owns the screen: the layer has to
-   clear the sections below it in the page, and .hp-content has to clear the
-   navbar. Only then does a veil pinned to the viewport actually cover
-   everything. Set from hero-folder.tsx, which is also what makes the rest of
-   the page inert. */
+   clear the sections below it in the page, so that a veil pinned to the
+   viewport actually covers them. Set from hero-folder.tsx, which is also what
+   makes the rest of the page inert.
+
+   The navbar is not covered this way, and cannot be. It would take lifting the
+   whole content column over it, and that column is opaque — it is what covers
+   the fixed footer — so lifting it does not blur the navbar, it deletes it, for
+   as long as the class is on. Which showed: the veil would clear, the page
+   would come back into focus, and the navbar would still be missing for the
+   rest of the return. It answers the veil directly instead, up in .hp-nav. */
 .hp-folder.is-open,
 .hp-folder.is-closing {
   position: relative;
   z-index: 10;
-}
-
-.hp[data-scatter] .hp-content {
-  z-index: 60;
 }
 
 /* A stacking context of its own, so the layer numbers above mean what they say
@@ -846,14 +868,14 @@
   opacity: 0;
   /* Going. The state being left is the one that declares nothing, so this is
      the timing that applies on the way out. */
-  transition: opacity var(--hp-folder-veil-clear) var(--ease-standard);
+  transition: opacity var(--hp-veil-clear) var(--ease-standard);
 }
 
 /* Coming: quicker, and no delay. Transitions take their timing from the state
    being entered, so the two directions differ just by saying so here. */
 .hp-folder.is-open .hp-folder__veil {
   opacity: 1;
-  transition-duration: var(--hp-folder-veil-fade);
+  transition-duration: var(--hp-veil-fade);
 }
 
 .hp-folder__close,
@@ -903,7 +925,7 @@
 .hp-folder.is-open .hp-folder__close {
   opacity: 1;
   transform: scale(1);
-  transition-delay: var(--hp-folder-veil-fade);
+  transition-delay: var(--hp-veil-fade);
 }
 
 .hp-folder__caption {
