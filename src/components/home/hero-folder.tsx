@@ -26,18 +26,20 @@ import { StampSticker, ToriiSticker } from '../icons'
  * cloned into an overlay and nothing cross-fades: the cards in the folder are
  * the cards that come out of it and the cards that go back in.
  *
- * What makes that work is the order the layers paint in, and one handover part
- * way through the move:
+ * What makes that work is the order the layers paint in, and one change of
+ * layer at each end of the move:
  *
- *   leaving    contents under the flap, so they slide out from beneath it
- *   out        contents over the veil, so the page can go out of focus behind
- *   returning  contents back under the flap just before they reach it
+ *   shut   contents under the flap, which is what hides all but a sliver
+ *   out    contents over it, clear of the folder they came from
  *
- * The handover is a change of z-index, which animates as an integer — so it is
- * a transition with a delay rather than a timer in here, and the moment it
- * happens is written next to the duration it has to fit inside, over in
- * home-page.css. Nothing about it shows: by then the cards are clear of the
- * folder and the veil is still completely transparent.
+ * Nothing in between: the layer changes in the frame the click lands, in both
+ * directions. Delayed, the cards spend half their flight still behind the flap
+ * and then come whole in one frame out over open screen. It is a plain z-index
+ * left out of the transitions in home-page.css, so there is no timer in here.
+ *
+ * The veil is under the whole object rather than in the middle of it — the page
+ * goes out of focus, the folder stays sharp — so nothing ever crosses it, and
+ * its fade and the flight above are free of each other.
  *
  * This file measures. Every value being moved between lives in the stylesheet.
  */
@@ -87,9 +89,9 @@ function restingCentre(element: HTMLElement) {
  * Put the rest of the page out of reach the way a modal dialog would: walk up
  * from the folder marking everything alongside it inert, and hand back the undo.
  *
- * A dialog is not an option here. The top layer would take the contents above
- * the flap, and then there would be nothing left for them to slide out from
- * under — which is the whole point of the thing.
+ * A dialog is not an option here. The top layer would lift the whole object out
+ * of the page's own stacking order, and the veil's whole job is to sit between
+ * the two — over the page, under the object.
  */
 function inertOutside(root: HTMLElement) {
   const marked: HTMLElement[] = []

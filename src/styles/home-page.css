@@ -317,21 +317,28 @@
    that travels — nothing is cloned, nothing cross-fades. Within the stage:
 
      0  back        the flat panel behind everything
-     1  contents    under the flap, which is how they slide out from beneath it
+     1  contents    while the folder is shut, which is what hides all but a sliver
      2  flap
      3  veil        the blurred layer that takes the page out of focus
-     4  contents    once clear of the folder, they step over the veil
+     4  contents    while they are out, over the veil
      5  chrome      close and caption
 
-   The step from 1 to 4 happens part way through the move. z-index animates as
-   an integer, so it is a transition with a delay and not a timer in JavaScript:
-   see --hp-folder-handover below. Nothing about it shows, because by then the
-   cards have left the folder and the veil is still completely transparent.
+   The folder goes under the veil with the rest of the page. It is the object
+   the contents came out of, not one of them: once they are out, it has nothing
+   left to say, and leaving it sharp in the corner gives the eye a second thing
+   to look at while it is trying to look at six.
 
-   Coming back is the same in reverse: they hold their high layer until they are
-   nearly home, then drop under the flap for the last of it and slide into the
-   pocket. No fade, no handover between one element and another — the card that
-   goes in is the card that came out.
+   The step from 1 to 4 happens in the frame the folder is opened, and the step
+   back down in the frame it is closed. There is no third state part way through
+   the flight: z-index is left out of the transitions below so that it simply
+   applies, which is also why nothing in here needs a timer in JavaScript.
+
+   Opening, the step is covered by the move — the cards are leaving as they come
+   whole. Closing, it is covered by the veil, which is still up when they drop
+   and takes --hp-folder-veil-clear to go: long enough that a card resting over
+   the folder can pass behind the flap out of sight. That is what the fade-out is
+   for as much as the blur, and it is why the arrangement below is free to put a
+   card on the folder at all.
    -------------------------------------------------------------------------- */
 
 .hp-folder {
@@ -356,23 +363,25 @@
   /* Width of one card, as a share of the stage. */
   --hp-folder-card: 40%;
 
-  /* When the contents step over the veil on the way out: at the very end of
-     the journey, once each has stopped.
+  /* How long the veil takes to come up, and how long it takes to go. Not the
+     same value, and the asymmetry is the point.
 
-     Not part way through, which was the first attempt at this. A card whose
-     travel still crosses the flap when it changes layer goes from half hidden
-     to whole in one frame, and that jump is far more noticeable than the
-     occlusion it was meant to resolve. Leaving it until they have arrived means
-     the change lands on cards that are not moving and, since none of them comes
-     to rest over the folder, are not touching the flap either — so there is
-     nothing to see. Per card, because the fan leaves in a stagger and each one
-     should hand over at the end of its own flight. */
-  --hp-folder-handover: calc(var(--duration-slow) * 0.95);
-  /* And straight back down on the way in, so the whole return happens under
-     the flap. They start out clear of it, so there is nothing to jump. Just
-     long enough that the veil has gone: drop below it while it still has any
-     opacity and the cards get washed out for the rest of the way home. */
-  --hp-folder-handback: calc(var(--duration-fast) + 20ms);
+     Coming up it is short — a third of the flight, over long before it ends. It
+     is the page losing focus, not a thing arriving, and anything slower reads
+     as a lag between the click and the folder answering it. Not instant either:
+     a hard cut to a blurred page is a flash. 180ms sits between the two.
+
+     Going, it has longer, and it is doing two things at once. It is most of
+     what says the scatter is being put away — opening announces itself, six
+     cards leaving a folder, and closing does not; at 180ms the page snaps back
+     into focus while the cards are still most of the way out, which reads as
+     the blur being switched off rather than lifted. And it is the cover for the
+     drop back to layer 1, which happens under it: without that cover a card
+     sitting on the folder would be cut in half by the flap in one frame.
+     320ms covers the first half of the return and lets go of it gradually;
+     longer, and it is still there once the folder has already shut. */
+  --hp-folder-veil-fade: var(--duration-fast);
+  --hp-folder-veil-clear: var(--duration-base);
 
   /* Two shadows, built from the ones already on this page — the chip's close
      2/6 and the old folder front's 18/34. Rest sits the object on the paper;
@@ -704,31 +713,31 @@
     scale(var(--out-scale, 1))
     rotate(var(--slot-r, 0deg))
     translateY(50%);
-  transition:
-    transform var(--duration-slow) var(--ease-spring-out),
-    z-index 1ms linear;
-  transition-delay: calc(var(--i, 0) * 40ms), calc(var(--hp-folder-handover) + var(--i, 0) * 40ms);
+  /* z-index is deliberately not in here: left out of the transition it applies
+     in this frame, so the cards are clear of the flap before they have moved
+     rather than emerging from under it half way out. Only the transform is
+     staggered. */
+  transition: transform var(--duration-slow) var(--ease-spring-out);
+  transition-delay: calc(var(--i, 0) * 40ms);
 }
 
-/* The return. Nothing to aim: dropping .is-open puts the fan values back, and
-   the fan is where these cards live. All this rule does is hold them in the
-   upper layer until they are nearly home, and give the move the same duration
-   as the folder's own close so the two are one movement. */
+/* The return. Nothing to aim and nothing to sequence: dropping .is-open puts
+   the fan values back — the fan is where these cards live — and takes the
+   scatter's z-index with it, so they are on their resting layer from the first
+   frame of the way home. All this rule does is give the move the same duration
+   as the folder's own close, so the two are one movement.
+
+   They come home under the clearing veil, which is the point of its taking
+   longer to go than to arrive: it is still up when they drop a layer, so the
+   one resting on the folder slips behind the flap with nothing to see, and it
+   thins out as they travel rather than switching off over a scatter that is
+   still most of the way out.
+
+   Not an ease-out. An ease-out spends nearly all of its travel in the first
+   third, and the last of the journey — the part that reads as being put away
+   — was over before it could be seen. */
 .hp-folder.is-closing .hp-folder__item {
-  /* The delay is what holds them up: the value here is the layer under the
-     flap, and the transition puts off arriving at it. Naming the upper layer
-     instead would leave nothing for the transition to do, and the drop would
-     not happen until this class came off — by which time they are home, and
-     back under the flap in one jump rather than sliding in. */
-  z-index: 1;
-  /* Not an ease-out. An ease-out spends nearly all of its travel in the first
-     third, so the cards were home before the handback had happened and the
-     slide in under the flap was over before it could be seen. The symmetric
-     curve leaves about a fifth of the journey still to make at that point,
-     which is the part that reads as being put away. */
-  transition:
-    transform var(--duration-slow) var(--ease-standard),
-    z-index 1ms linear var(--hp-folder-handback);
+  transition: transform var(--duration-slow) var(--ease-standard);
 }
 
 /* Closing after the scatter is a different move from a pointer leaving, and the
@@ -830,19 +839,16 @@
   backdrop-filter: blur(28px) saturate(125%);
   cursor: zoom-out;
   opacity: 0;
-  /* Quick on the way out, so it has cleared before the contents drop back
-     under the flap — see --hp-folder-handback. */
-  transition: opacity var(--duration-fast) var(--ease-standard);
+  /* Going. The state being left is the one that declares nothing, so this is
+     the timing that applies on the way out. */
+  transition: opacity var(--hp-folder-veil-clear) var(--ease-standard);
 }
 
-/* Waits for the contents rather than travelling with them. It has to: until
-   they have changed layer they are underneath this, and a veil coming up over
-   cards in flight would take them with it. The last of them hands over one
-   stagger step after the first, hence the extra wait. */
+/* Coming: quicker, and no delay. Transitions take their timing from the state
+   being entered, so the two directions differ just by saying so here. */
 .hp-folder.is-open .hp-folder__veil {
   opacity: 1;
-  transition-duration: var(--duration-base);
-  transition-delay: calc(var(--hp-folder-handover) + 80ms);
+  transition-duration: var(--hp-folder-veil-fade);
 }
 
 .hp-folder__close,
@@ -887,10 +893,12 @@
   filter: brightness(1.04);
 }
 
+/* One beat behind the veil, so the control lands on a page that has already
+   gone soft rather than racing the contents out of the folder. */
 .hp-folder.is-open .hp-folder__close {
   opacity: 1;
   transform: scale(1);
-  transition-delay: calc(var(--hp-folder-handover) + 80ms);
+  transition-delay: var(--hp-folder-veil-fade);
 }
 
 .hp-folder__caption {
@@ -1775,9 +1783,8 @@
   /* The folder needs nothing of its own here. The blanket rule above takes
      every duration and delay to nothing, so the flap, the fan and the scatter
      all still change state — they just arrive rather than travel, which is the
-     distinction this preference is actually about. It also collapses the
-     folder's z-index handover to the same instant, which is correct: with no
-     flight, there is no journey for the contents to make under the flap. */
+     distinction this preference is actually about. Its layer changes are not
+     transitioned at all, so they were already instant. */
 
   .hp-footer__shader,
   .hp-footer__baseline {
