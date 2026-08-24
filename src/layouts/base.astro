@@ -28,8 +28,39 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
-    <link rel="shortcut icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
+    {/* Two hand-tuned SVGs per appearance rather than one scaling file: the 16
+        and 32 artboards have their own paths so the glyph stays crisp at tab
+        size. The pairing is the browser's appearance, not the site's own
+        `data-theme` toggle — a favicon sits in the tab strip, so it has to read
+        against the browser chrome, which the toggle does not change. */}
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      sizes="32x32"
+      media="(prefers-color-scheme: light)"
+      href="/img/favicon-light-32x32.svg"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      sizes="16x16"
+      media="(prefers-color-scheme: light)"
+      href="/img/favicon-light-16x16.svg"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      sizes="32x32"
+      media="(prefers-color-scheme: dark)"
+      href="/img/favicon-dark-32x32.svg"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      sizes="16x16"
+      media="(prefers-color-scheme: dark)"
+      href="/img/favicon-dark-16x16.svg"
+    />
     <meta name="author" content="Craig Chihururu" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#1d4fff" />
