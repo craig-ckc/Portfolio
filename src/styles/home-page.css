@@ -777,16 +777,29 @@
    scale and rotation moves their pivot to the middle of the card, which is what
    lets that offset be a plain difference of centres despite the fan turning
    these same cards about their bottom edge.
+
+   --drag-x / --drag-y / --drag-r are written by the same file, every frame,
+   while a card is in hand or coasting after it: where the hand has taken the
+   card from its place, and the lean it has at that speed. --raised is the
+   card's place in the pile, the one handled last on top.
+
+   Layers while the contents are out, all inside the stage's own context: flap
+   2, veil 3, cards 10–15 in the order they were last handled, the one being
+   looked at 17, the close button and caption 20.
    -------------------------------------------------------------------------- */
 
 .folder.is-open .folder__item {
-  z-index: 4;
-  cursor: zoom-in;
+  z-index: calc(10 + var(--raised, 0));
+  cursor: grab;
+  /* The browser gets no say over a press on a card: no scroll, no zoom, and no
+     pointercancel taking a drag away part way through. */
+  touch-action: none;
   transform:
     translate(var(--out-x, 0px), var(--out-y, 0px))
+    translate(var(--drag-x, 0px), var(--drag-y, 0px))
     translateY(-50%)
     scale(var(--out-scale, 1))
-    rotate(var(--slot-r, 0deg))
+    rotate(calc(var(--slot-r, 0deg) + var(--drag-r, 0deg)))
     translateY(50%);
   /* z-index is deliberately not in here: left out of the transition it applies
      in this frame, so the cards are clear of the flap before they have moved
@@ -794,6 +807,29 @@
      staggered. */
   transition: transform var(--duration-slow) var(--ease-spring-out);
   transition-delay: calc(var(--i, 0) * 40ms);
+}
+
+/* In hand, and coasting after it. The transform is written every frame by
+   hero-folder.tsx, and a transition under that would put its own 560ms of lag
+   on top of the 40ms that is meant: the card would trail the hand by half a
+   screen and spring after it. The lag lives in the loop, and only there. */
+.folder.is-open .folder__item.is-held,
+.folder.is-open .folder__item.is-coasting {
+  transition: none;
+}
+
+.folder.is-open .folder__item.is-held {
+  cursor: grabbing;
+}
+
+/* Picked up: a touch larger, and a shadow from further off the desk. On the
+   card rather than the item, which is how it can ease in while the item's own
+   transform cannot. */
+.folder__item.is-held .card {
+  transform: scale(1.04);
+  box-shadow:
+    0 0 0 1px rgb(21 21 21 / 8%),
+    0 14px 30px rgb(21 21 21 / 16%);
 }
 
 /* The return. Nothing to aim and nothing to sequence: dropping .is-open puts
@@ -827,7 +863,10 @@
    to the centre of the screen is arithmetic on the target's own coordinates,
    which is the reason those are written in vw and svh rather than percentages. */
 .folder.is-open .folder__item.is-focused {
-  z-index: 5;
+  /* Over the whole pile, whatever order it was last handled in. No --drag-*
+     here, deliberately: focus brings a card to the middle of the screen from
+     wherever it was left, and puts it back there after. */
+  z-index: 17;
   cursor: zoom-out;
   transform:
     translate(var(--out-x, 0px), var(--out-y, 0px))
@@ -934,7 +973,8 @@
 .folder__close,
 .folder__caption {
   position: fixed;
-  z-index: 5;
+  /* Over every card, dragged or looked at. */
+  z-index: 20;
   border: 1px solid var(--folder-chrome-edge);
   background: var(--folder-chrome);
   box-shadow: var(--folder-shadow-rest);
@@ -1125,6 +1165,10 @@
   box-shadow:
     0 0 0 1px rgb(21 21 21 / 8%),
     0 3px 8px rgb(21 21 21 / 10%);
+  /* For the lift when it is picked up — see .folder__item.is-held. */
+  transition:
+    transform var(--duration-fast) var(--ease-out-cubic),
+    box-shadow var(--duration-fast) var(--ease-standard);
 }
 
 .card[data-ratio='portrait'] { aspect-ratio: 3 / 4; }

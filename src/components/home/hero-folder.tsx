@@ -1,5 +1,26 @@
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+} from 'react'
 import { folderItems, type FolderItem } from '../../content/home-page'
+import {
+  coast,
+  confine,
+  DRAG_THRESHOLD,
+  follow,
+  lean,
+  release,
+  within,
+  type Bounds,
+  type Motion,
+  type Point,
+} from '../../lib/card-motion'
 import { folderMetrics, folderShape } from '../../lib/folder-shape'
 import { getLenis } from '../../lib/smooth-scroll'
 import { StampSticker, ToriiSticker } from '../icons'
@@ -20,7 +41,9 @@ import { StampSticker, ToriiSticker } from '../icons'
  *          fan up out from behind it. The back never moves.
  *   open   the contents leave the folder and take places across the screen, on
  *          a blurred layer that puts the page out of focus. Clicking one brings
- *          it to the middle to be looked at properly.
+ *          it to the middle to be looked at properly. Out there they can also
+ *          be picked up and moved about; how a card follows the hand and how
+ *          it comes to rest once let go is in src/lib/card-motion.ts.
  *
  * There is one copy of each item and it is the one that moves. Nothing is
  * cloned into an overlay and nothing cross-fades: the cards in the folder are
@@ -53,6 +76,14 @@ const SCROLL_KEYS = new Set(['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'Ar
 const RETURN_GRACE_MS = 60
 
 /**
+ * How far in from the screen's edge a card stops, in px. The whole card stays
+ * on screen, not just enough of it to take hold of again: a card hanging past
+ * the edge still counts as overflow, and the page grows a scrollbar under the
+ * scatter to reach it.
+ */
+const EDGE_MARGIN = 8
+
+/**
  * How long the return takes, read off the same token the stylesheet animates
  * it with, so the two cannot drift.
  *
@@ -83,6 +114,50 @@ function restingCentre(element: HTMLElement) {
     x: base.left + element.offsetLeft + element.offsetWidth / 2,
     y: base.top + element.offsetTop + element.offsetHeight / 2,
   }
+}
+
+/**
+ * Where the scatter put a card's centre before anyone touched it: its resting
+ * centre plus the aim. Every drag offset is measured from here.
+ */
+function scatterCentre(element: HTMLElement): Point {
+  const rest = restingCentre(element)
+
+  return {
+    x: rest.x + (parseFloat(element.style.getPropertyValue('--out-x')) || 0),
+    y: rest.y + (parseFloat(element.style.getPropertyValue('--out-y')) || 0),
+  }
+}
+
+/** Write where a card is and how it is moving, for the transform in home-page.css to read. */
+function paint(element: HTMLElement, motion: Motion) {
+  element.style.setProperty('--drag-x', `${motion.position.x.toFixed(2)}px`)
+  element.style.setProperty('--drag-y', `${motion.position.y.toFixed(2)}px`)
+  element.style.setProperty('--drag-r', `${lean(motion.velocity).toFixed(2)}deg`)
+}
+
+/**
+ * One card being handled: pressed and not yet moved, in the hand, or coasting
+ * to rest after leaving it. Positions are offsets from where the scatter put
+ * the card — the space --drag-x / --drag-y are in — so putting a card down is
+ * nothing more than leaving the last pair written.
+ */
+type Grip = {
+  pointerId: number
+  mode: 'pressed' | 'held' | 'coasting'
+  /** Where the pointer went down. Nothing moves until it is DRAG_THRESHOLD from here. */
+  origin: Point
+  /** The offset the card already had when it was picked up. */
+  base: Point
+  /** Where the hand is asking the card to be. */
+  target: Point
+  motion: Motion
+  /** How far the offset may go before the card's centre would leave the screen. */
+  bounds: Bounds
+  /** How quickly it sheds speed once let go. Set at that moment. */
+  rate: number
+  /** Under reduced motion the card sits under the pointer and stops where it is let go. */
+  instant: boolean
 }
 
 /**
@@ -185,6 +260,19 @@ export function HeroFolder({ caption }: { caption: string }) {
   /** Whether the folder had focus when it was closed, so it can be given back. */
   const returnFocus = useRef(false)
 
+  /** Every card in hand or still moving, by element. */
+  const grips = useRef(new Map<HTMLElement, Grip>())
+  const frame = useRef(0)
+  const lastFrame = useRef(0)
+  /**
+   * The click that follows a drag is not a click. Set when a press becomes a
+   * drag and spent by the click it produces; a press that never moves leaves
+   * it alone, so a tap still opens the card.
+   */
+  const suppressClick = useRef(false)
+  /** The cards in paint order, the one handled last at the end. */
+  const pile = useRef<HTMLElement[]>([])
+
   /**
    * Give every item the offset and scale that lands it on its target.
    *
@@ -213,6 +301,186 @@ export function HeroFolder({ caption }: { caption: string }) {
       item.style.setProperty('--out-scale', (to.width / item.offsetWidth).toFixed(4))
     }
   }, [])
+
+  /**
+   * One frame for every card that is moving: the ones in hand follow, the ones
+   * let go coast, and the loop stops itself when nothing is left moving.
+   */
+  const step = useCallback((now: number) => {
+    const dt = lastFrame.current ? Math.min((now - lastFrame.current) / 1000, 0.05) : 0
+    lastFrame.current = now
+    let moving = false
+
+    for (const [element, grip] of grips.current) {
+      if (grip.mode === 'pressed') continue
+
+      if (grip.mode === 'held') {
+        grip.motion = grip.instant
+          ? { position: grip.target, velocity: { x: 0, y: 0 } }
+          : follow(grip.motion, grip.target, dt)
+        moving = true
+      } else {
+        const coasted = coast(grip.motion, grip.rate, dt)
+        grip.motion = confine(coasted.motion, grip.bounds)
+
+        if (coasted.settled) {
+          element.classList.remove('is-coasting')
+          grips.current.delete(element)
+        } else {
+          moving = true
+        }
+      }
+
+      paint(element, grip.motion)
+    }
+
+    frame.current = moving ? requestAnimationFrame(step) : 0
+    if (!moving) lastFrame.current = 0
+  }, [])
+
+  const wake = useCallback(() => {
+    if (!frame.current) frame.current = requestAnimationFrame(step)
+  }, [step])
+
+  /** Bring a card to the top of the pile, as picking it up would. */
+  const raise = useCallback((element: HTMLElement) => {
+    const cards = pile.current.length ? pile.current : Array.from(stackRef.current?.children ?? [])
+    const order = cards.filter((card): card is HTMLElement => card instanceof HTMLElement && card !== element)
+    order.push(element)
+
+    pile.current = order
+    order.forEach((card, index) => card.style.setProperty('--raised', String(index)))
+  }, [])
+
+  /**
+   * The moment a press becomes a drag. Measured from where the card actually
+   * is rather than where it was sent, so one caught still in flight comes away
+   * with the hand from there instead of jumping to where it would have landed.
+   */
+  const lift = useCallback(
+    (element: HTMLElement, grip: Grip) => {
+      const centre = scatterCentre(element)
+      const box = element.getBoundingClientRect()
+      const offset = { x: box.left + box.width / 2 - centre.x, y: box.top + box.height / 2 - centre.y }
+      /* The box of the card as it sits, rotation included, so the reach is
+         measured to its corner and not to the edge of an upright card. */
+      const reachX = box.width / 2 + EDGE_MARGIN
+      const reachY = box.height / 2 + EDGE_MARGIN
+
+      grip.mode = 'held'
+      grip.base = offset
+      grip.target = offset
+      grip.motion = { position: offset, velocity: { x: 0, y: 0 } }
+      grip.bounds = {
+        minX: reachX - centre.x,
+        maxX: document.documentElement.clientWidth - reachX - centre.x,
+        minY: reachY - centre.y,
+        maxY: window.innerHeight - reachY - centre.y,
+      }
+      grip.instant = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      /* Class and offset land in the same frame, and the class is what turns
+         the transition off: the card snaps to exactly where it already is. */
+      element.classList.add('is-held')
+      paint(element, grip.motion)
+      raise(element)
+      suppressClick.current = true
+    },
+    [raise],
+  )
+
+  /** The hand opens. */
+  const drop = useCallback(
+    (element: HTMLElement, grip: Grip) => {
+      element.classList.remove('is-held')
+      const glide = grip.instant ? null : release(grip.motion.velocity)
+
+      if (!glide) {
+        grips.current.delete(element)
+        paint(element, { position: grip.motion.position, velocity: { x: 0, y: 0 } })
+        return
+      }
+
+      grip.mode = 'coasting'
+      grip.rate = glide.rate
+      grip.motion = { position: grip.motion.position, velocity: glide.velocity }
+      element.classList.add('is-coasting')
+      wake()
+    },
+    [wake],
+  )
+
+  const onPointerDown = (event: ReactPointerEvent<HTMLButtonElement>, id: string) => {
+    /* The card being looked at is not for moving. And only the main button. */
+    if (stage !== 'open' || focused === id || event.button !== 0) return
+
+    const element = event.currentTarget
+    const grip = grips.current.get(element)
+    if (grip && grip.mode !== 'coasting') return
+
+    suppressClick.current = false
+    const origin = { x: event.clientX, y: event.clientY }
+
+    if (grip) {
+      /* Caught on the move: it stops in the hand. */
+      element.classList.remove('is-coasting')
+      grip.mode = 'pressed'
+      grip.pointerId = event.pointerId
+      grip.origin = origin
+      grip.motion = { position: grip.motion.position, velocity: { x: 0, y: 0 } }
+      paint(element, grip.motion)
+    } else {
+      grips.current.set(element, {
+        pointerId: event.pointerId,
+        mode: 'pressed',
+        origin,
+        base: { x: 0, y: 0 },
+        target: { x: 0, y: 0 },
+        motion: { position: { x: 0, y: 0 }, velocity: { x: 0, y: 0 } },
+        bounds: { minX: 0, maxX: 0, minY: 0, maxY: 0 },
+        rate: 0,
+        instant: false,
+      })
+    }
+
+    /* Taken now, ahead of the threshold, so a fast start cannot slip off the card. */
+    element.setPointerCapture(event.pointerId)
+  }
+
+  const onPointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const element = event.currentTarget
+    const grip = grips.current.get(element)
+    if (!grip || grip.pointerId !== event.pointerId || grip.mode === 'coasting') return
+
+    const pointer = { x: event.clientX, y: event.clientY }
+
+    if (grip.mode === 'pressed') {
+      if (Math.hypot(pointer.x - grip.origin.x, pointer.y - grip.origin.y) < DRAG_THRESHOLD) return
+      lift(element, grip)
+    }
+
+    grip.target = within(
+      { x: grip.base.x + pointer.x - grip.origin.x, y: grip.base.y + pointer.y - grip.origin.y },
+      grip.bounds,
+    )
+    wake()
+  }
+
+  const onPointerUp = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const element = event.currentTarget
+    const grip = grips.current.get(element)
+    if (!grip || grip.pointerId !== event.pointerId || grip.mode === 'coasting') return
+
+    /* Never moved: a click, and the click handler takes it from here. */
+    if (grip.mode === 'pressed') grips.current.delete(element)
+    else drop(element, grip)
+  }
+
+  const onPointerCancel = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    onPointerUp(event)
+    /* No click follows a cancel, so there is nothing for this to wait for. */
+    suppressClick.current = false
+  }
 
   const closeScatter = useCallback(() => {
     if (stage !== 'open') return
@@ -309,6 +577,32 @@ export function HeroFolder({ caption }: { caption: string }) {
     }
   }, [active, dismiss])
 
+  /* Nothing stays in hand once the contents are on their way home. Before the
+     paint rather than after it, so no card spends the first frame of the
+     return with its transition still switched off. The way back never read the
+     drag, so clearing it here changes nothing that can be seen — it just means
+     the next opening starts from the arrangement, not from wherever the cards
+     were last left. */
+  useLayoutEffect(() => {
+    if (stage === 'open') return
+
+    cancelAnimationFrame(frame.current)
+    frame.current = 0
+    lastFrame.current = 0
+
+    for (const [element, grip] of grips.current) {
+      element.classList.remove('is-held', 'is-coasting')
+      if (element.hasPointerCapture(grip.pointerId)) element.releasePointerCapture(grip.pointerId)
+    }
+    grips.current.clear()
+    pile.current = []
+
+    for (const card of stackRef.current?.children ?? []) {
+      if (!(card instanceof HTMLElement)) continue
+      for (const property of ['--drag-x', '--drag-y', '--drag-r', '--raised']) card.style.removeProperty(property)
+    }
+  }, [stage])
+
   /* Focus follows the contents: into the scatter as they come out, back onto
      the folder as they go in.
 
@@ -373,7 +667,17 @@ export function HeroFolder({ caption }: { caption: string }) {
               key={item.id}
               type="button"
               aria-pressed={focused === item.id}
-              onClick={() => setFocused((current) => (current === item.id ? null : item.id))}
+              onPointerDown={(event) => onPointerDown(event, item.id)}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerCancel={onPointerCancel}
+              onClick={() => {
+                if (suppressClick.current) {
+                  suppressClick.current = false
+                  return
+                }
+                setFocused((current) => (current === item.id ? null : item.id))
+              }}
             >
               <Card item={item} />
               <span className="sr-only">
