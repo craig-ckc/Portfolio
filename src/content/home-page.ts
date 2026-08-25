@@ -180,7 +180,7 @@ export const siteNav = [
    (dribbble.com/craigkc, verified) in this slot instead. Verified alternatives:
    instagram.com/ckc.designes, behance.net/craigchihururu */
 export const socials = [
-  { label: 'X', href: 'https://x.com/craigchihururu', icon: 'x', verified: false },
+  { label: 'X', href: 'https://x.com/chihururu_craig', icon: 'x', verified: false },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/craig-chihururu/', icon: 'linkedin', verified: true },
 ] as const
 
