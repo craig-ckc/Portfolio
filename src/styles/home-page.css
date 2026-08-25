@@ -1776,6 +1776,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2xl);
+  color: white;
   font-size: var(--text-body);
   line-height: var(--leading-normal);
   opacity: clamp(0, calc((var(--reveal, 1) - 0.4) * 2.6), 1);
