@@ -8,8 +8,8 @@ const socialIcons = {
 
 function Siteline() {
   return (
-    <div className="hp-siteline">
-      <nav className="hp-siteline__nav" aria-label="Sections">
+    <div className="siteline">
+      <nav className="siteline__nav" aria-label="Sections">
         {siteNav.map((item) => (
           <a href={item.href} key={item.label}>
             {item.label}
@@ -17,16 +17,16 @@ function Siteline() {
         ))}
       </nav>
 
-      <div className="hp-siteline__actions">
+      <div className="siteline__actions">
         {/* Collapsed to just the hand; the label wipes open on hover/focus. */}
-        <a className="hp-hello" href={contact.href}>
-          <span className="hp-hello__hand">
+        <a className="hello" href={contact.href}>
+          <span className="hello__hand">
             <WavingHand />
           </span>
-          <span className="hp-hello__label">{contact.label}</span>
+          <span className="hello__label">{contact.label}</span>
         </a>
 
-        <div className="hp-social">
+        <div className="social">
           {socials.map((social) => {
             const Icon = socialIcons[social.icon]
             return (
@@ -43,19 +43,19 @@ function Siteline() {
 
 export function Cta() {
   return (
-    <section className="hp-cta hp-container" id="contact" aria-labelledby="hp-cta-title">
-      <span className="hp-cta__mark" aria-hidden="true">
+    <section className="cta container" id="contact" aria-labelledby="cta-title">
+      <span className="cta__mark" aria-hidden="true">
         <CtaMark />
       </span>
 
-      <h2 className="hp-cta__title" id="hp-cta-title">
+      <h2 className="cta__title" id="cta-title">
         {cta.title}
       </h2>
 
-      <p className="hp-cta__invitation">
+      <p className="cta__invitation">
         <span>{cta.invitationLead}</span>
-        <a className="hp-cta__link" href={cta.invitationLink.href}>
-          <span className="hp-cta__label">{cta.invitationLink.label}</span>
+        <a className="cta__link" href={cta.invitationLink.href}>
+          <span className="cta__label">{cta.invitationLink.label}</span>
         </a>
       </p>
 

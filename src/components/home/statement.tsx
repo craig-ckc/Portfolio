@@ -6,8 +6,8 @@ import { statement } from '../../content/home-page'
  */
 export function Statement() {
   return (
-    <section className="hp-statement hp-container" id="about">
-      <p className="hp-statement__text">{statement.body}</p>
+    <section className="statement container" id="about">
+      <p className="statement__text">{statement.body}</p>
     </section>
   )
 }

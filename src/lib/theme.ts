@@ -22,7 +22,7 @@ export type Theme = 'light' | 'dark'
  * and cannot import from here, so the key is handed to it through
  * `define:vars` rather than written out twice.
  */
-export const THEME_STORAGE_KEY = 'hp-theme'
+export const THEME_STORAGE_KEY = 'theme'
 
 const SYSTEM_DARK = '(prefers-color-scheme: dark)'
 

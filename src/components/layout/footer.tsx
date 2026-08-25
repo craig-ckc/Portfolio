@@ -81,17 +81,17 @@ export function Footer() {
   }, [])
 
   return (
-    <div className="hp-footer-slot" ref={slotRef}>
-      <footer className="hp-footer" ref={footerRef}>
+    <div className="footer-slot" ref={slotRef}>
+      <footer className="footer" ref={footerRef}>
         {/* Two nested layers because they animate from different sources: the
             outer one is driven by scroll (--reveal), the inner one drifts on its
             own so the backdrop is never completely still. */}
-        <div className="hp-footer__shader" aria-hidden="true">
-          <div className="hp-footer__drift">
+        <div className="footer__shader" aria-hidden="true">
+          <div className="footer__drift">
             {FOOTER_DITHER_VARIANT === 'video' ? (
               <DitheredVideoBackground
                 active={videoActive}
-                className="hp-footer__dither"
+                className="footer__dither"
                 colorBack={DITHER_PALETTE_VIDEO.back}
                 colorFront={DITHER_PALETTE_VIDEO.front}
                 colorHighlight={DITHER_PALETTE_VIDEO.highlight}
@@ -100,7 +100,7 @@ export function Footer() {
               />
             ) : (
               <DitheredImageBackground
-                className="hp-footer__dither"
+                className="footer__dither"
                 colorBack={DITHER_PALETTE_IMAGE.back}
                 colorFront={DITHER_PALETTE_IMAGE.front}
                 colorHighlight={DITHER_PALETTE_IMAGE.highlight}
@@ -109,7 +109,7 @@ export function Footer() {
             )}
           </div>
         </div>
-        <p className="hp-footer__baseline">{footer.copyright}</p>
+        <p className="footer__baseline">{footer.copyright}</p>
       </footer>
     </div>
   )

@@ -29,13 +29,13 @@ export function Sparkle() {
  */
 export function AppearanceGlyph() {
   return (
-    <svg className="hp-nav__icon-glyph" viewBox="0 0 12 12" aria-hidden="true">
+    <svg className="nav__icon-glyph" viewBox="0 0 12 12" aria-hidden="true">
       <g fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
         <path
-          className="hp-nav__glyph hp-nav__glyph--sun"
+          className="nav__glyph nav__glyph--sun"
           d="M6 2H6.005M10 6H10.005M6 10H6.005M2 6H2.005M8.829 3.171H8.834M8.829 8.829H8.834M3.171 8.829H3.176M3.171 3.171H3.176M8 6C8 7.105 7.105 8 6 8C4.895 8 4 7.105 4 6C4 4.895 4.895 4 6 4C7.105 4 8 4.895 8 6Z"
         />
-        <path className="hp-nav__glyph hp-nav__glyph--moon" d="M6 1.5a3 3 0 0 0 4.5 4.5 4.5 4.5 0 1 1-4.5-4.5Z" />
+        <path className="nav__glyph nav__glyph--moon" d="M6 1.5a3 3 0 0 0 4.5 4.5 4.5 4.5 0 1 1-4.5-4.5Z" />
       </g>
     </svg>
   )
@@ -45,7 +45,7 @@ export function AppearanceGlyph() {
    the wave reads as a hand rather than a spinning shape. */
 export function WavingHand() {
   return (
-    <svg viewBox="0 0 17 21" aria-hidden="true" className="hp-wave">
+    <svg viewBox="0 0 17 21" aria-hidden="true" className="wave">
       <g
         fill="none"
         stroke="currentColor"
@@ -70,12 +70,12 @@ export function CtaMark() {
   return (
     <svg viewBox="0 0 35 34" aria-hidden="true">
       <defs>
-        <linearGradient id="hp-mark-tile" x1="11.785" y1="0.44" x2="33.258" y2="35.396" gradientUnits="userSpaceOnUse">
+        <linearGradient id="mark-tile" x1="11.785" y1="0.44" x2="33.258" y2="35.396" gradientUnits="userSpaceOnUse">
           <stop stopColor="#F9FAF7" stopOpacity="0.12" />
           <stop offset="1" stopColor="#F9FAF7" stopOpacity="0.18" />
         </linearGradient>
       </defs>
-      <rect x="0.922" width="34" height="34" rx="6" fill="url(#hp-mark-tile)" />
+      <rect x="0.922" width="34" height="34" rx="6" fill="url(#mark-tile)" />
       <rect x="6.5" y="20.992" width="22.841" height="1.269" fill={bar} />
       <rect x="24.898" y="16.548" width="2.538" height="1.269" fill={bar} />
       <rect x="8.445" y="16.548" width="2.538" height="1.269" fill={bar} />

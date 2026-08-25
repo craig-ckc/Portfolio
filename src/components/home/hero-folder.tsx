@@ -112,42 +112,42 @@ function inertOutside(root: HTMLElement) {
 /** The face of one item. `kind` picks the drawing; the card frame is shared. */
 function FolderFace({ item }: { item: FolderItem }) {
   if (item.kind === 'photo') {
-    return <img className="hp-face__photo" src={item.src} alt={item.alt ?? ''} loading="lazy" draggable={false} />
+    return <img className="face__photo" src={item.src} alt={item.alt ?? ''} loading="lazy" draggable={false} />
   }
 
   if (item.kind === 'logo') {
     return (
-      <span className="hp-face hp-face--logo">
-        <span className="hp-face__mark">{item.mark}</span>
-        <span className="hp-face__name">{item.label}</span>
+      <span className="face face--logo">
+        <span className="face__mark">{item.mark}</span>
+        <span className="face__name">{item.label}</span>
       </span>
     )
   }
 
   if (item.kind === 'note') {
     return (
-      <span className="hp-face hp-face--note">
-        <span className="hp-face__body">{item.body}</span>
-        <span className="hp-face__rule" aria-hidden="true" />
+      <span className="face face--note">
+        <span className="face__body">{item.body}</span>
+        <span className="face__rule" aria-hidden="true" />
       </span>
     )
   }
 
   return (
-    <span className="hp-face hp-face--swatch">
-      <span className="hp-face__chips" aria-hidden="true">
+    <span className="face face--swatch">
+      <span className="face__chips" aria-hidden="true">
         {item.colors?.map((color) => (
           <span key={color} style={{ background: color }} />
         ))}
       </span>
-      <span className="hp-face__name">{item.label}</span>
+      <span className="face__name">{item.label}</span>
     </span>
   )
 }
 
 function Card({ item }: { item: FolderItem }) {
   return (
-    <span className="hp-card" data-kind={item.kind} data-ratio={item.ratio ?? 'portrait'}>
+    <span className="card" data-kind={item.kind} data-ratio={item.ratio ?? 'portrait'}>
       <FolderFace item={item} />
     </span>
   )
@@ -335,48 +335,48 @@ export function HeroFolder({ caption }: { caption: string }) {
 
   return (
     <div
-      className={`hp-folder${stage === 'open' ? ' is-open' : ''}${stage === 'closing' ? ' is-closing' : ''}`}
+      className={`folder${stage === 'open' ? ' is-open' : ''}${stage === 'closing' ? ' is-closing' : ''}`}
       ref={rootRef}
     >
       <span
-        className="hp-folder__stage"
+        className="folder__stage"
         style={
           {
             aspectRatio: metrics.aspectRatio,
-            '--hp-folder-contents-top': metrics.contentsTop,
+            '--folder-contents-top': metrics.contentsTop,
           } as CSSProperties
         }
       >
         {/* The front's edge, twice over: once as the clip that shapes the
             frosted layer, once as the gradient that fills the drawn face. Both
             come off the same path in src/lib/folder-shape.ts. */}
-        <svg className="hp-folder__defs" aria-hidden="true" focusable="false">
+        <svg className="folder__defs" aria-hidden="true" focusable="false">
           <defs>
             <clipPath id={clipId} clipPathUnits="objectBoundingBox">
               <path d={metrics.frontClip} />
             </clipPath>
             <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="var(--hp-folder-face-top)" />
-              <stop offset="1" stopColor="var(--hp-folder-face-bottom)" />
+              <stop offset="0" stopColor="var(--folder-face-top)" />
+              <stop offset="1" stopColor="var(--folder-face-bottom)" />
             </linearGradient>
           </defs>
         </svg>
 
-        <svg className="hp-folder__back" viewBox={metrics.viewBox} aria-hidden="true">
+        <svg className="folder__back" viewBox={metrics.viewBox} aria-hidden="true">
           <path d={metrics.back} />
         </svg>
 
-        <span className="hp-folder__stack" ref={stackRef} inert={inFolder}>
+        <span className="folder__stack" ref={stackRef} inert={inFolder}>
           {folderItems.map((item) => (
             <button
-              className={`hp-folder__item${focused === item.id ? ' is-focused' : ''}`}
+              className={`folder__item${focused === item.id ? ' is-focused' : ''}`}
               key={item.id}
               type="button"
               aria-pressed={focused === item.id}
               onClick={() => setFocused((current) => (current === item.id ? null : item.id))}
             >
               <Card item={item} />
-              <span className="hp-sr-only">
+              <span className="sr-only">
                 {item.label}
                 {item.note ? `, ${item.note}` : ''}
               </span>
@@ -392,24 +392,24 @@ export function HeroFolder({ caption }: { caption: string }) {
 
             The stickers ride here rather than on the stage, so they tip with
             the front — which is most of the reason to put them on it. */}
-        <span className="hp-folder__flap" aria-hidden="true">
-          <span className="hp-folder__frost" style={{ clipPath: `url(#${clipId})` }} />
+        <span className="folder__flap" aria-hidden="true">
+          <span className="folder__frost" style={{ clipPath: `url(#${clipId})` }} />
 
-          <svg className="hp-folder__face" viewBox={metrics.viewBox}>
+          <svg className="folder__face" viewBox={metrics.viewBox}>
             <path d={metrics.front} fill={`url(#${fillId})`} />
           </svg>
 
-          <span className="hp-folder__sticker hp-folder__sticker--stamp">
+          <span className="folder__sticker folder__sticker--stamp">
             <StampSticker />
           </span>
-          <span className="hp-folder__sticker hp-folder__sticker--torii">
+          <span className="folder__sticker folder__sticker--torii">
             <ToriiSticker />
           </span>
         </span>
 
-        <span className="hp-folder__targets" ref={targetsRef} aria-hidden="true">
+        <span className="folder__targets" ref={targetsRef} aria-hidden="true">
           {folderItems.map((item) => (
-            <span className="hp-folder__target" key={item.id} />
+            <span className="folder__target" key={item.id} />
           ))}
         </span>
 
@@ -417,7 +417,7 @@ export function HeroFolder({ caption }: { caption: string }) {
             nothing is being looked at, so putting a card down never costs you
             the whole scatter. */}
         <button
-          className="hp-folder__veil"
+          className="folder__veil"
           type="button"
           inert={inFolder}
           aria-label={focused ? 'Put this back' : `Close ${caption}`}
@@ -428,7 +428,7 @@ export function HeroFolder({ caption }: { caption: string }) {
             rather than a label per card: a label riding a card that scales up
             twice over either scales with it or has to be unscaled by hand, and
             neither ends up legible. */}
-        <p className="hp-folder__caption" aria-live="polite">
+        <p className="folder__caption" aria-live="polite">
           {folderItems.map((item) => (
             <span key={item.id} hidden={focused !== item.id}>
               <strong>{item.label}</strong>
@@ -437,24 +437,24 @@ export function HeroFolder({ caption }: { caption: string }) {
           ))}
         </p>
 
-        <button className="hp-folder__close" type="button" ref={closeRef} inert={inFolder} onClick={closeScatter}>
+        <button className="folder__close" type="button" ref={closeRef} inert={inFolder} onClick={closeScatter}>
           <svg viewBox="0 0 16 16" aria-hidden="true">
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
-          <span className="hp-sr-only">Close {caption}</span>
+          <span className="sr-only">Close {caption}</span>
         </button>
 
         {/* The folder as one hit target while it is shut, over the whole object
             so the flap and the tab open it too. */}
         <button
-          className="hp-folder__open"
+          className="folder__open"
           type="button"
           ref={openRef}
           inert={stage === 'open'}
           aria-expanded={active}
           onClick={() => setStage('open')}
         >
-          <span className="hp-sr-only">Open {caption}</span>
+          <span className="sr-only">Open {caption}</span>
         </button>
       </span>
     </div>

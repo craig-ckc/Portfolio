@@ -79,17 +79,17 @@ export function NavBar({
   }
 
   return (
-    <nav className="hp-nav" aria-label="Primary" ref={navRef}>
+    <nav className="nav" aria-label="Primary" ref={navRef}>
       <a href={homeHref} aria-label="Craig Chihururu — home">
-        <span className="hp-nav__logo" />
+        <span className="nav__logo" />
       </a>
 
-      <div className="hp-nav__actions">
-        <a className="hp-chip hp-nav__pill" href={contact.href}>
+      <div className="nav__actions">
+        <a className="chip nav__pill" href={contact.href}>
           Contact
         </a>
         <button
-          className="hp-chip hp-nav__icon"
+          className="chip nav__icon"
           type="button"
           aria-pressed={theme === 'dark'}
           aria-label={theme === 'dark' ? 'Switch to light appearance' : 'Switch to dark appearance'}

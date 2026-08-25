@@ -220,7 +220,7 @@ export function DitheredVideoBackground({
         ref={videoRef}
         aria-hidden="true"
         autoPlay
-        className="hp-footer__video-source"
+        className="footer__video-source"
         loop
         muted
         playsInline

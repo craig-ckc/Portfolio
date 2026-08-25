@@ -10,7 +10,7 @@
   position: relative;
   min-width: 320px;
   /* Shared by the footer and the slot that reserves its scroll distance. */
-  --hp-footer-h: 520px;
+  --footer-h: 520px;
 
   /* How long the folder's veil takes to come up over the page, and how long it
      takes to go. Up here rather than with the folder's own knobs because the
@@ -34,8 +34,8 @@
      cover a card resting on the folder would be cut in half in one frame.
      320ms covers the first half of the return and lets go of it gradually;
      longer, and it is still there once the folder has already shut. */
-  --hp-veil-fade: var(--duration-fast);
-  --hp-veil-clear: var(--duration-base);
+  --veil-fade: var(--duration-fast);
+  --veil-clear: var(--duration-base);
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
@@ -71,7 +71,7 @@
   letter-spacing: inherit;
 }
 
-.hp-sr-only {
+.sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -82,7 +82,7 @@
 }
 
 /* Shared: the page gutter every section sits inside. */
-.hp-container {
+.container {
   width: 100%;
   max-width: calc(var(--container-page) + var(--spacing-page-gutter) * 2);
   margin-inline: auto;
@@ -90,7 +90,7 @@
 }
 
 /* Shared: the dark pill / chip surface used by the nav and hero buttons. */
-.hp-chip {
+.chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -111,14 +111,14 @@
     filter var(--duration-fast) var(--ease-standard);
 }
 
-.hp-chip:hover {
+.chip:hover {
   filter: brightness(1.25);
   box-shadow:
     inset 0 1px 1px rgb(255 255 255 / 6%),
     0 4px 12px rgb(142 143 143 / 26%);
 }
 
-.hp-chip:active {
+.chip:active {
   transform: translateY(1px);
 }
 
@@ -131,7 +131,7 @@
    Navbar — overlays the hero, which reserves --spacing-hero-top for it.
    -------------------------------------------------------------------------- */
 
-.hp-nav {
+.nav {
   position: absolute;
   inset: 0 0 auto;
   z-index: 50;
@@ -140,23 +140,23 @@
   justify-content: space-between;
   padding: var(--spacing-md);
   /* Going, which is the slower of the veil's two timings. */
-  transition: opacity var(--hp-veil-clear) var(--ease-standard);
+  transition: opacity var(--veil-clear) var(--ease-standard);
 }
 
 /* Out of the way while the folder's contents are out. It cannot be put under
-   the veil — see the note on .hp-folder.is-open — so it goes on the veil's own
+   the veil — see the note on .folder.is-open — so it goes on the veil's own
    timings instead, out as the blur arrives and back as it lifts.
 
    Keyed off the folder's own class and not the page's data-scatter attribute,
    even though that is the obvious hook and is already there. The attribute
    stays on for the whole return, so the navbar would have come back only once
    the cards were home — which is the fault this is fixing, a beat later. */
-.hp:has(.hp-folder.is-open) .hp-nav {
+.hp:has(.folder.is-open) .nav {
   opacity: 0;
-  transition-duration: var(--hp-veil-fade);
+  transition-duration: var(--veil-fade);
 }
 
-.hp-nav__logo {
+.nav__logo {
   display: block;
   width: 78.57px;
   height: 20px;
@@ -165,7 +165,7 @@
   -webkit-mask: url('/figma/logo.svg') center / contain no-repeat;
 }
 
-.hp-nav__actions {
+.nav__actions {
   display: flex;
   gap: var(--spacing-3xs);
 }
@@ -178,19 +178,19 @@
    buttons sitting side by side, and the square has to be told its width from
    somewhere: aspect-ratio does not get it, since a flex item takes its main
    size from its content before any ratio is applied. */
-.hp-nav__pill,
-.hp-nav__icon {
+.nav__pill,
+.nav__icon {
   height: 26px;
 }
 
-.hp-nav__pill {
+.nav__pill {
   padding: var(--spacing-3xs) var(--spacing-xs);
   font-size: var(--text-body);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-snug);
 }
 
-.hp-nav__icon {
+.nav__icon {
   width: 26px;
   padding: 0;
 }
@@ -199,7 +199,7 @@
    12 unit grid, so at 12px their 1px strokes land on whole pixels — at 16 they
    fell between them and the dots around the sun read as smudges. What is left
    of the button is the padding. */
-.hp-nav__icon svg {
+.nav__icon svg {
   width: 12px;
   height: 12px;
 }
@@ -213,13 +213,13 @@
 
    border-box and not the default view-box, so the centre stays the centre if the
    drawing and the box it is drawn at ever stop being the same 12 units. */
-.hp-nav__icon-glyph {
+.nav__icon-glyph {
   transform-box: border-box;
   transform-origin: center;
   transition: transform var(--duration-slow) var(--ease-out-quart);
 }
 
-.hp-nav__icon:hover .hp-nav__icon-glyph {
+.nav__icon:hover .nav__icon-glyph {
   transform: rotate(60deg);
 }
 
@@ -227,7 +227,7 @@
    glyph twists away and shrinks, the incoming one arrives from the other side.
    Both are drawn and only their opacity and transform change, so there is no
    swap of one element for another to go wrong half way through. */
-.hp-nav__glyph {
+.nav__glyph {
   transform-box: view-box;
   transform-origin: center;
   transition:
@@ -235,17 +235,17 @@
     transform var(--duration-base) var(--ease-out-cubic);
 }
 
-.hp-nav__glyph--moon {
+.nav__glyph--moon {
   opacity: 0;
   transform: rotate(-80deg) scale(0.5);
 }
 
-.hp[data-theme='dark'] .hp-nav__glyph--sun {
+.hp[data-theme='dark'] .nav__glyph--sun {
   opacity: 0;
   transform: rotate(80deg) scale(0.5);
 }
 
-.hp[data-theme='dark'] .hp-nav__glyph--moon {
+.hp[data-theme='dark'] .nav__glyph--moon {
   opacity: 1;
   transform: none;
 }
@@ -254,7 +254,7 @@
    Hero
    -------------------------------------------------------------------------- */
 
-.hp-hero {
+.hero {
   position: relative;
   display: flex;
   min-height: 100svh;
@@ -263,7 +263,7 @@
   padding-bottom: var(--spacing-3xl);
 }
 
-.hp-hero__body {
+.hero__body {
   display: flex;
   flex: 1;
   align-items: center;
@@ -271,7 +271,7 @@
   gap: clamp(var(--spacing-2xl), 5vw, var(--spacing-5xl));
 }
 
-.hp-hero__copy {
+.hero__copy {
   display: flex;
   min-width: 0;
   max-width: var(--container-hero);
@@ -284,7 +284,7 @@
   gap: var(--spacing-xl);
 }
 
-.hp-hero__title {
+.hero__title {
   font-family: var(--font-display);
   /* 4.8vw lands on the frame's 92px at 1920 and scales down from there. */
   font-size: clamp(2.5rem, 4.8vw, 5.75rem);
@@ -296,17 +296,17 @@
   color: var(--neutral-700);
 }
 
-.hp-hero__title span {
+.hero__title span {
   color: var(--foreground);
 }
 
-.hp-hero__lower {
+.hero__lower {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
 }
 
-.hp-hero__standfirst {
+.hero__standfirst {
   max-width: var(--container-caption);
   margin: 0;
   color: var(--neutral-700);
@@ -314,13 +314,13 @@
   line-height: var(--leading-normal);
 }
 
-.hp-hero__actions {
+.hero__actions {
   display: flex;
   align-items: center;
   padding-top: var(--spacing-lg);
 }
 
-.hp-hero__cta {
+.hero__cta {
   padding: var(--spacing-xs) var(--spacing-lg);
   border-radius: var(--radius-sm);
   background-image: linear-gradient(in oklab 180deg, oklab(31.1% 0 0) 0%, oklab(22.5% 0 0) 100%);
@@ -333,7 +333,7 @@
   line-height: var(--leading-normal);
 }
 
-.hp-hero__object {
+.hero__object {
   display: flex;
   width: min(var(--container-object), 38%);
   flex: 0 0 auto;
@@ -344,7 +344,7 @@
   gap: var(--spacing-2xs);
 }
 
-.hp-hero__caption {
+.hero__caption {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
@@ -354,7 +354,7 @@
   line-height: var(--leading-normal);
 }
 
-.hp-hero__caption svg {
+.hero__caption svg {
   width: 13px;
   height: 13px;
   flex-shrink: 0;
@@ -362,19 +362,19 @@
 }
 
 @media (max-width: 1199.98px) {
-  .hp-hero__body {
+  .hero__body {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-4xl);
   }
 
-  .hp-hero__copy,
-  .hp-hero__object {
+  .hero__copy,
+  .hero__object {
     width: 100%;
     max-width: none;
   }
 
-  .hp-hero__object {
+  .hero__object {
     align-items: flex-start;
   }
 }
@@ -399,7 +399,7 @@
    a pale panel clipped across it rather than as one continuous face.
 
    The only thing that file hands to this stylesheet is where the contents sit,
-   as --hp-folder-contents-top on the stage. Everything else about the two
+   as --folder-contents-top on the stage. Everything else about the two
    shapes is in the paths themselves. So every radius is tuned in that one file
    and both layers follow, and the knobs below are the ones neither path has an
    opinion about: how far the front tips, how the contents fan, and where they
@@ -428,19 +428,19 @@
 
    Opening, the step is covered by the move — the cards are leaving as they come
    whole. Closing, it is covered by the veil, which is still up when they drop
-   and takes --hp-veil-clear to go: long enough that a card resting over
+   and takes --veil-clear to go: long enough that a card resting over
    the folder can pass behind the flap out of sight. That is what the fade-out is
    for as much as the blur, and it is why the arrangement below is free to put a
    card on the folder at all.
    -------------------------------------------------------------------------- */
 
-.hp-folder {
+.folder {
   /* How far the flap tips toward the viewer. Its hinge is its own bottom edge,
      so this is also how much more of the contents comes into view. */
-  --hp-folder-tilt: 32deg;
+  --folder-tilt: 32deg;
   /* Long focal length on purpose: at 600px the flap's top edge balloons as it
      comes forward and the panel reads as a ramp rather than a lid. */
-  --hp-folder-perspective: 1200px;
+  --folder-perspective: 1200px;
 
   /* How much of its column the object takes. The stage, the silhouette, the
      cards and the fan are all proportional, so this one number scales the whole
@@ -451,49 +451,49 @@
      would otherwise take so much of the screen that there is nowhere left above
      it for its own contents to land. 47svh of width is about a third of the
      height. */
-  --hp-folder-size: min(75%, 47svh);
+  --folder-size: min(75%, 47svh);
 
   /* Width of one card, as a share of the stage. */
-  --hp-folder-card: 40%;
+  --folder-card: 40%;
 
   /* Two shadows, built from the ones already on this page — the chip's close
      2/6 and the old folder front's 18/34. Rest sits the object on the paper;
      raised is the flap being handled. drop-shadow takes one blur per call, so
      the silhouette gets its own spelling of the same thing. */
-  --hp-folder-shadow-rest:
+  --folder-shadow-rest:
     0 1px 2px rgb(21 21 21 / 6%),
     0 8px 20px rgb(21 21 21 / 8%);
-  --hp-folder-shadow-raised:
+  --folder-shadow-raised:
     0 2px 6px rgb(142 143 143 / 18%),
     0 18px 34px rgb(21 21 21 / 12%);
-  --hp-folder-drop:
+  --folder-drop:
     drop-shadow(0 1px 2px rgb(21 21 21 / 6%))
     drop-shadow(0 8px 20px rgb(21 21 21 / 8%));
 
   /* The front's cast shadow. On a filter rather than a box-shadow, because a
      box-shadow follows the element's box and the front is not a box — this one
      follows the drawn edge, notch and all. */
-  --hp-folder-face-drop:
+  --folder-face-drop:
     drop-shadow(0 -1px 1px rgb(21 21 21 / 5%))
     drop-shadow(0 6px 16px rgb(21 21 21 / 10%));
-  --hp-folder-face-drop-raised:
+  --folder-face-drop-raised:
     drop-shadow(0 -1px 1px rgb(21 21 21 / 5%))
     drop-shadow(0 2px 6px rgb(142 143 143 / 18%))
     drop-shadow(0 16px 30px rgb(21 21 21 / 14%));
 
-  --hp-folder-paper: #ebe9e4;
-  --hp-folder-paper-edge: rgb(255 255 255 / 82%);
+  --folder-paper: #ebe9e4;
+  --folder-paper-edge: rgb(255 255 255 / 82%);
   /* Two stops rather than a gradient string: the fill is an SVG gradient now,
      and its stops read these directly. */
-  --hp-folder-face-top: rgb(255 255 255 / 80%);
-  --hp-folder-face-bottom: rgb(246 246 245 / 68%);
-  --hp-folder-flap-edge: rgb(255 255 255 / 76%);
-  --hp-folder-veil: rgb(249 249 249 / 82%);
-  --hp-folder-chrome: rgb(255 255 255 / 82%);
-  --hp-folder-chrome-edge: rgb(21 21 21 / 10%);
+  --folder-face-top: rgb(255 255 255 / 80%);
+  --folder-face-bottom: rgb(246 246 245 / 68%);
+  --folder-flap-edge: rgb(255 255 255 / 76%);
+  --folder-veil: rgb(249 249 249 / 82%);
+  --folder-chrome: rgb(255 255 255 / 82%);
+  --folder-chrome-edge: rgb(21 21 21 / 10%);
 
   display: block;
-  width: var(--hp-folder-size);
+  width: var(--folder-size);
   max-width: var(--container-object);
 }
 
@@ -507,9 +507,9 @@
    the fixed footer — so lifting it does not blur the navbar, it deletes it, for
    as long as the class is on. Which showed: the veil would clear, the page
    would come back into focus, and the navbar would still be missing for the
-   rest of the return. It answers the veil directly instead, up in .hp-nav. */
-.hp-folder.is-open,
-.hp-folder.is-closing {
+   rest of the return. It answers the veil directly instead, up in .nav. */
+.folder.is-open,
+.folder.is-closing {
   position: relative;
   z-index: 10;
 }
@@ -520,32 +520,32 @@
    `position: fixed` resolve against this box instead of the viewport, and the
    whole overlay would be trapped inside the folder. Same reason the flap
    carries its own `perspective()` rather than taking one from here. */
-.hp-folder__stage {
+.folder__stage {
   position: relative;
   display: block;
   width: 100%;
   isolation: isolate;
-  /* aspect-ratio and the three --hp-folder-* metrics are set inline from
+  /* aspect-ratio and the three --folder-* metrics are set inline from
      folderMetrics(), so the shape file stays the single source. */
 }
 
 /* The silhouette. One generated path, and the only shadow that touches the
    page — which is why it is a drop-shadow on the path and not a box-shadow on
    a rectangle: the tab has to cast a shadow too. */
-.hp-folder__back {
+.folder__back {
   position: absolute;
   inset: 0;
   z-index: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
-  filter: var(--hp-folder-drop);
+  filter: var(--folder-drop);
   /* No transform, no transition. This layer is nailed down. */
 }
 
-.hp-folder__back path {
-  fill: var(--hp-folder-paper);
-  stroke: var(--hp-folder-paper-edge);
+.folder__back path {
+  fill: var(--folder-paper);
+  stroke: var(--folder-paper-edge);
   stroke-width: 1;
 }
 
@@ -554,7 +554,7 @@
 /* No z-index of its own, deliberately: the cards have to be able to move
    between layers 1 and 4, and a positioned parent with a z-index would trap
    them in one of its own. */
-.hp-folder__stack {
+.folder__stack {
   position: absolute;
   inset: 0;
 }
@@ -571,12 +571,12 @@
    Positioned by `left` alone rather than centred with a translate, so that the
    transform below is nothing but the move — which is what lets hero-folder.tsx
    aim it with a plain difference of centres. */
-.hp-folder__item {
+.folder__item {
   position: absolute;
-  top: var(--hp-folder-contents-top);
-  left: calc(50% - var(--hp-folder-card) / 2);
+  top: var(--folder-contents-top);
+  left: calc(50% - var(--folder-card) / 2);
   z-index: 1;
-  width: var(--hp-folder-card);
+  width: var(--folder-card);
   padding: 0;
   /* The container the card's cqw type sizes read from. It has to be the card's
      parent, not the card: an element queries its nearest ANCESTOR container,
@@ -593,12 +593,12 @@
 }
 
 /* Resting fan: barely splayed, tucked to the right of the tab. */
-.hp-folder__item:nth-child(1) { --i: 2; --x: -36%; --y: 2%; --r: -7deg; }
-.hp-folder__item:nth-child(2) { --i: 1; --x: -21%; --y: 0%; --r: -4deg; }
-.hp-folder__item:nth-child(3) { --i: 0; --x: -7%; --y: -1%; --r: -1.5deg; }
-.hp-folder__item:nth-child(4) { --i: 0; --x: 7%; --y: -1%; --r: 1.5deg; }
-.hp-folder__item:nth-child(5) { --i: 1; --x: 21%; --y: 0%; --r: 4deg; }
-.hp-folder__item:nth-child(6) { --i: 2; --x: 36%; --y: 2%; --r: 7deg; }
+.folder__item:nth-child(1) { --i: 2; --x: -36%; --y: 2%; --r: -7deg; }
+.folder__item:nth-child(2) { --i: 1; --x: -21%; --y: 0%; --r: -4deg; }
+.folder__item:nth-child(3) { --i: 0; --x: -7%; --y: -1%; --r: -1.5deg; }
+.folder__item:nth-child(4) { --i: 0; --x: 7%; --y: -1%; --r: 1.5deg; }
+.folder__item:nth-child(5) { --i: 1; --x: 21%; --y: 0%; --r: 4deg; }
+.folder__item:nth-child(6) { --i: 2; --x: 36%; --y: 2%; --r: 7deg; }
 
 /* Hover: wider fan, small rise. The stagger runs outward from the middle, and
    only in this direction — coming back, everything eases home together, since a
@@ -607,24 +607,24 @@
 /* Keyboard focus and not :focus-within, which would also match the focus a
    mouse click leaves behind — and then the folder would sit there open after
    being closed with the pointer. */
-.hp-folder:hover .hp-folder__item,
-.hp-folder:has(:focus-visible) .hp-folder__item {
+.folder:hover .folder__item,
+.folder:has(:focus-visible) .folder__item {
   transition: transform var(--duration-slow) var(--ease-spring-out);
   transition-delay: calc(var(--i, 0) * 40ms);
 }
 
-.hp-folder:hover .hp-folder__item:nth-child(1),
-.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(1) { --x: -64%; --y: -18%; --r: -14deg; }
-.hp-folder:hover .hp-folder__item:nth-child(2),
-.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(2) { --x: -38%; --y: -21%; --r: -8.5deg; }
-.hp-folder:hover .hp-folder__item:nth-child(3),
-.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(3) { --x: -13%; --y: -23%; --r: -3deg; }
-.hp-folder:hover .hp-folder__item:nth-child(4),
-.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(4) { --x: 13%; --y: -23%; --r: 3deg; }
-.hp-folder:hover .hp-folder__item:nth-child(5),
-.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(5) { --x: 38%; --y: -21%; --r: 8.5deg; }
-.hp-folder:hover .hp-folder__item:nth-child(6),
-.hp-folder:has(:focus-visible) .hp-folder__item:nth-child(6) { --x: 64%; --y: -18%; --r: 14deg; }
+.folder:hover .folder__item:nth-child(1),
+.folder:has(:focus-visible) .folder__item:nth-child(1) { --x: -64%; --y: -18%; --r: -14deg; }
+.folder:hover .folder__item:nth-child(2),
+.folder:has(:focus-visible) .folder__item:nth-child(2) { --x: -38%; --y: -21%; --r: -8.5deg; }
+.folder:hover .folder__item:nth-child(3),
+.folder:has(:focus-visible) .folder__item:nth-child(3) { --x: -13%; --y: -23%; --r: -3deg; }
+.folder:hover .folder__item:nth-child(4),
+.folder:has(:focus-visible) .folder__item:nth-child(4) { --x: 13%; --y: -23%; --r: 3deg; }
+.folder:hover .folder__item:nth-child(5),
+.folder:has(:focus-visible) .folder__item:nth-child(5) { --x: 38%; --y: -21%; --r: 8.5deg; }
+.folder:hover .folder__item:nth-child(6),
+.folder:has(:focus-visible) .folder__item:nth-child(6) { --x: 64%; --y: -18%; --r: 14deg; }
 
 /* --- The flap ----------------------------------------------------------- */
 
@@ -639,21 +639,21 @@
 
    Decorative to the last pixel, so it takes no pointer events — the shut
    folder's hit target sits above it, and once open the contents do. */
-.hp-folder__flap {
+.folder__flap {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  transform: perspective(var(--hp-folder-perspective)) rotateX(0deg);
+  transform: perspective(var(--folder-perspective)) rotateX(0deg);
   transform-origin: center bottom;
   will-change: transform;
   transition: transform var(--duration-base) var(--ease-out-cubic);
 }
 
-.hp-folder:hover .hp-folder__flap,
-.hp-folder:has(:focus-visible) .hp-folder__flap,
-.hp-folder.is-open .hp-folder__flap {
-  transform: perspective(var(--hp-folder-perspective)) rotateX(calc(var(--hp-folder-tilt) * -1));
+.folder:hover .folder__flap,
+.folder:has(:focus-visible) .folder__flap,
+.folder.is-open .folder__flap {
+  transform: perspective(var(--folder-perspective)) rotateX(calc(var(--folder-tilt) * -1));
   transition: transform var(--duration-slow) var(--ease-spring-out);
 }
 
@@ -666,7 +666,7 @@
    Blur chosen so what is behind reads as tone rather than as objects: at 16px
    the cards were still recognisable through it and the panel looked smudged
    rather than frosted. */
-.hp-folder__frost {
+.folder__frost {
   position: absolute;
   inset: 0;
   backdrop-filter: blur(26px) saturate(140%);
@@ -675,29 +675,29 @@
 
 /* The drawn front: the gradient over the frost, the hairline on the edge, and
    the cast shadow. */
-.hp-folder__face {
+.folder__face {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
-  filter: var(--hp-folder-face-drop);
+  filter: var(--folder-face-drop);
   transition: filter var(--duration-base) var(--ease-standard);
 }
 
-.hp-folder__face path {
-  stroke: var(--hp-folder-flap-edge);
+.folder__face path {
+  stroke: var(--folder-flap-edge);
   stroke-width: 1;
 }
 
-.hp-folder:hover .hp-folder__face,
-.hp-folder:has(:focus-visible) .hp-folder__face,
-.hp-folder.is-open .hp-folder__face {
-  filter: var(--hp-folder-face-drop-raised);
+.folder:hover .folder__face,
+.folder:has(:focus-visible) .folder__face,
+.folder.is-open .folder__face {
+  filter: var(--folder-face-drop-raised);
 }
 
 /* Definitions only. Never drawn, and kept out of the layout. */
-.hp-folder__defs {
+.folder__defs {
   position: absolute;
   width: 0;
   height: 0;
@@ -706,14 +706,14 @@
 
 /* Stickers. Children of the flap, so they tip with it — which is most of the
    reason to put them there rather than on the stage. */
-.hp-folder__sticker {
+.folder__sticker {
   position: absolute;
   filter: drop-shadow(0 4px 8px rgb(21 21 21 / 18%));
   transform: rotate(var(--r));
   transition: transform var(--duration-base) var(--ease-out-cubic);
 }
 
-.hp-folder__sticker svg {
+.folder__sticker svg {
   display: block;
   width: 100%;
   height: auto;
@@ -722,14 +722,14 @@
 /* Placed on the stage, not on the drawn front, since the layer they sit in
    spans the whole object while the shape inside it starts a quarter of the way
    down. So these are stage percentages that happen to land on the front. */
-.hp-folder__sticker--stamp {
+.folder__sticker--stamp {
   --r: -7deg;
   top: 41%;
   left: 12%;
   width: 22%;
 }
 
-.hp-folder__sticker--torii {
+.folder__sticker--torii {
   --r: 6deg;
   top: 53%;
   left: 62%;
@@ -738,17 +738,17 @@
 
 /* A touch of their own on top of the flap's move, so they read as stuck on
    rather than printed. */
-.hp-folder:hover .hp-folder__sticker--stamp,
-.hp-folder.is-open .hp-folder__sticker--stamp { transform: rotate(-11deg) scale(1.04); }
-.hp-folder:hover .hp-folder__sticker--torii,
-.hp-folder.is-open .hp-folder__sticker--torii { transform: rotate(10deg) scale(1.04); }
+.folder:hover .folder__sticker--stamp,
+.folder.is-open .folder__sticker--stamp { transform: rotate(-11deg) scale(1.04); }
+.folder:hover .folder__sticker--torii,
+.folder.is-open .folder__sticker--torii { transform: rotate(10deg) scale(1.04); }
 
 /* --- The hit target while it is shut ------------------------------------ */
 
 /* Over the whole object, above the flap, so a click anywhere on the folder —
    the flap, the tab, a card — opens it. Made inert once it is open, which takes
    it out of both the tab order and the pointer's way in one word. */
-.hp-folder__open {
+.folder__open {
   position: absolute;
   inset: 0;
   z-index: 6;
@@ -757,12 +757,12 @@
   cursor: pointer;
 }
 
-.hp-folder__open:focus-visible {
+.folder__open:focus-visible {
   outline-offset: 6px;
 }
 
 /* Clear of the card's own shadow, so the ring reads as a ring. */
-.hp-folder__item:focus-visible {
+.folder__item:focus-visible {
   outline-offset: 6px;
 }
 
@@ -779,7 +779,7 @@
    these same cards about their bottom edge.
    -------------------------------------------------------------------------- */
 
-.hp-folder.is-open .hp-folder__item {
+.folder.is-open .folder__item {
   z-index: 4;
   cursor: zoom-in;
   transform:
@@ -811,7 +811,7 @@
    Not an ease-out. An ease-out spends nearly all of its travel in the first
    third, and the last of the journey — the part that reads as being put away
    — was over before it could be seen. */
-.hp-folder.is-closing .hp-folder__item {
+.folder.is-closing .folder__item {
   transition: transform var(--duration-slow) var(--ease-standard);
 }
 
@@ -819,27 +819,27 @@
    flap has to keep time with the contents coming back. Left at the hover's own
    duration the lid is down long before they arrive, and the folder reads as
    snapping shut on nothing. */
-.hp-folder.is-closing .hp-folder__flap {
+.folder.is-closing .folder__flap {
   transition: transform var(--duration-slow) var(--ease-standard);
 }
 
 /* One card at a time, in the middle, at the size the work deserves. The offset
    to the centre of the screen is arithmetic on the target's own coordinates,
    which is the reason those are written in vw and svh rather than percentages. */
-.hp-folder.is-open .hp-folder__item.is-focused {
+.folder.is-open .folder__item.is-focused {
   z-index: 5;
   cursor: zoom-out;
   transform:
     translate(var(--out-x, 0px), var(--out-y, 0px))
     translate(calc(50vw - var(--slot-x)), calc(50svh - var(--slot-y)))
     translateY(-50%)
-    scale(calc(var(--out-scale, 1) * var(--slot-focus, 2) * var(--hp-folder-zoom, 1)))
+    scale(calc(var(--out-scale, 1) * var(--slot-focus, 2) * var(--folder-zoom, 1)))
     rotate(0deg)
     translateY(50%);
 }
 
 /* The others stay legible but stop competing. */
-.hp-folder.is-open:has(.is-focused) .hp-folder__item:not(.is-focused) {
+.folder.is-open:has(.is-focused) .folder__item:not(.is-focused) {
   opacity: 0.28;
 }
 
@@ -848,7 +848,7 @@
 /* Never painted and never touched by the pointer. They are here to be measured:
    the arrangement, its sizes and its breakpoints stay in this stylesheet, and
    the cards are sent to wherever these end up. */
-.hp-folder__targets {
+.folder__targets {
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -856,7 +856,7 @@
   pointer-events: none;
 }
 
-.hp-folder__target {
+.folder__target {
   position: absolute;
   left: var(--slot-x);
   top: var(--slot-y);
@@ -882,25 +882,25 @@
 
    --slot-focus is the extra scale a card takes when it is the one being looked
    at, picked so that every card arrives at about the same 28vw however small it
-   sits here. --hp-folder-zoom scales all of them at once, for viewports with
+   sits here. --folder-zoom scales all of them at once, for viewports with
    less room to grow into.
 
    Each entry is read by two rules: the target box takes the position and width,
    the card itself takes the rotation and the zoom. */
-.hp-folder__target:nth-child(1),
-.hp-folder__item:nth-child(1) { --slot-x: 12vw; --slot-y: 42svh; --slot-w: 15vw; --slot-r: -7deg; --slot-focus: 1.87; }
-.hp-folder__target:nth-child(2),
-.hp-folder__item:nth-child(2) { --slot-x: 30vw; --slot-y: 17svh; --slot-w: 13vw; --slot-r: 5deg; --slot-focus: 2.15; }
-.hp-folder__target:nth-child(3),
-.hp-folder__item:nth-child(3) { --slot-x: 60vw; --slot-y: 22svh; --slot-w: 20vw; --slot-r: -3deg; --slot-focus: 1.4; }
-.hp-folder__target:nth-child(4),
-.hp-folder__item:nth-child(4) { --slot-x: 20vw; --slot-y: 76svh; --slot-w: 14vw; --slot-r: 8deg; --slot-focus: 2; }
-.hp-folder__target:nth-child(5),
-.hp-folder__item:nth-child(5) { --slot-x: 45vw; --slot-y: 64svh; --slot-w: 14vw; --slot-r: -5deg; --slot-focus: 2; }
+.folder__target:nth-child(1),
+.folder__item:nth-child(1) { --slot-x: 12vw; --slot-y: 42svh; --slot-w: 15vw; --slot-r: -7deg; --slot-focus: 1.87; }
+.folder__target:nth-child(2),
+.folder__item:nth-child(2) { --slot-x: 30vw; --slot-y: 17svh; --slot-w: 13vw; --slot-r: 5deg; --slot-focus: 2.15; }
+.folder__target:nth-child(3),
+.folder__item:nth-child(3) { --slot-x: 60vw; --slot-y: 22svh; --slot-w: 20vw; --slot-r: -3deg; --slot-focus: 1.4; }
+.folder__target:nth-child(4),
+.folder__item:nth-child(4) { --slot-x: 20vw; --slot-y: 76svh; --slot-w: 14vw; --slot-r: 8deg; --slot-focus: 2; }
+.folder__target:nth-child(5),
+.folder__item:nth-child(5) { --slot-x: 45vw; --slot-y: 64svh; --slot-w: 14vw; --slot-r: -5deg; --slot-focus: 2; }
 /* The one on the folder. Wider than it was, because it has the least distance
    to travel of the six and the growth is most of what reads as it moving. */
-.hp-folder__target:nth-child(6),
-.hp-folder__item:nth-child(6) { --slot-x: 79vw; --slot-y: 62svh; --slot-w: 18vw; --slot-r: 6deg; --slot-focus: 1.56; }
+.folder__target:nth-child(6),
+.folder__item:nth-child(6) { --slot-x: 79vw; --slot-y: 62svh; --slot-w: 18vw; --slot-r: 6deg; --slot-focus: 1.56; }
 
 /* --- The veil and the chrome -------------------------------------------- */
 
@@ -908,36 +908,36 @@
    nothing between here and the root has a transform. Above the flap and below
    the contents, so the folder goes soft with the page while the cards that came
    out of it stay sharp over the top. */
-.hp-folder__veil {
+.folder__veil {
   position: fixed;
   inset: 0;
   z-index: 3;
   width: 100%;
   height: 100%;
   padding: 0;
-  background: var(--hp-folder-veil);
+  background: var(--folder-veil);
   backdrop-filter: blur(28px) saturate(125%);
   cursor: zoom-out;
   opacity: 0;
   /* Going. The state being left is the one that declares nothing, so this is
      the timing that applies on the way out. */
-  transition: opacity var(--hp-veil-clear) var(--ease-standard);
+  transition: opacity var(--veil-clear) var(--ease-standard);
 }
 
 /* Coming: quicker, and no delay. Transitions take their timing from the state
    being entered, so the two directions differ just by saying so here. */
-.hp-folder.is-open .hp-folder__veil {
+.folder.is-open .folder__veil {
   opacity: 1;
-  transition-duration: var(--hp-veil-fade);
+  transition-duration: var(--veil-fade);
 }
 
-.hp-folder__close,
-.hp-folder__caption {
+.folder__close,
+.folder__caption {
   position: fixed;
   z-index: 5;
-  border: 1px solid var(--hp-folder-chrome-edge);
-  background: var(--hp-folder-chrome);
-  box-shadow: var(--hp-folder-shadow-rest);
+  border: 1px solid var(--folder-chrome-edge);
+  background: var(--folder-chrome);
+  box-shadow: var(--folder-shadow-rest);
   backdrop-filter: blur(12px) saturate(150%);
   opacity: 0;
   transition:
@@ -945,7 +945,7 @@
     transform var(--duration-base) var(--ease-out-cubic);
 }
 
-.hp-folder__close {
+.folder__close {
   top: var(--spacing-xl);
   right: var(--spacing-xl);
   display: grid;
@@ -959,7 +959,7 @@
   transform: scale(0.92);
 }
 
-.hp-folder__close svg {
+.folder__close svg {
   width: 15px;
   height: 15px;
   fill: none;
@@ -968,20 +968,20 @@
   stroke-width: 1.4;
 }
 
-.hp-folder__close:hover {
-  background: var(--hp-folder-chrome);
+.folder__close:hover {
+  background: var(--folder-chrome);
   filter: brightness(1.04);
 }
 
 /* One beat behind the veil, so the control lands on a page that has already
    gone soft rather than racing the contents out of the folder. */
-.hp-folder.is-open .hp-folder__close {
+.folder.is-open .folder__close {
   opacity: 1;
   transform: scale(1);
-  transition-delay: var(--hp-veil-fade);
+  transition-delay: var(--veil-fade);
 }
 
-.hp-folder__caption {
+.folder__caption {
   bottom: var(--spacing-2xl);
   left: 50%;
   display: flex;
@@ -997,18 +997,18 @@
   pointer-events: none;
 }
 
-.hp-folder__caption > span {
+.folder__caption > span {
   display: flex;
   min-width: 0;
   align-items: baseline;
   gap: var(--spacing-xs);
 }
 
-.hp-folder__caption > span[hidden] {
+.folder__caption > span[hidden] {
   display: none;
 }
 
-.hp-folder__caption strong {
+.folder__caption strong {
   overflow: hidden;
   color: var(--foreground);
   font-weight: var(--font-weight-semibold);
@@ -1017,12 +1017,12 @@
   white-space: nowrap;
 }
 
-.hp-folder__caption span span {
+.folder__caption span span {
   flex-shrink: 0;
   color: var(--neutral-700);
 }
 
-.hp-folder.is-open:has(.is-focused) .hp-folder__caption {
+.folder.is-open:has(.is-focused) .folder__caption {
   opacity: 1;
   transform: translate(-50%, 0);
 }
@@ -1039,26 +1039,26 @@
    and to the right now that the folder is on the left. Below 900 there is no
    room to scatter at all and it becomes two columns stacked above the folder. */
 @media (max-width: 1199.98px) {
-  .hp-folder {
+  .folder {
     /* Capped, so a full-width column does not blow the object up. Lands within
        a few pixels of its desktop size right across the range. Same height
        bound as above. */
-    --hp-folder-size: min(88%, 380px, 47svh);
+    --folder-size: min(88%, 380px, 47svh);
   }
 
-  .hp-folder__target:nth-child(1),
-  .hp-folder__item:nth-child(1) { --slot-x: 88vw; --slot-y: 42svh; --slot-r: 7deg; }
-  .hp-folder__target:nth-child(2),
-  .hp-folder__item:nth-child(2) { --slot-x: 70vw; --slot-y: 17svh; --slot-r: -5deg; }
-  .hp-folder__target:nth-child(3),
-  .hp-folder__item:nth-child(3) { --slot-x: 40vw; --slot-y: 22svh; --slot-r: 3deg; }
-  .hp-folder__target:nth-child(4),
-  .hp-folder__item:nth-child(4) { --slot-x: 80vw; --slot-y: 76svh; --slot-r: -8deg; }
-  .hp-folder__target:nth-child(5),
-  .hp-folder__item:nth-child(5) { --slot-x: 55vw; --slot-y: 64svh; --slot-r: 5deg; }
+  .folder__target:nth-child(1),
+  .folder__item:nth-child(1) { --slot-x: 88vw; --slot-y: 42svh; --slot-r: 7deg; }
+  .folder__target:nth-child(2),
+  .folder__item:nth-child(2) { --slot-x: 70vw; --slot-y: 17svh; --slot-r: -5deg; }
+  .folder__target:nth-child(3),
+  .folder__item:nth-child(3) { --slot-x: 40vw; --slot-y: 22svh; --slot-r: 3deg; }
+  .folder__target:nth-child(4),
+  .folder__item:nth-child(4) { --slot-x: 80vw; --slot-y: 76svh; --slot-r: -8deg; }
+  .folder__target:nth-child(5),
+  .folder__item:nth-child(5) { --slot-x: 55vw; --slot-y: 64svh; --slot-r: 5deg; }
   /* On the folder, which down here is in the bottom left. */
-  .hp-folder__target:nth-child(6),
-  .hp-folder__item:nth-child(6) { --slot-x: 21vw; --slot-y: 62svh; --slot-r: -6deg; }
+  .folder__target:nth-child(6),
+  .folder__item:nth-child(6) { --slot-x: 21vw; --slot-y: 62svh; --slot-r: -6deg; }
 }
 
 @media (max-width: 899.98px) {
@@ -1076,25 +1076,25 @@
      stands 32vw tall, which on a short wide window is most of the screen and
      runs off the top of it. The svh half of each min() is what that card's
      height can afford, worked back through its own ratio. */
-  .hp-folder__target:nth-child(1),
-  .hp-folder__item:nth-child(1) { --slot-x: 27vw; --slot-y: 16svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
-  .hp-folder__target:nth-child(2),
-  .hp-folder__item:nth-child(2) { --slot-x: 73vw; --slot-y: 16svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
-  .hp-folder__target:nth-child(3),
-  .hp-folder__item:nth-child(3) { --slot-x: 30vw; --slot-y: 42svh; --slot-w: min(32vw, 23svh); --slot-focus: 2.06; }
-  .hp-folder__target:nth-child(4),
-  .hp-folder__item:nth-child(4) { --slot-x: 74vw; --slot-y: 42svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
-  .hp-folder__target:nth-child(5),
-  .hp-folder__item:nth-child(5) { --slot-x: 27vw; --slot-y: 68svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
-  .hp-folder__target:nth-child(6),
-  .hp-folder__item:nth-child(6) { --slot-x: 73vw; --slot-y: 68svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .folder__target:nth-child(1),
+  .folder__item:nth-child(1) { --slot-x: 27vw; --slot-y: 16svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .folder__target:nth-child(2),
+  .folder__item:nth-child(2) { --slot-x: 73vw; --slot-y: 16svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .folder__target:nth-child(3),
+  .folder__item:nth-child(3) { --slot-x: 30vw; --slot-y: 42svh; --slot-w: min(32vw, 23svh); --slot-focus: 2.06; }
+  .folder__target:nth-child(4),
+  .folder__item:nth-child(4) { --slot-x: 74vw; --slot-y: 42svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .folder__target:nth-child(5),
+  .folder__item:nth-child(5) { --slot-x: 27vw; --slot-y: 68svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
+  .folder__target:nth-child(6),
+  .folder__item:nth-child(6) { --slot-x: 73vw; --slot-y: 68svh; --slot-w: min(24vw, 17svh); --slot-focus: 2.75; }
 
-  .hp-folder__close {
+  .folder__close {
     top: var(--spacing-md);
     right: var(--spacing-md);
   }
 
-  .hp-folder__caption {
+  .folder__caption {
     bottom: var(--spacing-md);
   }
 }
@@ -1102,8 +1102,8 @@
 /* A portrait card blown up twice over needs height that a laptop in a shallow
    window does not have. */
 @media (max-height: 760px) {
-  .hp-folder {
-    --hp-folder-zoom: 0.78;
+  .folder {
+    --folder-zoom: 0.78;
   }
 }
 
@@ -1115,7 +1115,7 @@
    container is the item, since an element cannot be its own.
    -------------------------------------------------------------------------- */
 
-.hp-card {
+.card {
   position: relative;
   display: block;
   overflow: hidden;
@@ -1127,24 +1127,24 @@
     0 3px 8px rgb(21 21 21 / 10%);
 }
 
-.hp-card[data-ratio='portrait'] { aspect-ratio: 3 / 4; }
-.hp-card[data-ratio='landscape'] { aspect-ratio: 4 / 3; }
-.hp-card[data-ratio='square'] { aspect-ratio: 1; }
+.card[data-ratio='portrait'] { aspect-ratio: 3 / 4; }
+.card[data-ratio='landscape'] { aspect-ratio: 4 / 3; }
+.card[data-ratio='square'] { aspect-ratio: 1; }
 
-.hp-folder__item.is-focused .hp-card {
+.folder__item.is-focused .card {
   box-shadow:
     0 0 0 1px rgb(21 21 21 / 8%),
     0 10px 30px rgb(21 21 21 / 18%);
 }
 
-.hp-face__photo {
+.face__photo {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.hp-face {
+.face {
   position: absolute;
   inset: 0;
   display: flex;
@@ -1158,13 +1158,13 @@
 }
 
 /* The line under a mark or a palette: what the thing is. */
-.hp-face__name {
+.face__name {
   color: #616161;
   font-size: 7cqw;
   font-weight: var(--font-weight-medium);
 }
 
-.hp-face--logo {
+.face--logo {
   align-items: flex-start;
   justify-content: space-between;
   background:
@@ -1172,7 +1172,7 @@
     linear-gradient(165deg, #f4f3f1, #e7e6e3);
 }
 
-.hp-face__mark {
+.face__mark {
   display: grid;
   width: 27cqw;
   height: 27cqw;
@@ -1185,32 +1185,32 @@
   letter-spacing: 0;
 }
 
-.hp-face--note {
+.face--note {
   justify-content: space-between;
   background: linear-gradient(170deg, #fffdf6, #f6f2e6);
 }
 
-.hp-face__body {
+.face__body {
   color: #2c2c2c;
   font-size: 9cqw;
   font-weight: var(--font-weight-medium);
   text-wrap: pretty;
 }
 
-.hp-face__rule {
+.face__rule {
   height: 1px;
   flex-shrink: 0;
   border-radius: var(--radius-full);
   background: rgb(21 21 21 / 14%);
 }
 
-.hp-face--swatch {
+.face--swatch {
   justify-content: space-between;
   padding: 6cqw;
   gap: 5cqw;
 }
 
-.hp-face__chips {
+.face__chips {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -1218,11 +1218,11 @@
   border-radius: 1.25cqw;
 }
 
-.hp-face__chips span {
+.face__chips span {
   flex: 1;
 }
 
-.hp-face--swatch .hp-face__name {
+.face--swatch .face__name {
   padding-left: 2cqw;
 }
 
@@ -1232,7 +1232,7 @@
 
 /* Sized by its padding, not by the viewport. It used to fill the screen because
    it was the only thing on the page; now the CTA sits underneath it. */
-.hp-placeholder {
+.placeholder {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1240,7 +1240,7 @@
   padding-bottom: var(--spacing-section-py);
 }
 
-.hp-placeholder__title {
+.placeholder__title {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 4.8vw, 5.75rem);
   font-weight: var(--font-weight-bold);
@@ -1249,7 +1249,7 @@
   line-height: var(--leading-tight);
 }
 
-.hp-placeholder__blurb {
+.placeholder__blurb {
   max-width: var(--container-caption);
   margin-top: var(--spacing-xl);
   color: var(--neutral-700);
@@ -1257,7 +1257,7 @@
   line-height: var(--leading-normal);
 }
 
-.hp-placeholder__back {
+.placeholder__back {
   margin-top: var(--spacing-2xl);
   padding-bottom: var(--spacing-4xs);
   border-bottom: 1px solid var(--neutral-600);
@@ -1267,7 +1267,7 @@
   transition: border-color var(--duration-base) var(--ease-standard);
 }
 
-.hp-placeholder__back:hover {
+.placeholder__back:hover {
   border-bottom-color: var(--foreground);
 }
 
@@ -1275,14 +1275,14 @@
    Statement — one paragraph at display size between the hero and the work list.
    -------------------------------------------------------------------------- */
 
-.hp-statement {
+.statement {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-block: var(--spacing-section-y);
 }
 
-.hp-statement__text {
+.statement__text {
   width: 100%;
   max-width: var(--container-work);
   font-family: var(--font-display);
@@ -1298,11 +1298,11 @@
    Work
    -------------------------------------------------------------------------- */
 
-.hp-work {
+.work {
   padding-block: var(--spacing-section-py);
 }
 
-.hp-work__list {
+.work__list {
   display: flex;
   max-width: var(--container-work);
   flex-direction: column;
@@ -1310,19 +1310,19 @@
   gap: var(--spacing-section-y);
 }
 
-.hp-work__item {
+.work__item {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
 }
 
-.hp-work__tiles {
+.work__tiles {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-md);
 }
 
-.hp-work__tile {
+.work__tile {
   position: relative;
   height: 320px;
   overflow: hidden;
@@ -1330,7 +1330,7 @@
   background: var(--neutral-600);
 }
 
-.hp-work__tile img {
+.work__tile img {
   display: block;
   width: 100%;
   height: 100%;
@@ -1338,17 +1338,17 @@
   transition: transform var(--duration-slower) var(--ease-out-quart);
 }
 
-.hp-work__item:hover .hp-work__tile img {
+.work__item:hover .work__tile img {
   transform: scale(1.03);
 }
 
-.hp-work__meta {
+.work__meta {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-3xs);
 }
 
-.hp-work__title {
+.work__title {
   margin: 0;
   font-family: var(--font-display);
   /* Dropped from 24px in the frame — the work rows shrank to match. */
@@ -1359,7 +1359,7 @@
   line-height: var(--leading-tight);
 }
 
-.hp-work__description {
+.work__description {
   max-width: 62ch;
   margin: 0;
   color: var(--neutral-700);
@@ -1370,11 +1370,11 @@
 }
 
 @media (max-width: 899.98px) {
-  .hp-work__tiles {
+  .work__tiles {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .hp-work__tile {
+  .work__tile {
     height: auto;
     aspect-ratio: 542 / 320;
   }
@@ -1384,26 +1384,26 @@
    CTA
    -------------------------------------------------------------------------- */
 
-.hp-cta {
+.cta {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-block: var(--spacing-section-py);
 }
 
-.hp-cta__mark {
+.cta__mark {
   width: 44px;
   height: 44px;
   flex-shrink: 0;
 }
 
-.hp-cta__mark svg {
+.cta__mark svg {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.hp-cta__title {
+.cta__title {
   padding-top: var(--spacing-2xl);
   white-space: pre-line;
   font-family: var(--font-display);
@@ -1416,7 +1416,7 @@
   text-wrap: balance;
 }
 
-.hp-cta__invitation {
+.cta__invitation {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1428,7 +1428,7 @@
   line-height: var(--leading-normal);
 }
 
-.hp-cta__link {
+.cta__link {
   display: inline-flex;
   align-items: center;
   padding-bottom: var(--spacing-4xs);
@@ -1438,7 +1438,7 @@
   transition: border-color var(--duration-base) var(--ease-standard);
 }
 
-.hp-cta__link:hover {
+.cta__link:hover {
   border-bottom-color: var(--foreground);
 }
 
@@ -1446,7 +1446,7 @@
    that this is clickable, since it carries no button chrome. The gradient's
    base stop is the text colour, so the label stays legible if the animation
    never runs. */
-.hp-cta__label {
+.cta__label {
   /* A wide, soft band peaking near the page colour, so the pass is legible
      rather than a faint grey flicker. Narrow bands read as noise at this text
      size. The base stop is the text colour, so the label stays readable if the
@@ -1468,10 +1468,10 @@
   color: transparent;
   /* Linear, so the sweep travels at a constant speed — easing made it look
      like it darted across. */
-  animation: hp-shimmer 6s linear infinite;
+  animation: shimmer 6s linear infinite;
 }
 
-@keyframes hp-shimmer {
+@keyframes shimmer {
   /* Holds ~2.7s, then sweeps across over ~3.3s. */
   0%,
   45% {
@@ -1487,7 +1487,7 @@
    Site footer row (inside the CTA section, as in the frame)
    -------------------------------------------------------------------------- */
 
-.hp-siteline {
+.siteline {
   display: flex;
   width: 100%;
   align-items: center;
@@ -1496,14 +1496,14 @@
   padding-top: var(--spacing-5xl);
 }
 
-.hp-siteline__nav {
+.siteline__nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--spacing-2xl);
 }
 
-.hp-siteline__nav a {
+.siteline__nav a {
   /* Was --neutral-600, which measured 1.9:1 against the page. The frame moved
      it to --neutral-700 (5.6:1), which clears AA. */
   color: var(--neutral-700);
@@ -1513,11 +1513,11 @@
   transition: color var(--duration-fast) var(--ease-standard);
 }
 
-.hp-siteline__nav a:hover {
+.siteline__nav a:hover {
   color: var(--foreground);
 }
 
-.hp-siteline__actions {
+.siteline__actions {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
@@ -1529,7 +1529,7 @@
    its content and there is no fixed target width to keep in sync with the
    copy. Animating max-width rather than width is what makes that possible:
    width has no transitionable value for `auto`. */
-.hp-hello {
+.hello {
   display: inline-flex;
   align-items: center;
   padding: var(--spacing-3xs) var(--spacing-3xs) var(--spacing-2xs);
@@ -1541,12 +1541,12 @@
   transition: border-color var(--duration-base) var(--ease-standard);
 }
 
-.hp-hello:hover,
-.hp-hello:focus-visible {
+.hello:hover,
+.hello:focus-visible {
   border-bottom-color: var(--foreground);
 }
 
-.hp-hello__label {
+.hello__label {
   display: inline-block;
   max-width: 0;
   overflow: clip;
@@ -1557,8 +1557,8 @@
     opacity 200ms var(--ease-standard);
 }
 
-.hp-hello:hover .hp-hello__label,
-.hp-hello:focus-visible .hp-hello__label {
+.hello:hover .hello__label,
+.hello:focus-visible .hello__label {
   /* Comfortably past the label's natural width; the container still sizes to
      the text, so this only needs to not clip it. */
   max-width: 8rem;
@@ -1566,7 +1566,7 @@
   opacity: 1;
 }
 
-.hp-hello__hand {
+.hello__hand {
   display: inline-flex;
   width: 20px;
   height: 24px;
@@ -1577,20 +1577,20 @@
 }
 
 /* Waves on its own every few seconds, and again on hover. */
-.hp-hello__hand svg {
+.hello__hand svg {
   width: 100%;
   height: 100%;
   /* Pivot at the wrist, bottom-left, so this reads as a hand waving rather
      than a shape rotating about its middle. */
   transform-origin: 30% 85%;
-  animation: hp-wave 6s var(--ease-standard) infinite;
+  animation: wave 6s var(--ease-standard) infinite;
 }
 
-.hp-hello:hover .hp-hello__hand svg {
-  animation: hp-wave 1.1s var(--ease-standard) 1;
+.hello:hover .hello__hand svg {
+  animation: wave 1.1s var(--ease-standard) 1;
 }
 
-@keyframes hp-wave {
+@keyframes wave {
   0%,
   74%,
   100% {
@@ -1614,13 +1614,13 @@
   }
 }
 
-.hp-social {
+.social {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
 }
 
-.hp-social a {
+.social a {
   display: inline-flex;
   width: 32px;
   height: 32px;
@@ -1637,28 +1637,28 @@
     transform var(--duration-fast) var(--ease-standard);
 }
 
-.hp-social a:hover {
+.social a:hover {
   color: var(--foreground);
   transform: translateY(-1px);
 }
 
-.hp-social svg {
+.social svg {
   width: 16px;
   height: 16px;
 }
 
 @media (max-width: 899.98px) {
-  .hp-siteline {
+  .siteline {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-2xl);
   }
 
-  .hp-siteline__actions {
+  .siteline__actions {
     flex-wrap: wrap;
   }
 
-  .hp-hello {
+  .hello {
     margin-left: calc(var(--spacing-3xs) * -1);
   }
 }
@@ -1672,26 +1672,26 @@
    Footer component and drives the backdrop drift.
    -------------------------------------------------------------------------- */
 
-.hp-content {
+.content {
   position: relative;
   z-index: 2;
   /* Must be opaque — this is what covers the fixed footer until you reach it. */
   background: var(--background);
 }
 
-.hp-footer-slot {
+.footer-slot {
   position: relative;
   z-index: 1;
-  height: var(--hp-footer-h);
+  height: var(--footer-h);
 }
 
-.hp-footer {
+.footer {
   position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
   display: flex;
-  height: var(--hp-footer-h);
+  height: var(--footer-h);
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
@@ -1709,7 +1709,7 @@
    direction as the page. Starting at +13% and easing to 0 does that. The
    inverse (starting negative) makes the image slide down against the scroll,
    which reads as the whole footer fighting you. */
-.hp-footer__shader {
+.footer__shader {
   position: absolute;
   inset: -18% 0;
   z-index: -1;
@@ -1721,10 +1721,10 @@
 /* Slow autonomous drift, so the backdrop is never completely static even when
    the page is not moving. Alternating rather than looping, so it never jumps.
    Scaled up slightly so the translate cannot expose an edge. */
-.hp-footer__drift {
+.footer__drift {
   width: 100%;
   height: 100%;
-  animation: hp-cloud-drift 52s ease-in-out infinite alternate;
+  animation: cloud-drift 52s ease-in-out infinite alternate;
   will-change: transform;
 }
 
@@ -1733,7 +1733,7 @@
    the dither is the footer's own ground. Each version supplies its own
    background-image, so the fallback photo cannot drift from the source the
    shader is sampling. */
-.hp-footer__dither {
+.footer__dither {
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -1741,7 +1741,7 @@
   background-size: cover;
 }
 
-.hp-footer__dither canvas {
+.footer__dither canvas {
   position: absolute;
   inset: 0;
   display: block;
@@ -1751,7 +1751,7 @@
 
 /* Kept in the document as the decoded WebGL texture source, never as a visible
    layer. The canvas above is the only moving image the footer displays. */
-.hp-footer__video-source {
+.footer__video-source {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1759,7 +1759,7 @@
   pointer-events: none;
 }
 
-@keyframes hp-cloud-drift {
+@keyframes cloud-drift {
   from {
     transform: translate3d(-1.6%, 0.9%, 0) scale(1.05);
   }
@@ -1769,7 +1769,7 @@
   }
 }
 
-.hp-footer__baseline {
+.footer__baseline {
   position: relative;
   display: flex;
   width: 100%;
@@ -1803,7 +1803,7 @@
   --neutral-100: #090a0a;
 }
 
-.hp[data-theme='dark'] .hp-chip {
+.hp[data-theme='dark'] .chip {
   border-color: rgb(255 255 255 / 10%);
   background-color: #ededed;
   background-image: linear-gradient(in oklab 180deg, oklab(96% 0 0) 0%, oklab(88% 0 0) 100%);
@@ -1813,11 +1813,11 @@
   color: #151515;
 }
 
-.hp[data-theme='dark'] .hp-chip:hover {
+.hp[data-theme='dark'] .chip:hover {
   filter: brightness(1.04);
 }
 
-.hp[data-theme='dark'] .hp-social a {
+.hp[data-theme='dark'] .social a {
   border-color: var(--neutral-300);
 }
 
@@ -1825,32 +1825,32 @@
    silhouette and the flap go dark, the shadows go black instead of grey. The
    cards stay paper — a folder full of dark rectangles stops reading as
    contents, and the photographs in it are dark to begin with. */
-.hp[data-theme='dark'] .hp-folder {
-  --hp-folder-paper: #2b2b2b;
-  --hp-folder-paper-edge: rgb(255 255 255 / 13%);
-  --hp-folder-face-top: rgb(45 45 45 / 82%);
-  --hp-folder-face-bottom: rgb(29 29 29 / 72%);
-  --hp-folder-face-drop:
+.hp[data-theme='dark'] .folder {
+  --folder-paper: #2b2b2b;
+  --folder-paper-edge: rgb(255 255 255 / 13%);
+  --folder-face-top: rgb(45 45 45 / 82%);
+  --folder-face-bottom: rgb(29 29 29 / 72%);
+  --folder-face-drop:
     drop-shadow(0 -1px 1px rgb(0 0 0 / 24%))
     drop-shadow(0 6px 16px rgb(0 0 0 / 34%));
-  --hp-folder-face-drop-raised:
+  --folder-face-drop-raised:
     drop-shadow(0 -1px 1px rgb(0 0 0 / 24%))
     drop-shadow(0 2px 6px rgb(0 0 0 / 30%))
     drop-shadow(0 16px 30px rgb(0 0 0 / 44%));
-  --hp-folder-flap-edge: rgb(255 255 255 / 8%);
-  --hp-folder-shadow-rest:
+  --folder-flap-edge: rgb(255 255 255 / 8%);
+  --folder-shadow-rest:
     0 1px 2px rgb(0 0 0 / 30%),
     0 8px 20px rgb(0 0 0 / 34%);
-  --hp-folder-shadow-raised:
+  --folder-shadow-raised:
     0 2px 6px rgb(0 0 0 / 34%),
     0 18px 34px rgb(0 0 0 / 44%);
-  --hp-folder-drop:
+  --folder-drop:
     drop-shadow(0 1px 2px rgb(0 0 0 / 30%))
     drop-shadow(0 8px 20px rgb(0 0 0 / 36%));
 
-  --hp-folder-veil: rgb(15 15 15 / 78%);
-  --hp-folder-chrome: rgb(38 38 38 / 82%);
-  --hp-folder-chrome-edge: rgb(255 255 255 / 10%);
+  --folder-veil: rgb(15 15 15 / 78%);
+  --folder-chrome: rgb(38 38 38 / 82%);
+  --folder-chrome-edge: rgb(255 255 255 / 10%);
 }
 
 /* --------------------------------------------------------------------------
@@ -1872,25 +1872,25 @@
      distinction this preference is actually about. Its layer changes are not
      transitioned at all, so they were already instant. */
 
-  .hp-footer__shader,
-  .hp-footer__baseline {
+  .footer__shader,
+  .footer__baseline {
     transform: none !important;
   }
 
-  .hp-footer__drift {
+  .footer__drift {
     animation: none !important;
     transform: none !important;
   }
 
   /* The shimmer is a hint, not information — drop it and restore a flat colour
      rather than leaving the label clipped to a static gradient. */
-  .hp-cta__label {
+  .cta__label {
     background: none;
     color: var(--foreground);
     animation: none !important;
   }
 
-  .hp-hello__hand svg {
+  .hello__hand svg {
     animation: none !important;
     transform: none !important;
   }
@@ -1898,6 +1898,6 @@
 
 @media (max-width: 599.98px) {
   .hp {
-    --hp-footer-h: 380px;
+    --footer-h: 380px;
   }
 }

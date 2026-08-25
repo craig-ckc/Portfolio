@@ -57,7 +57,7 @@ const { title, description, homeHref = '#top', smoothScroll = false } = Astro.pr
     <NavBar client:load homeHref={homeHref} />
     {/* Opaque and above the footer — the footer is fixed and revealed as this
         scrolls past it. */}
-    <main class="hp-content">
+    <main class="content">
       <slot />
     </main>
     <Footer client:visible />
