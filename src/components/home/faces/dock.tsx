@@ -132,7 +132,7 @@ export function DockFace({ item }: { item: DockItem }) {
             <span className="dock__tip-note">{app.note}</span>
           </span>
           <img className="dock__tile" src={app.icon} alt="" draggable={false} />
-          <span className="dock__dot" aria-hidden="true" />
+          {/* <span className="dock__dot" aria-hidden="true" /> */}
         </span>
       ))}
     </span>
