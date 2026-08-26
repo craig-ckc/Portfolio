@@ -1,0 +1,207 @@
+/* The dock face of the hero folder: not a desktop, just the dock bar itself.
+   The card's ratio is 24 / 5 — exactly the bar's shape — so this file draws
+   one frosted strip that fills the card and never changes size, however the
+   card itself is scaled. Everything here reads the same card-width cqw basis
+   as the rest of the folder — see the contract in hero-folder.tsx — so the
+   same markup is a sliver peeking over the flap, a small card in the scatter
+   and a large one focused, all at once.
+
+   The magnification maths (how big a tile gets, how far its neighbours have
+   to move, and how that spread is capped to the bar's fixed width) lives in
+   src/lib/dock-magnify.ts. This file only turns --mag and --shift — written
+   by dock.tsx off the pointer — into motion. */
+
+.card[data-kind='dock'] {
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* The held and focused states each set their own box-shadow on `.card` with
+   more classes than the rule above, so without this they would draw a
+   rectangular hairline at the card's own corner radius behind the bar's
+   rounder one. The bar owns its own shadow below; the card underneath it
+   stays invisible in every state. */
+.folder__item.is-focused .card[data-kind='dock'],
+.folder__item.is-held .card[data-kind='dock'] {
+  box-shadow: none;
+}
+
+/* The fan lifts every card by a share of its own height, and the bar is a
+   quarter as tall as the others: the same share moves it a few pixels and
+   it stays lost behind the flap while the rest rise. So it gets a lift of
+   its own here, worked out to travel about the distance a portrait card
+   does. On the item rather than the card because that is where the fan's
+   own values live; the scatter uses different properties and is untouched. */
+.folder .folder__item:has(> .card[data-kind='dock']) {
+  --y: -6%;
+}
+
+.folder:hover .folder__item:has(> .card[data-kind='dock']),
+.folder:has(:focus-visible) .folder__item:has(> .card[data-kind='dock']) {
+  --y: -125%;
+}
+
+/* --- The bar -----------------------------------------------------------
+
+   The card is already the bar's exact shape (aspect-ratio 24 / 5, set on
+   .card[data-ratio='bar'] in home-page.css), so filling it with inset: 0
+   is the whole layout: no width to measure, no padding that grows, nothing
+   here ever changes the box's size. A tile magnifying, or the tooltip
+   rising, both do it in the open air above the bar rather than inside a
+   clipped box — the card's own overflow: visible, above, is what allows
+   that. */
+
+.dock {
+  --dock-tile: calc(100cqw * 5 / 24 - 4.6cqw);
+  --dock-gap: 2.4cqw;
+
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--dock-gap);
+  padding: 1.6cqw 0 1.2cqw;
+  border-radius: 4.6cqw;
+  background: rgb(255 255 255 / 62%);
+  border: 1px solid rgb(255 255 255 / 60%);
+  box-shadow:
+    0 0 0 1px rgb(21 21 21 / 8%),
+    0 1px 1px rgb(21 21 21 / 6%),
+    0 1cqw 2.6cqw rgb(21 21 21 / 16%);
+  backdrop-filter: blur(1.6cqw);
+  -webkit-backdrop-filter: blur(1.6cqw);
+  font-family: var(--font-sans);
+}
+
+/* One app: the tile, the indicator dot that says it is running, and the
+   tooltip that hangs above it. --shift moves the whole slot sideways, so
+   the tooltip and the dot travel with the tile they belong to; --mag scales
+   only the tile itself, so the dot stays the same small size underneath a
+   tile that has grown. */
+.dock__slot {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6cqw;
+  width: var(--dock-tile);
+  transform: translateX(var(--shift, 0px));
+  transition: transform var(--duration-base) var(--ease-out-cubic);
+}
+
+/* While the pointer is actually moving along the bar the follow has to keep
+   up with it — 120ms reads as silky rather than late. The moment it leaves,
+   this reverts to the slower, eased return of every other hover state on
+   the site, entirely from the cascade and with nothing to reset in script. */
+.dock:hover .dock__slot {
+  transition: transform 120ms var(--ease-out-cubic);
+}
+
+.dock__tile {
+  display: block;
+  width: var(--dock-tile);
+  height: var(--dock-tile);
+  /* The images already carry their own squircle, shadow and inset — no
+     frame to add here. */
+  transform: scale(var(--mag, 1));
+  /* Grows up off the bar, never down into it or sideways into a neighbour —
+     the neighbour clearance is `--shift`'s job, not this one's. */
+  transform-origin: 50% 100%;
+  transition: transform var(--duration-base) var(--ease-out-cubic);
+}
+
+.dock:hover .dock__tile {
+  transition: transform 120ms var(--ease-out-cubic);
+}
+
+.dock__dot {
+  width: 1.2cqw;
+  height: 1.2cqw;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgb(21 21 21 / 55%);
+}
+
+/* --- The tooltip -----------------------------------------------------------
+
+   Centred over its own tile: the card is overflow: visible now, so a note
+   near either end of the row has open air to rise into rather than a clipped
+   edge to run up against. */
+
+.dock__tip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 1.4cqw);
+  /* Wide enough that a note runs to two lines at most. */
+  width: max-content;
+  max-width: 64cqw;
+  padding: 1.5cqw 2.4cqw;
+  border-radius: 1.8cqw;
+  background: rgb(30 30 30 / 88%);
+  color: #f9f9f9;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  /* Rises with the tile: a tile at --mag grows upward by (mag - 1) tile
+     widths, and the tooltip has to clear that or it sits inside the icon. */
+  transform: translate(-50%, calc((1 - var(--mag, 1)) * var(--dock-tile) + 0.8cqw));
+  transition:
+    opacity var(--duration-fast) var(--ease-out-cubic),
+    transform var(--duration-fast) var(--ease-out-cubic);
+}
+
+.dock__tip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 1.6cqw;
+  height: 1.6cqw;
+  background: inherit;
+  transform: translate(-50%, -55%) rotate(45deg);
+  border-radius: 0 0 0.3cqw;
+}
+
+/* Only on the presented card. In the scatter the dock is small enough that a
+   name over a tile is a smudge, so a hover there is the magnification alone;
+   brought to the middle, the tiles are big enough to be named. */
+.folder__item.is-focused .card[data-kind='dock'] .dock__slot[data-active] .dock__tip {
+  opacity: 1;
+  transform: translate(-50%, calc((1 - var(--mag, 1)) * var(--dock-tile)));
+}
+
+.dock__tip-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 4.6cqw;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-tight);
+}
+
+.dock__tip-note {
+  display: block;
+  margin-top: 0.5cqw;
+  text-wrap: balance;
+  font-size: 3.2cqw;
+  line-height: var(--leading-normal);
+  color: rgb(249 249 249 / 70%);
+}
+
+/* No magnification at all under reduced motion — the tooltip is the only
+   part of the hover life left, and it switches rather than eases. */
+@media (prefers-reduced-motion: reduce) {
+  .dock__slot,
+  .dock:hover .dock__slot,
+  .dock__tile,
+  .dock:hover .dock__tile {
+    transition: none;
+  }
+
+  .dock__tip {
+    transition: none;
+  }
+}

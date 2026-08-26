@@ -1,0 +1,316 @@
+/* The disc face: a cover that is the card, a record sleeved behind it that
+   only shows itself on hover, and a popover above naming the track. Both the
+   record and the popover poke outside the card's own square, which is why
+   this is the one face that has to open the card's box up rather than fill
+   it — see the overflow override just below.
+
+   Everything here reads its cqw sizing from .folder__item, same as .face
+   does; .disc is not a container of its own. */
+
+.card[data-kind='disc'] {
+  overflow: visible;
+}
+
+.disc {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* --- The record ----------------------------------------------------------
+   Centred behind the cover at rest, so "shut" and "open but not hovered"
+   both read as a plain cover with nothing behind it. Two things bring it
+   out, and the slide and spin rules name both: the pointer arriving, and the
+   card being brought to the middle to be looked at — a record presented that
+   way should not need finding with the cursor as well. The popover, further
+   down, answers only the second. Slide and spin are two
+   different elements on purpose: a translate on this one and a rotate on the
+   child below compose cleanly, where the same element doing both would need
+   its rotation pivot fighting its own offset. */
+
+.disc__record {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: 92cqw;
+  height: 92cqw;
+  /* The platter inside is a square that rotates, and a rotated square's box
+     is wider than the circle drawn in it — up to 41% wider at 45°. That box
+     counts as overflow, and on a narrow screen it was what grew the page a
+     scrollbar while the record itself sat within the edge. Clipping here, on
+     the box that only slides, keeps the overflow honest; the circle fits the
+     square exactly, so nothing drawn is lost. */
+  overflow: clip;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) translateX(0%);
+  transition: transform var(--duration-base) var(--ease-out-cubic);
+}
+
+.folder.is-open .card[data-kind='disc']:hover .disc__record,
+.folder.is-open .folder__item.is-focused .card[data-kind='disc'] .disc__record {
+  transform: translate(-50%, -50%) translateX(56%);
+}
+
+.disc__platter {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: #0e0e0e;
+  background-image:
+    conic-gradient(
+      from 205deg at 46% 42%,
+      rgb(255 255 255 / 7%),
+      transparent 16%,
+      transparent 52%,
+      rgb(255 255 255 / 5%) 64%,
+      transparent 80%
+    ),
+    repeating-radial-gradient(
+      circle at 50% 50%,
+      rgb(255 255 255 / 3%) 0,
+      rgb(255 255 255 / 3%) 1px,
+      transparent 1px,
+      transparent 1.5cqw
+    );
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
+  animation: disc-spin 1.8s linear infinite;
+  animation-play-state: paused;
+}
+
+.folder.is-open .card[data-kind='disc']:hover .disc__platter,
+.folder.is-open .folder__item.is-focused .card[data-kind='disc'] .disc__platter {
+  animation-play-state: running;
+}
+
+@keyframes disc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The label: the current cover, cropped round, so it visibly turns with the
+   platter even though the spindle beneath it does not need to move at all. */
+.disc__label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34cqw;
+  height: 34cqw;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+}
+
+.disc__label img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-standard);
+}
+
+.disc__label img[data-current='true'] {
+  opacity: 1;
+}
+
+.disc__spindle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4cqw;
+  height: 4cqw;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #f9f9f9;
+}
+
+/* --- The cover ---------------------------------------------------------- */
+
+.disc__cover {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.disc__cover img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-standard);
+}
+
+.disc__cover img[data-current='true'] {
+  opacity: 1;
+}
+
+/* --- The popover -------------------------------------------------------- */
+
+.disc__tip {
+  position: absolute;
+  bottom: calc(100% + 3cqw);
+  left: 50%;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 66cqw;
+  max-width: 120cqw;
+  padding: 2.2cqw 2.6cqw 2cqw 3.2cqw;
+  border-radius: 2.4cqw;
+  background: rgb(21 21 21 / 92%);
+  backdrop-filter: blur(8px);
+  color: #f9f9f9;
+  font-family: var(--font-display);
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%) translateY(1.5cqw);
+  transition:
+    opacity var(--duration-fast) var(--ease-out-cubic),
+    transform var(--duration-fast) var(--ease-out-cubic);
+  pointer-events: none;
+}
+
+/* Presented only — never on a scatter hover. Small, the title and the times
+   are not legible, and a label that cannot be read is noise; the record
+   sliding out is enough to say what this is. Brought to the middle, it can be
+   read and used. */
+.folder.is-open .folder__item.is-focused .card[data-kind='disc'] .disc__tip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.disc__tip-row {
+  display: flex;
+  align-items: center;
+  gap: 3cqw;
+}
+
+.disc__tip-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.3cqw;
+  min-width: 0;
+  text-align: left;
+}
+
+.disc__tip-title {
+  overflow: hidden;
+  font-size: 4.2cqw;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-snug);
+  text-overflow: ellipsis;
+}
+
+.disc__tip-artist {
+  overflow: hidden;
+  color: rgb(249 249 249 / 72%);
+  font-size: 3.4cqw;
+  font-weight: var(--font-weight-medium);
+  text-overflow: ellipsis;
+}
+
+/* --- The skip controls ---------------------------------------------------
+   The popover as a whole is pointer-events: none so it never steals the
+   drag; these two are the one part of it a visitor can actually reach, so
+   they opt back in individually. */
+
+.disc__tip-controls {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1cqw;
+}
+
+.disc__tip-skip {
+  display: grid;
+  width: 6.4cqw;
+  height: 6.4cqw;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 10%);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background var(--duration-fast);
+}
+
+.disc__tip-skip:hover {
+  background: rgb(255 255 255 / 18%);
+}
+
+.disc__tip-skip svg {
+  width: 2.6cqw;
+  height: 2.6cqw;
+}
+
+.disc__tip-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2cqw;
+  margin-top: 1.6cqw;
+}
+
+.disc__tip-track {
+  position: relative;
+  height: 2cqw;
+  border-radius: var(--radius-full);
+  background: rgb(249 249 249 / 18%);
+  overflow: hidden;
+}
+
+.disc__tip-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: #f9f9f9;
+  transition: width var(--duration-fast) linear;
+}
+
+.disc__tip-time {
+  display: flex;
+  justify-content: space-between;
+  color: rgb(249 249 249 / 62%);
+  font-family: var(--font-sans);
+  font-size: 2.8cqw;
+  font-variant-numeric: tabular-nums;
+}
+
+.disc__tip-arrow {
+  position: absolute;
+  bottom: -1.6cqw;
+  left: 50%;
+  width: 2.8cqw;
+  height: 1.6cqw;
+  transform: translateX(-50%);
+  background: rgb(21 21 21 / 92%);
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+}
+
+/* On a phone the presented card is two thirds of the screen wide, and a
+   record slid out the full 56% would carry on past the right edge of it. It
+   comes out just far enough to read as a record — about a third of its width
+   — which is what fits with a few pixels to spare. */
+@media (max-width: 899.98px) {
+  .folder.is-open .card[data-kind='disc']:hover .disc__record,
+  .folder.is-open .folder__item.is-focused .card[data-kind='disc'] .disc__record {
+    transform: translate(-50%, -50%) translateX(30%);
+  }
+}
+
+/* Reduced motion: the record still slides into view on hover — that is a
+   reversible transform, not a continuous animation — but nothing spins on
+   its own. */
+@media (prefers-reduced-motion: reduce) {
+  .disc__platter {
+    animation: none;
+  }
+}

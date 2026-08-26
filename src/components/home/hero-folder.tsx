@@ -24,6 +24,10 @@ import {
 import { folderMetrics, folderShape } from '../../lib/folder-shape'
 import { getLenis } from '../../lib/smooth-scroll'
 import { StampSticker, ToriiSticker } from '../icons'
+import { DiscFace } from './faces/disc'
+import { DockFace } from './faces/dock'
+import { LanyardFace } from './faces/lanyard'
+import { PolaroidsFace } from './faces/polaroids'
 
 /**
  * The hero object: a folder holding the things a project leaves behind — a
@@ -184,46 +188,68 @@ function inertOutside(root: HTMLElement) {
   }
 }
 
-/** The face of one item. `kind` picks the drawing; the card frame is shared. */
-function FolderFace({ item }: { item: FolderItem }) {
-  if (item.kind === 'photo') {
-    return <img className="face__photo" src={item.src} alt={item.alt ?? ''} loading="lazy" draggable={false} />
-  }
+/**
+ * The face of one item. `kind` picks the drawing; the card frame is shared.
+ *
+ * The plain kinds are drawn here. The four richer ones — each with a hover
+ * life of its own — have a file each under ./faces, and a stylesheet each under
+ * src/styles/faces, so their moving parts stay out of this file's way.
+ */
+function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
+  switch (item.kind) {
+    case 'photo':
+      return <img className="face__photo" src={item.src} alt={item.alt ?? ''} loading="lazy" draggable={false} />
 
-  if (item.kind === 'logo') {
-    return (
-      <span className="face face--logo">
-        <span className="face__mark">{item.mark}</span>
-        <span className="face__name">{item.label}</span>
-      </span>
-    )
-  }
+    case 'logo':
+      return (
+        <span className="face face--logo">
+          <span className="face__mark">{item.mark}</span>
+          <span className="face__name">{item.label}</span>
+        </span>
+      )
 
-  if (item.kind === 'note') {
-    return (
-      <span className="face face--note">
-        <span className="face__body">{item.body}</span>
-        <span className="face__rule" aria-hidden="true" />
-      </span>
-    )
-  }
+    case 'note':
+      return (
+        <span className="face face--note">
+          <span className="face__body">{item.body}</span>
+          <span className="face__rule" aria-hidden="true" />
+        </span>
+      )
 
-  return (
-    <span className="face face--swatch">
-      <span className="face__chips" aria-hidden="true">
-        {item.colors?.map((color) => (
-          <span key={color} style={{ background: color }} />
-        ))}
-      </span>
-      <span className="face__name">{item.label}</span>
-    </span>
-  )
+    case 'swatch':
+      return (
+        <span className="face face--swatch">
+          <span className="face__chips" aria-hidden="true">
+            {item.colors.map((color) => (
+              <span key={color} style={{ background: color }} />
+            ))}
+          </span>
+          <span className="face__name">{item.label}</span>
+        </span>
+      )
+
+    case 'dock':
+      return <DockFace item={item} />
+
+    case 'polaroids':
+      /* Dragging a print to shuffle the pile is only for the card being
+         looked at; in the scatter a press on it moves the whole card. */
+      return <PolaroidsFace item={item} presented={focused} />
+
+    case 'disc':
+      /* Brought to the middle, the record presents itself — platter out,
+         popover up — without waiting for the pointer to find it. */
+      return <DiscFace item={item} presented={focused} />
+
+    case 'lanyard':
+      return <LanyardFace item={item} />
+  }
 }
 
-function Card({ item }: { item: FolderItem }) {
+function Card({ item, focused }: { item: FolderItem; focused: boolean }) {
   return (
     <span className="card" data-kind={item.kind} data-ratio={item.ratio ?? 'portrait'}>
-      <FolderFace item={item} />
+      <FolderFace item={item} focused={focused} />
     </span>
   )
 }
@@ -679,7 +705,7 @@ export function HeroFolder({ caption }: { caption: string }) {
                 setFocused((current) => (current === item.id ? null : item.id))
               }}
             >
-              <Card item={item} />
+              <Card item={item} focused={focused === item.id} />
               <span className="sr-only">
                 {item.label}
                 {item.note ? `, ${item.note}` : ''}

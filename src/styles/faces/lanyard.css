@@ -1,0 +1,260 @@
+/* The lanyard face of the hero folder: a conference badge on a strap, cut
+   short and taped down rather than hanging free — see
+   src/components/home/faces/lanyard.tsx for the markup this styles.
+
+   The card's own frame is handed back here: the strap has to sit above the
+   badge as one piece with it, and a box clipped to overflow: hidden cannot
+   let anything stand proud of its own top edge. .lanyard__badge draws the
+   frame — the fill, the corners, the hairline and shadow the card would
+   otherwise have supplied — so nothing about the look is actually lost. */
+.card[data-kind='lanyard'] {
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* home-page.css gives a focused or held card a deeper shadow of its own, at a
+   higher specificity than the rule above — which on a frameless card would
+   draw a rectangle behind the badge. The badge carries its own shadow, so
+   the card's stays off in those states too. */
+.folder__item.is-focused .card[data-kind='lanyard'],
+.folder__item.is-held .card[data-kind='lanyard'] {
+  box-shadow: none;
+}
+
+/* The whole object: a still badge with a stub of strap above it. Nothing here
+   rotates or moves — the strap is cut short enough, and taped down firmly
+   enough, that there is nothing left for it to swing on. */
+.lanyard {
+  position: absolute;
+  inset: 0;
+  --strap-h: 15cqw;
+}
+
+/* --- The strap --------------------------------------------------------------
+   Short, and cut straight across the top rather than running off to a neck
+   somewhere out of frame — the tape below is what is holding the cut end
+   down. The running text is left to be cut mid-word by that top edge
+   (overflow: hidden does that for free); a strap that happened to end on a
+   whole word would look staged. */
+
+.lanyard__strap {
+  position: absolute;
+  z-index: 0;
+  bottom: 100%;
+  left: 50%;
+  width: 16cqw;
+  height: var(--strap-h);
+  transform: translateX(-50%);
+  overflow: hidden;
+  background: #151515;
+  box-shadow:
+    inset 1px 0 0 rgb(249 249 249 / 14%),
+    inset -1px 0 0 rgb(249 249 249 / 14%);
+  /* Shut, only the badge's top sliver shows above the folder's flap — a strap
+     poking up past it would read as a stray thread rather than as the object
+     it belongs to. It only earns its place once the contents are actually
+     out. */
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+.folder.is-open .card[data-kind='lanyard'] .lanyard__strap,
+.folder.is-open .card[data-kind='lanyard'] .lanyard__tape {
+  opacity: 1;
+}
+
+.lanyard__strap-text {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 3cqw 0;
+  writing-mode: vertical-rl;
+  /* vertical-rl alone reads top to bottom; the flip is what sends the text
+     running up the strap instead. */
+  transform: rotate(180deg);
+  font-family: var(--font-display);
+  font-size: 3cqw;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: rgb(249 249 249 / 80%);
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* --- The tape -----------------------------------------------------------
+   A strip of translucent tape holding the cut end to the page. Centred on
+   the strap, its own vertical middle sitting on the strap's top edge so it
+   overlaps the cut by about half its height — the thing actually doing the
+   job of holding the strap down. Torn-looking ends come from a jagged
+   clip-path rather than a texture, kept cheap and crisp at any scale. */
+.lanyard__tape {
+  position: absolute;
+  z-index: 3;
+  top: calc(-1 * var(--strap-h));
+  left: 50%;
+  width: 30cqw;
+  height: 7.5cqw;
+  transform: translate(-50%, -50%) rotate(-4deg);
+  clip-path: polygon(
+    2% 0%,
+    0% 18%,
+    3% 38%,
+    1% 60%,
+    4% 82%,
+    2% 100%,
+    98% 100%,
+    100% 82%,
+    97% 60%,
+    99% 38%,
+    96% 18%,
+    98% 0%
+  );
+  /* Warm enough to read as masking tape against a page that is itself almost
+     white; over the dark strap the same strip goes pale and translucent. */
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 8%) 0 1px, transparent 1px 3px),
+    rgb(238 228 204 / 62%);
+  backdrop-filter: blur(0.5cqw);
+  border: 1px solid rgb(21 21 21 / 9%);
+  box-shadow: 0 0.6cqw 1.4cqw rgb(21 21 21 / 12%);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+/* --- The clip --------------------------------------------------------------
+   The metal fitting at the junction: half over the strap's foot, half over
+   the badge's top edge, which is what visually joins the two into one object
+   instead of a badge that merely happens to sit under a strap. */
+.lanyard__clip {
+  position: absolute;
+  z-index: 2;
+  top: -2.5cqw;
+  left: 50%;
+  width: 10cqw;
+  height: 5cqw;
+  transform: translateX(-50%);
+  border-radius: 1.4cqw;
+  background: linear-gradient(180deg, #dcdcdc 0%, #9a9a9a 55%, #e6e6e6 100%);
+  box-shadow: 0 1px 2px rgb(21 21 21 / 22%);
+}
+
+.lanyard__clip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3cqw;
+  height: 1.4cqw;
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-full);
+  background: rgb(21 21 21 / 55%);
+  box-shadow: inset 0 1px 1px rgb(21 21 21 / 30%);
+}
+
+/* --- The badge -------------------------------------------------------------
+   Fills the card box exactly — the frame .card[data-kind='lanyard'] gave up
+   above, drawn here instead. */
+.lanyard__badge {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8cqw;
+  border-radius: 3cqw;
+  background: #fdfdfd;
+  box-shadow:
+    0 0 0 1px rgb(21 21 21 / 8%),
+    0 3px 8px rgb(21 21 21 / 10%);
+}
+
+/* The hole the clip reads as passing through. */
+.lanyard__slot {
+  position: absolute;
+  top: 5cqw;
+  left: 50%;
+  width: 12cqw;
+  height: 2.4cqw;
+  transform: translateX(-50%);
+  border-radius: 1.2cqw;
+  background: rgb(21 21 21 / 70%);
+  box-shadow: inset 0 1px 1px rgb(21 21 21 / 35%);
+}
+
+.lanyard__header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-top: 4cqw;
+  font-family: var(--font-display);
+  font-size: 3cqw;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: #616161;
+}
+
+/* The .face__mark treatment: initials on a dark circle. */
+.lanyard__portrait {
+  display: grid;
+  width: 34cqw;
+  height: 34cqw;
+  margin-top: 6cqw;
+  place-items: center;
+  border-radius: 50%;
+  background: #151515;
+  color: #f9f9f9;
+  font-family: var(--font-display);
+  font-size: 12cqw;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0;
+}
+
+.lanyard__name {
+  margin-top: 5cqw;
+  font-family: var(--font-display);
+  font-size: 9.5cqw;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-tight);
+  text-align: center;
+  text-wrap: balance;
+  color: #151515;
+}
+
+.lanyard__role {
+  margin-top: 1.5cqw;
+  font-family: var(--font-display);
+  font-size: 4.6cqw;
+  color: #616161;
+  text-align: center;
+}
+
+.lanyard__footer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  margin-top: auto;
+  gap: 1.5cqw;
+}
+
+.lanyard__barcode {
+  display: block;
+  width: 70%;
+  height: 10cqw;
+}
+
+.lanyard__barcode rect {
+  fill: #151515;
+}
+
+.lanyard__no {
+  font-family: var(--font-sans);
+  font-size: 3cqw;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-wide);
+  color: #616161;
+}

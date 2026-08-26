@@ -1,5 +1,13 @@
 /* Tokens are imported once globally by src/styles.css. */
 
+/* The four hero-folder faces with a hover life of their own. One file each, so
+   their moving parts stay out of the way of the folder's. Everything shared —
+   the card frame, the fan, the scatter — is further down in this file. */
+@import './faces/dock.css';
+@import './faces/polaroids.css';
+@import './faces/disc.css';
+@import './faces/lanyard.css';
+
 /* ==========================================================================
    Homepage — built from the Paper page frame.
    All values come from get_computed_styles / get_jsx on that frame, expressed
@@ -1174,6 +1182,8 @@
 .card[data-ratio='portrait'] { aspect-ratio: 3 / 4; }
 .card[data-ratio='landscape'] { aspect-ratio: 4 / 3; }
 .card[data-ratio='square'] { aspect-ratio: 1; }
+/* The dock bar: exactly as tall as a row of tiles in a frosted strip. */
+.card[data-ratio='bar'] { aspect-ratio: 24 / 5; }
 
 .folder__item.is-focused .card {
   box-shadow:
