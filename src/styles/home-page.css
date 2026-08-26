@@ -1,12 +1,13 @@
 /* Tokens are imported once globally by src/styles.css. */
 
-/* The four hero-folder faces with a hover life of their own. One file each, so
+/* The hero-folder faces with a hover life of their own. One file each, so
    their moving parts stay out of the way of the folder's. Everything shared —
    the card frame, the fan, the scatter — is further down in this file. */
 @import './faces/dock.css';
 @import './faces/polaroids.css';
 @import './faces/disc.css';
 @import './faces/lanyard.css';
+@import './faces/phone.css';
 
 /* ==========================================================================
    Homepage — built from the Paper page frame.
@@ -1414,8 +1415,9 @@
 }
 
 .work__description {
-  max-width: 62ch;
+  max-width: 56ch;
   margin: 0;
+  text-wrap: pretty;
   color: var(--neutral-700);
   font-family: var(--font-display);
   font-size: var(--text-body);

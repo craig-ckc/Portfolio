@@ -1,0 +1,83 @@
+/* The phone face of the hero folder: a cutout of the phone on a transparent
+   card, with its Glyph lights as the hover life. The card's own frame is
+   handed back — the object is the phone, not a card with a phone on it — so
+   the shadow that sets it on the page is a drop-shadow following the cutout's
+   own edge rather than a box. */
+
+.card[data-kind='phone'] {
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* home-page.css gives a focused or held card a deeper shadow of its own, at a
+   higher specificity than the rule above — which on a frameless card would
+   draw a rectangle behind the phone. The cutout carries its own shadow, so
+   the card's stays off in those states too. */
+.folder__item.is-focused .card[data-kind='phone'],
+.folder__item.is-held .card[data-kind='phone'] {
+  box-shadow: none;
+}
+
+/* The two renders share one box, so the lit one lands exactly over the plain
+   one. Sized by height: the card is 3:4 (133.3cqw tall) and the render is
+   1:2, so 118cqw tall is 59cqw wide. Both images are laid out identically;
+   only opacity differs.
+
+   In the folder and the scatter the phone is shown a size up from that, so
+   it holds its own among the cards; presented in the middle, where the card
+   is already scaled up twice over, it eases back to the plain size. Done with
+   a transform rather than a height, so the two moves run together on the
+   compositor and the render is never re-laid-out mid-flight. A hair of it
+   overhangs the card at the larger size, which the card's overflow: visible
+   allows and its transparent box makes invisible. */
+.phone {
+  --phone-scale: 1.15;
+
+  position: absolute;
+  inset: 0;
+  display: block;
+  /* The cutout's shadow, on the group rather than an image, so the lit layer
+     fading in over the plain one never doubles it. */
+  filter:
+    drop-shadow(0 1.5cqw 3cqw rgb(21 21 21 / 22%))
+    drop-shadow(0 0.5cqw 1cqw rgb(21 21 21 / 12%));
+  transition: filter var(--duration-base) var(--ease-out-cubic);
+}
+
+.phone__back,
+.phone__lit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: 118cqw;
+  transform: translate(-50%, -50%) scale(var(--phone-scale));
+  transition: transform var(--duration-slow) var(--ease-out-cubic);
+}
+
+.folder__item.is-focused .card[data-kind='phone'] .phone {
+  --phone-scale: 1;
+}
+
+/* The lights. Off at rest; on while the pointer is over the card or the card
+   is presented in the middle. A quick rise and a slower fall, the way a real
+   light reads: it comes on at once and is seen to go out. */
+.phone__lit {
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-standard);
+}
+
+.folder.is-open .card[data-kind='phone']:hover .phone__lit,
+.folder.is-open .folder__item.is-focused .card[data-kind='phone'] .phone__lit {
+  opacity: 1;
+  transition-duration: var(--duration-fast);
+}
+
+/* Lit, the phone also sits a touch further off the page. */
+.folder.is-open .card[data-kind='phone']:hover .phone,
+.folder.is-open .folder__item.is-focused .card[data-kind='phone'] .phone {
+  filter:
+    drop-shadow(0 2.5cqw 5cqw rgb(21 21 21 / 26%))
+    drop-shadow(0 0.5cqw 1cqw rgb(21 21 21 / 12%));
+}

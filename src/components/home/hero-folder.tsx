@@ -27,6 +27,7 @@ import { StampSticker, ToriiSticker } from '../icons'
 import { DiscFace } from './faces/disc'
 import { DockFace } from './faces/dock'
 import { LanyardFace } from './faces/lanyard'
+import { PhoneFace } from './faces/phone'
 import { PolaroidsFace } from './faces/polaroids'
 
 /**
@@ -191,7 +192,7 @@ function inertOutside(root: HTMLElement) {
 /**
  * The face of one item. `kind` picks the drawing; the card frame is shared.
  *
- * The plain kinds are drawn here. The four richer ones — each with a hover
+ * The plain kinds are drawn here. The richer ones — each with a hover
  * life of its own — have a file each under ./faces, and a stylesheet each under
  * src/styles/faces, so their moving parts stay out of this file's way.
  */
@@ -243,6 +244,9 @@ function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
 
     case 'lanyard':
       return <LanyardFace item={item} />
+
+    case 'phone':
+      return <PhoneFace item={item} presented={focused} />
   }
 }
 

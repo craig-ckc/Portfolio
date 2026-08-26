@@ -77,6 +77,13 @@ export type Badge = {
 }
 export type LanyardItem = FolderItemBase & { kind: 'lanyard'; badge: Badge }
 
+/**
+ * A phone, as a cutout on a transparent card. `src` is the plain back; `lit`
+ * is the same render with its lights on, framed identically so the face can
+ * cross-fade between the two.
+ */
+export type PhoneItem = FolderItemBase & { kind: 'phone'; src: string; lit: string; alt: string }
+
 export type FolderItem =
   | PhotoItem
   | LogoItem
@@ -86,6 +93,7 @@ export type FolderItem =
   | PolaroidsItem
   | DiscItem
   | LanyardItem
+  | PhoneItem
 
 /* Placeholder photography for the hero folder, matching the night-street mood of
    the design's object. Served from the Unsplash CDN, which is built for this —
@@ -126,8 +134,8 @@ export const hero = {
    slides out of its right side has nothing in the way.
 
    What is in it: the things around the work rather than the work itself. The
-   tools open on the desk, the camera that comes out at weekends, whatever is
-   playing, the badge, and a note and a palette off a project.
+   tools open on the desk, the camera that comes out at weekends and the phone
+   it is, whatever is playing, the badge, and a note off a project.
 
    TODO(craig): the polaroids are placeholders. Swap in your own frames. */
 export const folderItems: FolderItem[] = [
@@ -212,12 +220,16 @@ export const folderItems: FolderItem[] = [
     ],
   },
   {
-    id: 'palette',
-    kind: 'swatch',
-    label: 'Neutral ramp',
-    note: 'Design tokens',
+    id: 'phone',
+    kind: 'phone',
+    label: 'Phone (3a) Pro',
+    note: 'What the weekend photos are shot on',
     ratio: 'portrait',
-    colors: ['#090a0a', '#434242', '#b8b8b8', '#f1f1f1'],
+    /* Nothing's own renders, cropped to the phone and encoded as WebP with
+       alpha. The two are framed identically; only the Glyph lights differ. */
+    src: '/img/phone/phone-3a-pro-black.webp',
+    lit: '/img/phone/phone-3a-pro-black-lit.webp',
+    alt: 'The back of a black Nothing Phone (3a) Pro',
   },
   {
     id: 'lanyard',
