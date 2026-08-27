@@ -66,6 +66,23 @@ const {
     <meta name="theme-color" content="#1d4fff" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    {/* Google Analytics (gtag.js). `is:inline` keeps both tags in the head as
+        written — Astro would otherwise hoist and bundle them, which delays the
+        measurement snippet past the point where it can see the first page
+        view. */}
+    <script
+      is:inline
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-5L0JXWGY7V"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+
+      gtag('config', 'G-5L0JXWGY7V')
+    </script>
   </head>
   <body>
     <slot />
