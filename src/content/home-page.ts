@@ -106,7 +106,7 @@ const unsplash = (id: string, ratio: 'portrait' | 'landscape' | 'square' = 'port
   return `https://images.unsplash.com/photo-${id}?${box}&fit=crop&q=80&auto=format`
 }
 
-/* Single source for the contact address, so the four call sites cannot drift.
+/* Single source for the contact address, so no call site can drift from it.
  *
  * NOTE(craig): you dictated "craigchihururuu@gmail.com" with a doubled u. This
  * uses the single-u spelling, which matches your surname and the address listed
@@ -115,11 +115,38 @@ export const email = 'craigchihururu@gmail.com'
 
 const mailto = (subject: string) => `mailto:${email}?subject=${encodeURIComponent(subject)}`
 
+/* Where a project starts now: the two project-shaped CTAs — the hero button
+   and the closing invitation — open Cal's booking modal rather than an empty
+   draft email. The "say hello" links keep the mailto, which is the right shape
+   for a question that isn't a project yet.
+ *
+ * `href` is the same booking page the modal shows, so the CTAs stay real links
+ * for a visitor whose JavaScript never arrives; the embed in
+ * src/components/embeds/cal-booking.astro cancels that navigation once it is
+ * live, because Cal's own click handler opens the modal without cancelling
+ * anything itself. */
+export const booking = {
+  link: 'craig-chihururu/30min',
+  namespace: '30min',
+  origin: 'https://app.cal.com',
+  href: 'https://cal.com/craig-chihururu/30min',
+  /* Cal parses this off the element as JSON, so it is authored as a string
+     rather than as an object that would have to be stringified at every use. */
+  config: '{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}',
+} as const
+
+/* Spread onto whichever element should open the modal. */
+export const bookingTrigger = {
+  'data-cal-link': booking.link,
+  'data-cal-namespace': booking.namespace,
+  'data-cal-config': booking.config,
+} as const
+
 export const hero = {
   title: 'I help brands build websites that convert and apps people enjoy.',
   standfirst:
     'Independent designer and front-end developer. Usually taking what’s already there, turning it into an interface, then staying with it until it ships.',
-  cta: { label: 'Start a project', href: mailto('New project') },
+  cta: { label: 'Start a project', href: booking.href },
   objectCaption: 'Work, and everything around it',
 } as const
 
@@ -277,7 +304,7 @@ export const cta = {
   title: "Design and code\nshouldn't be two separate jobs",
   invitationLead: 'If that sounds interesting to you,',
   /* Brackets are part of the label in the frame, not decoration added in CSS. */
-  invitationLink: { label: "[ let's start your project ]", href: mailto('New project') },
+  invitationLink: { label: "[ let's start your project ]", href: booking.href },
 } as const
 
 export const siteNav = [

@@ -1,4 +1,4 @@
-import { contact, cta, siteNav, socials } from '../../content/home-page'
+import { bookingTrigger, contact, cta, siteNav, socials } from '../../content/home-page'
 import { CtaMark, LinkedInLogo, WavingHand, XLogo } from '../icons'
 
 const socialIcons = {
@@ -54,7 +54,7 @@ export function Cta() {
 
       <p className="cta__invitation">
         <span>{cta.invitationLead}</span>
-        <a className="cta__link" href={cta.invitationLink.href}>
+        <a className="cta__link" href={cta.invitationLink.href} {...bookingTrigger}>
           <span className="cta__label">{cta.invitationLink.label}</span>
         </a>
       </p>

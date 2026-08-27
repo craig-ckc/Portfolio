@@ -1,4 +1,4 @@
-import { hero } from '../../content/home-page'
+import { bookingTrigger, hero } from '../../content/home-page'
 import { Sparkle } from '../icons'
 import { HeroFolder } from './hero-folder'
 
@@ -14,8 +14,10 @@ export function Hero() {
           <div className="hero__lower">
             <p className="hero__standfirst">{hero.standfirst}</p>
             <div className="hero__actions">
-              {/* No trailing arrow — the frame dropped it. */}
-              <a className="chip hero__cta" href={hero.cta.href}>
+              {/* No trailing arrow — the frame dropped it. The href is the
+                  booking page; `bookingTrigger` is what opens it in a modal
+                  instead. */}
+              <a className="chip hero__cta" href={hero.cta.href} {...bookingTrigger}>
                 {hero.cta.label}
               </a>
             </div>
