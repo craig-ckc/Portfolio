@@ -1,12 +1,12 @@
-/* The lanyard face of the hero folder: a conference badge on a strap, cut
-   short and taped down rather than hanging free — see
-   src/components/home/faces/lanyard.tsx for the markup this styles.
+/* The lanyard face of the hero folder: a printed badge, on its own, with the
+   light moving over it — see src/components/home/faces/lanyard.tsx for the
+   markup this styles and for the three properties it writes.
 
-   The card's own frame is handed back here: the strap has to sit above the
-   badge as one piece with it, and a box clipped to overflow: hidden cannot
-   let anything stand proud of its own top edge. .lanyard__badge draws the
-   frame — the fill, the corners, the hairline and shadow the card would
-   otherwise have supplied — so nothing about the look is actually lost. */
+   The card's own frame is handed back here. The badge leans, and a box clipped
+   to overflow: hidden cannot hold something that leans out of its own edges.
+   .lanyard__badge draws the frame instead — the fill, the corners, the
+   hairline and the shadow the card would otherwise have supplied — so nothing
+   about the look is lost. */
 .card[data-kind='lanyard'] {
   overflow: visible;
   background: transparent;
@@ -22,155 +22,101 @@
   box-shadow: none;
 }
 
-/* The whole object: a still badge with a stub of strap above it. Nothing here
-   rotates or moves — the strap is cut short enough, and taped down firmly
-   enough, that there is nothing left for it to swing on. */
+/* --- The pose ---------------------------------------------------------------
+   Three numbers, written by the face every frame it is moving and never
+   otherwise: --lx and --ly, where the light is over the card, 0 to 1 either
+   way; and --on, how much of any of this is drawn, 0 flat and unlit through to
+   1. Every other number below is arithmetic on those three, which is what
+   keeps the lean, the shine and the shade in step without a single one of them
+   being animated separately.
+
+   There is no transition in this file, deliberately, and no keyframe either.
+   The face eases the three numbers itself — the long comment there explains
+   why, and it is the reason the printing stays sharp through the turn rather
+   than going blocky for the length of it.
+
+   The perspective is on this element rather than in the badge's own transform,
+   and it is deep: three card widths back. Shallower reads as a photograph of a
+   card on a hinge rather than as a card being turned, and the lean is small
+   enough that a hard vanishing point would be the only thing anyone saw. */
 .lanyard {
   position: absolute;
   inset: 0;
-  --strap-h: 15cqw;
+  perspective: 300cqw;
+
+  --lx: 0.5;
+  --ly: 0.5;
+  --on: 0;
+  --enter: 0;
+
+  --rx: 0deg;
+  --ry: 0deg;
+  --rise: 0cqw;
+  --grow: 1;
+  --shine: 0;
 }
 
-/* --- The strap --------------------------------------------------------------
-   Short, and cut straight across the top rather than running off to a neck
-   somewhere out of frame — the tape below is what is holding the cut end
-   down. The running text is left to be cut mid-word by that top edge
-   (overflow: hidden does that for free); a strap that happened to end on a
-   whole word would look staged. */
-
-.lanyard__strap {
-  position: absolute;
-  z-index: 0;
-  bottom: 100%;
-  left: 50%;
-  width: 16cqw;
-  height: var(--strap-h);
-  transform: translateX(-50%);
-  overflow: hidden;
-  background: #151515;
-  box-shadow:
-    inset 1px 0 0 rgb(249 249 249 / 14%),
-    inset -1px 0 0 rgb(249 249 249 / 14%);
-  /* Shut, only the badge's top sliver shows above the folder's flap — a strap
-     poking up past it would read as a stray thread rather than as the object
-     it belongs to. It only earns its place once the contents are actually
-     out. */
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-standard);
+/* Under the pointer in the scatter: it rises, and takes one turn toward the
+   side the pointer came in from. One axis, one angle, set on the way in and
+   held — at 14vw across, a card tracking a pointer is a wobble. */
+.folder.is-open .card[data-kind='lanyard'] .lanyard {
+  --ry: calc(var(--enter) * var(--on) * 3.5deg);
+  --rise: calc(var(--on) * -1.6cqw);
+  --grow: calc(1 + var(--on) * 0.015);
+  --shine: calc(var(--on) * 0.6);
 }
 
-.folder.is-open .card[data-kind='lanyard'] .lanyard__strap,
-.folder.is-open .card[data-kind='lanyard'] .lanyard__tape {
-  opacity: 1;
-}
+/* In the middle, under the pointer: the badge follows the hand, both ways.
+   Five degrees at the very edge of the card and nothing at its centre — most
+   of what reads as depth here is the light moving over the printing rather
+   than the printing moving.
 
-.lanyard__strap-text {
-  display: block;
-  width: 100%;
-  height: 100%;
-  padding: 3cqw 0;
-  writing-mode: vertical-rl;
-  /* vertical-rl alone reads top to bottom; the flip is what sends the text
-     running up the strap instead. */
-  transform: rotate(180deg);
-  font-family: var(--font-display);
-  font-size: 3cqw;
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-wider);
-  color: rgb(249 249 249 / 80%);
-  white-space: nowrap;
-  text-align: center;
-}
-
-/* --- The tape -----------------------------------------------------------
-   A strip of translucent tape holding the cut end to the page. Centred on
-   the strap, its own vertical middle sitting on the strap's top edge so it
-   overlaps the cut by about half its height — the thing actually doing the
-   job of holding the strap down. Torn-looking ends come from a jagged
-   clip-path rather than a texture, kept cheap and crisp at any scale. */
-.lanyard__tape {
-  position: absolute;
-  z-index: 3;
-  top: calc(-1 * var(--strap-h));
-  left: 50%;
-  width: 30cqw;
-  height: 7.5cqw;
-  transform: translate(-50%, -50%) rotate(-4deg);
-  clip-path: polygon(
-    2% 0%,
-    0% 18%,
-    3% 38%,
-    1% 60%,
-    4% 82%,
-    2% 100%,
-    98% 100%,
-    100% 82%,
-    97% 60%,
-    99% 38%,
-    96% 18%,
-    98% 0%
-  );
-  /* Warm enough to read as masking tape against a page that is itself almost
-     white; over the dark strap the same strip goes pale and translucent. */
-  background:
-    repeating-linear-gradient(90deg, rgb(255 255 255 / 8%) 0 1px, transparent 1px 3px),
-    rgb(238 228 204 / 62%);
-  backdrop-filter: blur(0.5cqw);
-  border: 1px solid rgb(21 21 21 / 9%);
-  box-shadow: 0 0.6cqw 1.4cqw rgb(21 21 21 / 12%);
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-standard);
-}
-
-/* --- The clip --------------------------------------------------------------
-   The metal fitting at the junction: half over the strap's foot, half over
-   the badge's top edge, which is what visually joins the two into one object
-   instead of a badge that merely happens to sit under a strap. */
-.lanyard__clip {
-  position: absolute;
-  z-index: 2;
-  top: -2.5cqw;
-  left: 50%;
-  width: 10cqw;
-  height: 5cqw;
-  transform: translateX(-50%);
-  border-radius: 1.4cqw;
-  background: linear-gradient(180deg, #dcdcdc 0%, #9a9a9a 55%, #e6e6e6 100%);
-  box-shadow: 0 1px 2px rgb(21 21 21 / 22%);
-}
-
-.lanyard__clip::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 3cqw;
-  height: 1.4cqw;
-  transform: translate(-50%, -50%);
-  border-radius: var(--radius-full);
-  background: rgb(21 21 21 / 55%);
-  box-shadow: inset 0 1px 1px rgb(21 21 21 / 30%);
+   Both angles are the same map: 0 to 1 across the card becomes -lean to +lean,
+   signed so the corner nearest the pointer is the corner that comes toward it.
+   No --on in them, because --lx and --ly ease back to the middle of the card
+   on the way out, and the middle of the card is already flat. */
+.folder.is-open .folder__item.is-focused .card[data-kind='lanyard'] .lanyard {
+  --lean: 5deg;
+  --rx: calc((var(--ly) - 0.5) * 2 * var(--lean));
+  --ry: calc((0.5 - var(--lx)) * 2 * var(--lean));
+  --rise: 0cqw;
+  --grow: 1;
+  --shine: var(--on);
 }
 
 /* --- The badge -------------------------------------------------------------
-   Fills the card box exactly — the frame .card[data-kind='lanyard'] gave up
-   above, drawn here instead. */
+   Fills the card box exactly, and leans in it.
+
+   will-change is on permanently rather than added when the pointer arrives.
+   It is what pins the layer, and a layer promoted at the moment of the hover
+   is a layer rasterised again at that moment — the flicker it would fix is the
+   flicker it would cause. The trailing translate3d keeps the element in a 3D
+   rendering context even at rest, so the frame the lean starts is not also the
+   frame its rendering path changes.
+
+   The shadow is fixed. It could follow the pointer — it did — but box-shadow
+   is a paint property, and repainting the layer the printing lives on, every
+   frame, for a shadow nobody is looking at, is the one thing worth refusing
+   here. Everything that does move moves on the compositor alone. */
 .lanyard__badge {
   position: absolute;
-  z-index: 1;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8cqw;
+  overflow: hidden;
   border-radius: 3cqw;
   background: #fdfdfd;
+  transform:
+    translateY(var(--rise))
+    scale(var(--grow))
+    rotateX(var(--rx))
+    rotateY(var(--ry))
+    translate3d(0, 0, 0.01px);
+  will-change: transform;
   box-shadow:
     0 0 0 1px rgb(21 21 21 / 8%),
     0 3px 8px rgb(21 21 21 / 10%);
 }
 
-/* The hole the clip reads as passing through. */
+/* The hole the strap used to pass through, punched in the stock. */
 .lanyard__slot {
   position: absolute;
   top: 5cqw;
@@ -181,6 +127,16 @@
   border-radius: 1.2cqw;
   background: rgb(21 21 21 / 70%);
   box-shadow: inset 0 1px 1px rgb(21 21 21 / 35%);
+}
+
+/* --- The printing ---------------------------------------------------------- */
+.lanyard__print {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8cqw;
 }
 
 .lanyard__header {
@@ -257,4 +213,92 @@
   font-variant-numeric: tabular-nums;
   letter-spacing: var(--tracking-wide);
   color: #616161;
+}
+
+/* --- The light -------------------------------------------------------------
+   Two passes over the printing, neither reachable by the pointer, each
+   blending with what is under it differently — which is why they are two
+   elements and not one, since an element gets a single mix-blend-mode.
+
+   Both are pinned to the pointer rather than to the lean. That is the whole
+   reason five degrees is enough: the card barely moves, and the light moves
+   the width of the card, so what is being watched is a reflection travelling
+   over a surface rather than a rectangle rotating.
+
+   Each is drawn at twice the badge, centred on it, with its gradient centred
+   in turn — and then *moved by a transform* rather than by a background
+   position. Same picture; the difference is that a background position is
+   painted and a transform is not, so following the pointer costs these layers
+   a matrix each and no repaint at all. The badge clips them back to its own
+   corners. */
+.lanyard__foil,
+.lanyard__glare {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  /* Half the element is one badge across, so a pose of 0 to 1 lands the
+     element's middle exactly on the pointer. */
+  transform: translate(calc((var(--lx) - 0.5) * 50%), calc((var(--ly) - 0.5) * 50%));
+  will-change: transform, opacity;
+}
+
+/* The foil in the laminate. The band runs across the whole oversized layer, so
+   the pointer slides a long way through it for a short move of the hand —
+   which is how a laminated badge behaves, and why the colour reads as an angle
+   rather than as something printed on it.
+
+   Multiply, because the stock is white: the lighter blend modes have nothing
+   to lift there and the hues would simply not appear. Masked to a pool around
+   the middle — run across the whole card, the badge stops being a white badge
+   catching the light and becomes a card printed in rainbow. */
+.lanyard__foil {
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgb(255 110 196 / 26%) 30%,
+    rgb(120 115 245 / 26%) 38%,
+    rgb(76 201 240 / 26%) 46%,
+    rgb(128 237 153 / 26%) 54%,
+    rgb(249 199 79 / 26%) 62%,
+    rgb(244 132 95 / 26%) 70%,
+    transparent 80%
+  );
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(closest-side circle at 50% 50%, #000 0%, rgb(0 0 0 / 30%) 40%, transparent 75%);
+  mask-image: radial-gradient(closest-side circle at 50% 50%, #000 0%, rgb(0 0 0 / 30%) 40%, transparent 75%);
+  opacity: calc(var(--shine) * 0.45);
+}
+
+/* The shine, and the shade, in one gradient: a circle sitting under the
+   pointer that is near white at its middle and dark by the far corner. Hard
+   light, so the pale end screens — no effect on white stock, everything on the
+   ink under it — and the dark end multiplies, which is the only way a card
+   this close to white can be seen to have a side turned away from the light.
+
+   The white falls off fast, and there is nothing at all through the middle
+   distance. Carried further it lifts the portrait and the barcode off black
+   wherever the pointer happens to be, and ink reading as grey is a card that
+   has been faded rather than one being lit.
+
+   One layer rather than a highlight and a separate directional shading. The
+   shading would have to run along an angle taken from the pointer, and that
+   angle has no meaning in the middle of the card: it swings through a half
+   turn on a pixel of movement, and the whole gradient spins with it. Anchored
+   to a point instead, there is no angle to be unstable.
+
+   closest-side puts the gradient's own radius at one badge width, so the stops
+   below read as fractions of the card however large it is being shown. */
+.lanyard__glare {
+  background-image: radial-gradient(
+    closest-side circle at 50% 50%,
+    rgb(255 255 255 / 70%) 0%,
+    rgb(255 255 255 / 14%) 22%,
+    rgb(255 255 255 / 0%) 42%,
+    rgb(38 42 54 / 20%) 96%
+  );
+  mix-blend-mode: hard-light;
+  opacity: var(--shine);
 }

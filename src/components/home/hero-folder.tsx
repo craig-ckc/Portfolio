@@ -243,7 +243,9 @@ function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
       return <DiscFace item={item} presented={focused} />
 
     case 'lanyard':
-      return <LanyardFace item={item} />
+      /* In the scatter the badge lifts and takes one turn on the way in. In
+         the middle it follows the pointer, both ways, and the light with it. */
+      return <LanyardFace item={item} presented={focused} />
 
     case 'phone':
       return <PhoneFace item={item} presented={focused} />
