@@ -38,11 +38,21 @@
    The perspective is on this element rather than in the badge's own transform,
    and it is deep: three card widths back. Shallower reads as a photograph of a
    card on a hinge rather than as a card being turned, and the lean is small
-   enough that a hard vanishing point would be the only thing anyone saw. */
+   enough that a hard vanishing point would be the only thing anyone saw.
+
+   --k is how much bigger than its own layout the folder is showing this card.
+   It is the same product home-page.css scales a presented item by, read back
+   from the same three properties, so the two cannot drift. The badge below
+   uses it to undo that magnification on itself — see the note there, it is
+   the whole reason the printing survives being leaned. Clamped because it is
+   a layout size in disguise: a card that somehow measured huge would lay its
+   badge out huge to match. */
 .lanyard {
   position: absolute;
   inset: 0;
   perspective: 300cqw;
+
+  --k: clamp(1, calc(var(--out-scale, 1) * var(--slot-focus, 2) * var(--folder-zoom, 1)), 5);
 
   --lx: 0.5;
   --ly: 0.5;
@@ -51,7 +61,7 @@
 
   --rx: 0deg;
   --ry: 0deg;
-  --rise: 0cqw;
+  --rise: 0%;
   --grow: 1;
   --shine: 0;
 }
@@ -61,7 +71,7 @@
    held — at 14vw across, a card tracking a pointer is a wobble. */
 .folder.is-open .card[data-kind='lanyard'] .lanyard {
   --ry: calc(var(--enter) * var(--on) * 3.5deg);
-  --rise: calc(var(--on) * -1.6cqw);
+  --rise: calc(var(--on) * -1.2%);
   --grow: calc(1 + var(--on) * 0.015);
   --shine: calc(var(--on) * 0.6);
 }
@@ -79,7 +89,7 @@
   --lean: 5deg;
   --rx: calc((var(--ly) - 0.5) * 2 * var(--lean));
   --ry: calc((0.5 - var(--lx)) * 2 * var(--lean));
-  --rise: 0cqw;
+  --rise: 0%;
   --grow: 1;
   --shine: var(--on);
 }
@@ -87,12 +97,55 @@
 /* --- The badge -------------------------------------------------------------
    Fills the card box exactly, and leans in it.
 
-   will-change is on permanently rather than added when the pointer arrives.
-   It is what pins the layer, and a layer promoted at the moment of the hover
-   is a layer rasterised again at that moment — the flicker it would fix is the
-   flicker it would cause. The trailing translate3d keeps the element in a 3D
-   rendering context even at rest, so the frame the lean starts is not also the
-   frame its rendering path changes.
+   --- Why it is laid out --k times too big and then scaled back down ---------
+
+   This is the fix for the one real defect this face had, and it is worth the
+   words because it is invisible in the code and obvious on the screen.
+
+   The folder shows a presented card at about two and three quarter times the
+   size it is laid out at: 148px of layout inside a card scaled up to 404px,
+   and twice that again in device pixels on a retina screen. A flat card
+   survives that — the browser rasterises the whole scaled subtree at the size
+   it ends up. A card with a 3D transform on it does not: the leaning element
+   becomes a composited layer of its own, and that layer is rasterised at its
+   own *layout* size and then handed to the GPU to be stretched. 148px of
+   texture across 808 device pixels. The printing came back visibly blocky the
+   instant the badge left flat, and snapped sharp again the instant it returned
+   to exactly zero — which is what made it read as a flicker on the way in and
+   on the way out rather than as a card that was simply soft.
+
+   It is not the transition, and not the easing, and not will-change: a lean
+   held perfectly still is just as blocky. It is the 3D layer inside a scaled
+   ancestor, and nothing else.
+
+   So the badge is laid out at the size it is actually shown at — its own box
+   multiplied by --k — and the first thing its transform does is divide that
+   back out again. Net geometry: unchanged, exactly as before, whatever --k
+   happens to be. Net raster: a texture with --k times the detail in it, which
+   is a texture at the size it is going to be shown at. The scale-down is
+   applied about the top left so the shrunk box lands back on the card, and the
+   lean is wrapped in a translate either side of it so it still turns about the
+   badge's own middle. It is a scale3d rather than a scale so that the depth
+   the lean produces is divided out along with the width and the height — a 2D
+   scale leaves z alone, and the perspective would then bite --k times harder
+   than it was asked to.
+
+   Three things follow from the box being bigger. Lengths in px inside it are
+   in the enlarged space and have to be multiplied back up, or a hairline comes
+   out a third of a pixel. The badge has to become the
+   container the printing measures itself against, or every cqw inside it would
+   still be a percentage of the small card. And its own border-radius cannot be
+   in cqw, because an element does not measure against the container it is
+   itself declaring — hence the --k in it, which puts it back in proportion.
+
+   (cofounder.co, the reference for this face, never has to do any of it: their
+   tilt card has no scaled ancestor at all, so its layout size is already its
+   shown size. It is plain DOM with live text, not a canvas — the difference is
+   only ever this.)
+
+   will-change is on permanently rather than added when the pointer arrives. A
+   layer promoted at the moment of the hover is a layer rasterised again at that
+   moment — the flicker it would fix is the flicker it would cause.
 
    The shadow is fixed. It could follow the pointer — it did — but box-shadow
    is a paint property, and repainting the layer the printing lives on, every
@@ -100,20 +153,28 @@
    here. Everything that does move moves on the compositor alone. */
 .lanyard__badge {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: calc(100% * var(--k));
+  height: calc(100% * var(--k));
+  container-type: inline-size;
   overflow: hidden;
-  border-radius: 3cqw;
+  border-radius: calc(3cqw * var(--k));
   background: #fdfdfd;
+  transform-origin: 0 0;
   transform:
+    scale3d(calc(1 / var(--k)), calc(1 / var(--k)), calc(1 / var(--k)))
+    translate(50%, 50%)
     translateY(var(--rise))
     scale(var(--grow))
     rotateX(var(--rx))
     rotateY(var(--ry))
+    translate(-50%, -50%)
     translate3d(0, 0, 0.01px);
   will-change: transform;
   box-shadow:
-    0 0 0 1px rgb(21 21 21 / 8%),
-    0 3px 8px rgb(21 21 21 / 10%);
+    0 0 0 calc(1px * var(--k)) rgb(21 21 21 / 8%),
+    0 calc(3px * var(--k)) calc(8px * var(--k)) rgb(21 21 21 / 10%);
 }
 
 /* The hole the strap used to pass through, punched in the stock. */
@@ -126,7 +187,7 @@
   transform: translateX(-50%);
   border-radius: 1.2cqw;
   background: rgb(21 21 21 / 70%);
-  box-shadow: inset 0 1px 1px rgb(21 21 21 / 35%);
+  box-shadow: inset 0 0.2cqw 0.2cqw rgb(21 21 21 / 35%);
 }
 
 /* --- The printing ---------------------------------------------------------- */
