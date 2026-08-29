@@ -12,6 +12,9 @@ import '@fontsource/manrope/latin-700.css'
 // SSR, so the stylesheet has to be pulled in up here instead.
 import 'lenis/dist/lenis.css'
 import '../styles.css'
+import { canonicalUrl, requireSite } from '../lib/sitemap'
+import { SHARE_IMAGE } from '../lib/share-image'
+import { serializeJsonLd, structuredData } from '../lib/structured-data'
 
 interface Props {
   title?: string
@@ -22,6 +25,22 @@ const {
   title = 'Craig Chihururu — Designer + Developer',
   description = 'Craig Chihururu is a designer and developer helping brands build thoughtful websites and digital products.',
 } = Astro.props
+
+/* Absolute URLs, built from the one origin in astro.config.mjs. A crawler or
+   a scraper has no page to resolve a relative path against and drops the tag
+   rather than guess, so rel=canonical, og:url and the JSON-LD all need them
+   spelled out in full.
+
+   `canonical` comes from Astro.url.pathname, which carries no query string —
+   so ?ref=… and ?utm_source=… arrive at a page that names the clean URL as
+   the real one instead of splitting its ranking signals across every variant. */
+const site = requireSite(Astro.site)
+const canonical = canonicalUrl(site, Astro.url.pathname)
+const shareImage = new URL(SHARE_IMAGE.src, site).href
+
+/* Structured data, built from the same canonical URL, title and description
+   the og: tags use, so the two descriptions of the page agree. */
+const jsonLd = serializeJsonLd(structuredData(site, { url: canonical, title, description }))
 ---
 
 <html lang="en">
@@ -66,6 +85,40 @@ const {
     <meta name="theme-color" content="#1d4fff" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    {/* The page's own preferred URL. The site answers on three hosts and both
+        with and without a trailing slash; this is what says which of those
+        spellings the ranking signals belong to. Exactly one per page — it
+        lives here rather than in any page so there is nowhere for a second to
+        come from. */}
+    <link rel="canonical" href={canonical} />
+    {/* Open Graph, so a shared link renders as a card rather than a bare URL.
+        og:title and og:description track <title> and the meta description
+        above: one page, one claim about what it is.
+
+        og:url is the load-bearing one here. The site answers on three hosts —
+        the apex and the .vercel.app both 308 to www — and without it a share
+        of the same page from two of them counts as two pages. */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Craig Chihururu" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={shareImage} />
+    {/* Declaring the size lets a scraper lay the card out before it has
+        finished fetching the image, which is what stops the first share of a
+        cold URL rendering small. */}
+    <meta property="og:image:width" content={String(SHARE_IMAGE.width)} />
+    <meta property="og:image:height" content={String(SHARE_IMAGE.height)} />
+    <meta property="og:image:alt" content={SHARE_IMAGE.alt} />
+    {/* X reads the og: tags for everything else, but it will only render the
+        wide card if this says so — the default is a small square thumbnail. */}
+    <meta name="twitter:card" content="summary_large_image" />
+    {/* JSON-LD: a Person for Craig, a WebSite for the site, and a WebPage for
+        this page, joined by @id. `is:inline` for the same reason as the tags
+        below — it has to reach the document as written, and there is nothing
+        here for Astro to bundle. `set:html` because the value is already
+        serialised JSON, which Astro would otherwise HTML-escape into garbage. */}
+    <script type="application/ld+json" is:inline set:html={jsonLd} />
     {/* Google Analytics (gtag.js). `is:inline` keeps both tags in the head as
         written — Astro would otherwise hoist and bundle them, which delays the
         measurement snippet past the point where it can see the first page

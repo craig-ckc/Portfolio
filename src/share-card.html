@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<!--
+  Source for public/img/share.png — the 1200x630 Open Graph card.
+
+  Not a route (Astro only serves src/pages), and deliberately not in public/:
+  it is a build input, not something to ship. Regenerate after changing the
+  headline or the logo:
+
+    1. serve the project root over HTTP — file:// cannot read the logo, and
+       the paths below are written to resolve from the repo root:
+         python3 -m http.server 4455
+    2. open /src/share-card.html and screenshot it at exactly 1200x630,
+       with no device scaling (a 2x shot is the wrong size, not a sharper one)
+    3. compress into place:
+         npx sharp ... -o public/img/share.png   (or any PNG optimiser)
+       then run `npm test` — share-image.test.ts checks the size still matches
+       what the og:image:width/height tags promise.
+
+  Tokens below are copied from src/styles/design-tokens.css. Satoshi comes
+  from Fontshare and Manrope from Google Fonts, matching the site.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  @import url('https://api.fontshare.com/v2/css?f[]=satoshi@700&display=swap');
+
+  /* Tokens lifted verbatim from src/styles/design-tokens.css so the card and
+     the site cannot drift apart. */
+  :root {
+    --background: #f9f9f9;
+    --foreground: #151515;
+    --neutral-700: #616161;
+    --font-display: 'Satoshi Variable', 'Satoshi', system-ui, sans-serif;
+    --font-sans: 'Manrope', system-ui, sans-serif;
+    --tracking-snug: -0.02em;
+    --leading-tight: 1.1;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; overflow: hidden; }
+
+  .card {
+    width: 1200px;
+    height: 630px;
+    padding: 72px;
+    background: var(--background);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: var(--font-sans);
+  }
+
+  /* Same masking trick as .nav__logo — the SVG is a shape, the colour is ours. */
+  .logo {
+    width: 118px;
+    height: 30px;
+    background: var(--foreground);
+    mask: url('/public/figma/logo.svg') center / contain no-repeat;
+    -webkit-mask: url('/public/figma/logo.svg') center / contain no-repeat;
+  }
+
+  /* The hero's own treatment: the sentence sits back in grey, the three nouns
+     it turns on come forward in near-black. */
+  .headline {
+    margin: 0;
+    max-width: 15ch;
+    font-family: var(--font-display);
+    font-size: 74px;
+    font-weight: 700;
+    letter-spacing: var(--tracking-snug);
+    line-height: var(--leading-tight);
+    color: var(--neutral-700);
+  }
+  .headline b { font-weight: 700; color: var(--foreground); }
+
+  .foot {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+    color: var(--neutral-700);
+  }
+  .foot strong { font-weight: 600; color: var(--foreground); }
+  .foot .sep { padding: 0 10px; color: #b8b8b8; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo"></div>
+    <h1 class="headline">I help <b>brands</b> build <b>websites</b> worth visiting and <b>apps</b> worth using.</h1>
+    <div class="foot">
+      <div><strong>Craig Chihururu</strong><span class="sep">/</span>Independent designer and front-end developer</div>
+      <div>craigchihururu.com</div>
+    </div>
+  </div>
+</body>
+</html>
