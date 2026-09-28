@@ -101,8 +101,10 @@
   --radius-full: 999px;
 
   /* Container */
+  --container-content: 800px;
+  --container-content-wide: 1280px;
+
   --container-caption: 520px;
-  --container-object: 640px;
   --container-hero: 1040px;
   --container-work: 1100px;
   --container-page: 1792px;

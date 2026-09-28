@@ -344,7 +344,7 @@
 
 .hero__object {
   display: flex;
-  width: min(var(--container-object), 38%);
+  width: min(var(--container-content), 38%);
   flex: 0 0 auto;
   flex-direction: column;
   align-items: center;
@@ -503,7 +503,7 @@
 
   display: block;
   width: var(--folder-size);
-  max-width: var(--container-object);
+  max-width: var(--container-content);
 }
 
 /* While the contents are out, this object owns the screen: the layer has to
