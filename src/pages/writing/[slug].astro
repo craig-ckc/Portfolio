@@ -19,6 +19,7 @@ import PageShell from '../../layouts/page-shell.astro'
 import { Cta } from '../../components/sections/cta'
 import { articles, formatPublished, type Article } from '../../content/writing'
 import Frame from '../../components/writing/article-frame.astro'
+import ArticleShare from '../../components/writing/article-share.astro'
 import type { WorkMedia } from '../../content/work'
 import '../../styles/article.css'
 
@@ -31,10 +32,16 @@ interface Props {
 }
 
 const { article } = Astro.props
+const shareUrl = new URL(`/writing/${article.slug}`, Astro.site).href
 
 ---
 
-<PageShell title={`${article.title} — Craig Chihururu`} description={article.description} homeHref="/">
+<PageShell
+  title={`${article.title} | Craig Chihururu`}
+  description={article.description}
+  homeHref="/"
+  article={{ published: article.published, topics: article.topics }}
+>
   <article class="article">
     <header class="article__header">
       <h1 class="article__title">{article.title}</h1>
@@ -79,9 +86,10 @@ const { article } = Astro.props
           </section>
         ))
       }
+
+      <ArticleShare title={article.title} url={shareUrl} />
     </div>
   </article>
 
   <Cta />
 </PageShell>
-

@@ -28,6 +28,14 @@ _Avoid_: Marquee, carousel
 A canvas-like detail page frame for presenting and adjusting one small **Playground** experiment.
 _Avoid_: Detail dashboard, settings page
 
+**Writing**:
+Evergreen articles about design, product building, technology, AI, and the judgment behind the work.
+_Avoid_: News commentary, narrow implementation tutorials, personal promotion
+
+**Writing voice**:
+Plain, direct thinking that makes the idea the subject. Use first person only when a personal experience is necessary evidence, not as the default point of view.
+_Avoid_: Clever but unclear headlines, tool-led headlines, repeated "I" framing, excessive jargon, em dashes
+
 ## Relationships
 
 - The homepage sequence is **Work**, **About**, **Playground**, then service/list content.
@@ -44,6 +52,10 @@ _Avoid_: Detail dashboard, settings page
 - The dedicated **Playground** page repeats the masonry gallery and loads additional batches as the visitor scrolls.
 - Individual **Playground** items open in a **Playground shell** with a dotted canvas, centered experiment mount, and project-name notch.
 - **Playground shell** uses an icon-only return control instead of text navigation.
+- **Writing** focuses on durable ways to think, not short-lived reactions to a trend.
+- **Writing** headings state the question or point plainly and the first paragraph answers it directly.
+- **Writing** can draw on Craig's experiments, but the concept remains the hero of the article.
+- **Writing** can include AI without making AI the headline; lead with the enduring problem, principle, or human judgment.
 
 ## Example dialogue
 

@@ -4,8 +4,8 @@
  *
  * Every piece is a card within a card: its image is the whole card, and a
  * small pane of the homepage folder's frosted glass sits inside it carrying
- * the words. The newest leads, wide, with its title, subtitle and a way in;
- * everything older follows in a grid, each pane holding the title alone. No
+ * the words. The featured piece leads, wide, with its title, subtitle and a
+ * way in; every article, including the feature, follows in a grid. No
  * categories, no dates — those wait on the article's own page.
  */
 import PageShell from '../layouts/page-shell.astro'
@@ -20,12 +20,11 @@ const blurbLead = 'Notes on design, on code, and on the bits in between that nob
    underneath it. */
 const blurb = articles.length > 0 ? blurbLead : `${blurbLead} Nothing published yet.`
 
-/* Newest first, though the list never says so: the order is the only place a
-   date still shows. */
-const [featured, ...rest] = [...articles].sort((a, b) => b.published.localeCompare(a.published))
+const sortedArticles = [...articles].sort((a, b) => b.published.localeCompare(a.published))
+const featured = sortedArticles.find((article) => article.featured) ?? sortedArticles[0]
 ---
 
-<PageShell title="Writing — Craig Chihururu" description={blurb} homeHref="/">
+<PageShell title="Writing | Craig Chihururu" description={blurb} homeHref="/">
   {
     featured ? (
       <section class="writing__featured container" aria-labelledby="writing-heading">
@@ -56,18 +55,21 @@ const [featured, ...rest] = [...articles].sort((a, b) => b.published.localeCompa
   }
 
   {
-    rest.length > 0 && (
-      <section class="writing__grid container" aria-label="More writing">
-        {rest.map((article) => (
-          <a class="writing__tile" href={writingPath(article.slug)}>
-            <div class="writing__image">
-              {article.card.src ? <img src={article.card.src} alt={article.card.alt ?? ''} loading="lazy" /> : null}
-            </div>
-            <div class="writing__glass">
-              <h3 class="writing__glass-title">{article.title}</h3>
-            </div>
-          </a>
-        ))}
+    sortedArticles.length > 0 && (
+      <section class="writing__all container" aria-labelledby="all-writing-heading">
+        <h2 class="writing__all-title" id="all-writing-heading">All writing</h2>
+        <div class="writing__grid">
+          {sortedArticles.map((article) => (
+            <a class="writing__tile" href={writingPath(article.slug)}>
+              <div class="writing__image">
+                {article.card.src ? <img src={article.card.src} alt={article.card.alt ?? ''} loading="lazy" /> : null}
+              </div>
+              <div class="writing__glass">
+                <h3 class="writing__glass-title">{article.title}</h3>
+              </div>
+            </a>
+          ))}
+        </div>
       </section>
     )
   }

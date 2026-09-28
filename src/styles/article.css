@@ -183,6 +183,34 @@
 }
 
 /* --------------------------------------------------------------------------
+   Sharing
+   -------------------------------------------------------------------------- */
+
+.article__share {
+  margin-top: var(--spacing-4xl);
+  padding-top: var(--spacing-xl);
+  border-top: 1px solid var(--neutral-600);
+}
+
+.article__share-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-medium);
+  font-variation-settings: 'wght' 500;
+  letter-spacing: var(--tracking-snug);
+  line-height: var(--leading-normal);
+}
+
+.article__share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+/* --------------------------------------------------------------------------
    Load-in
 
    The header settles in a beat at a time — title, subtitle, the date —
