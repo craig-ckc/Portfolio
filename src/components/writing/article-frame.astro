@@ -10,15 +10,39 @@ interface Props {
   media: WorkMedia
   /** The cover is above the fold; every other image waits to be reached. */
   eager?: boolean
+  /**
+   * Wider than the body's images: at 16:9 the cover fills the whole first
+   * screen at this width and the reading starts below the fold, rather than
+   * the body image's 16:10.
+   */
+  cover?: boolean
+  /**
+   * One of a pair set side by side. Square from the tablet breakpoint up,
+   * where the pair actually sits two across; below it the pair stacks and
+   * each frame keeps the single image's 16:10 rather than turning square in
+   * a narrow column.
+   */
+  paired?: boolean
 }
 
-const { media, eager = false } = Astro.props
+const { media, eager = false, cover = false, paired = false } = Astro.props
 ---
 
-<div class="article__frame">
+<div
+  class:list={[
+    'tw:overflow-hidden tw:rounded-md tw:bg-neutral-600',
+    cover ? 'tw:aspect-[16/9]' : paired ? 'tw:aspect-[16/10] tw:sm:aspect-square' : 'tw:aspect-[16/10]',
+  ]}
+>
   {
     media.src && (
-      <img src={media.src} alt={media.alt ?? ''} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+      <img
+        class="tw:block tw:h-full tw:w-full tw:object-cover"
+        src={media.src}
+        alt={media.alt ?? ''}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+      />
     )
   }
 </div>

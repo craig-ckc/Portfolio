@@ -19,33 +19,57 @@ export function Sparkle() {
  * The appearance glyph in the navbar: a sun in light, a crescent in dark.
  *
  * Both are drawn, always. Which one shows is a matter of opacity and a twist,
- * handled in home-page.css off the `data-theme` on the `.hp` wrapper — so the
- * two cross over rather than one being swapped out for the other, and nothing
- * has to be mounted or unmounted mid-transition.
+ * driven off the `dark:` variant (itself keyed to `data-theme` on the `.hp`
+ * wrapper) — so the two cross over rather than one being swapped out for the
+ * other, and nothing has to be mounted or unmounted mid-transition.
  *
- * The rotation on hover belongs to the svg and not to either path, which is why
- * the shared class sits out here. Both are on the same 12 unit grid as the box,
- * and the sun's dots are zero-length segments with round caps.
+ * The rotation on hover belongs to the svg and not to either path — an svg
+ * element has an ordinary CSS box, so `origin-center` resolves against its
+ * centre without being told; a path resolves against the view box and starts
+ * at the corner. `className` carries the caller's sizing and its
+ * `group-hover:` rotation trigger (nav-bar.tsx owns the `.group`); this
+ * component keeps only what is intrinsic to the glyph itself. Both paths sit
+ * on the same 12 unit grid as the box, and the sun's dots are zero-length
+ * segments with round caps.
  */
-export function AppearanceGlyph() {
+export function AppearanceGlyph({ className = '' }: { className?: string }) {
   return (
-    <svg className="nav__icon-glyph" viewBox="0 0 12 12" aria-hidden="true">
+    <svg
+      // border-box, not the default view-box, so the centre stays the centre
+      // if the drawing and the box it is drawn at ever stop being the same
+      // 12 units.
+      className={`tw:[transform-box:border-box] tw:origin-center tw:transition-transform tw:duration-560 tw:ease-out-quart ${className}`}
+      viewBox="0 0 12 12"
+      aria-hidden="true"
+    >
       <g fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
         <path
-          className="nav__glyph nav__glyph--sun"
+          // transform-box: view-box here (not border-box) — these paths
+          // resolve origin against the 12-unit view box, matching the grid
+          // they are drawn on.
+          className="tw:[transform-box:view-box] tw:origin-center tw:[transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)] tw:dark:opacity-0 tw:dark:[transform:rotate(80deg)_scale(0.5)]"
           d="M6 2H6.005M10 6H10.005M6 10H6.005M2 6H2.005M8.829 3.171H8.834M8.829 8.829H8.834M3.171 8.829H3.176M3.171 3.171H3.176M8 6C8 7.105 7.105 8 6 8C4.895 8 4 7.105 4 6C4 4.895 4.895 4 6 4C7.105 4 8 4.895 8 6Z"
         />
-        <path className="nav__glyph nav__glyph--moon" d="M6 1.5a3 3 0 0 0 4.5 4.5 4.5 4.5 0 1 1-4.5-4.5Z" />
+        <path
+          className="tw:[transform-box:view-box] tw:origin-center tw:opacity-0 tw:[transform:rotate(-80deg)_scale(0.5)] tw:[transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)] tw:dark:opacity-100 tw:dark:[transform:none]"
+          d="M6 1.5a3 3 0 0 0 4.5 4.5 4.5 4.5 0 1 1-4.5-4.5Z"
+        />
       </g>
     </svg>
   )
 }
 
 /* The waving hand beside "Say hello". Pivots on the wrist, not the centre, so
-   the wave reads as a hand rather than a spinning shape. */
-export function WavingHand() {
+   the wave reads as a hand rather than a spinning shape. Waves on its own
+   every few seconds, and again (faster, once) on hover — the hover trigger is
+   the caller's `.group` (cta.tsx's `.hello`), reached with `group-hover:`. */
+export function WavingHand({ className = '' }: { className?: string }) {
   return (
-    <svg viewBox="0 0 17 21" aria-hidden="true" className="wave">
+    <svg
+      viewBox="0 0 17 21"
+      aria-hidden="true"
+      className={`tw:w-full tw:h-full tw:origin-[30%_85%] tw:animate-chrome-wave tw:group-hover:animate-chrome-wave-hover tw:motion-reduce:animate-none! tw:motion-reduce:[transform:none]! ${className}`}
+    >
       <g
         fill="none"
         stroke="currentColor"
@@ -64,11 +88,11 @@ export function WavingHand() {
 }
 
 /* The 44px mark that opens the CTA section. */
-export function CtaMark() {
+export function CtaMark({ className = '' }: { className?: string }) {
   const bar = 'var(--neutral-700)'
 
   return (
-    <svg viewBox="0 0 35 34" aria-hidden="true">
+    <svg className={`tw:block tw:w-full tw:h-full ${className}`} viewBox="0 0 35 34" aria-hidden="true">
       <defs>
         <linearGradient id="mark-tile" x1="11.785" y1="0.44" x2="33.258" y2="35.396" gradientUnits="userSpaceOnUse">
           <stop stopColor="#F9FAF7" stopOpacity="0.12" />

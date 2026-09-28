@@ -1,0 +1,104 @@
+---
+/**
+ * One tile in the writing list: an image is the whole card, and a pane of
+ * the homepage folder's frosted glass sits over it carrying the words. The
+ * featured piece leads wide, its pane top-left holding the title, the
+ * subtitle and a way in; every other tile — including the feature, again,
+ * once it repeats in the grid below — carries only its title, pane pinned to
+ * the bottom edge.
+ *
+ * The glass itself: the homepage folder's frost — the same blur and
+ * saturation as .folder__frost in home-page.css — with a light tint rather
+ * than the folder's near-opaque one. The folder's front sits on the page, so
+ * its tint follows the page; this pane sits on a photograph in either
+ * appearance, so it stays the same in both — clear enough for the picture to
+ * show through, white type on it. Opaque, it would read as a black box
+ * pasted on the image rather than glass over it. --writing-glass-* are
+ * declared as arbitrary-property utilities on the sections that hold these
+ * tiles, in src/pages/writing.astro.
+ */
+import type { WorkMedia } from '../../content/work'
+
+interface Props {
+  href: string
+  image: WorkMedia
+  title: string
+  /** Only read for the featured tile: every other pane keeps to a title. */
+  description?: string
+  /**
+   * The lead card: wide, its image the homepage hero's own height, its pane
+   * set top-left and holding more than a title. Every other tile is the
+   * homepage work row's height, title-only, pane pinned to the bottom edge.
+   */
+  featured?: boolean
+}
+
+const { href, image, title, description, featured = false } = Astro.props
+
+/* Held on its own compositor layer from the start, not only while it moves.
+   Without this the browser lifts the image onto a GPU layer for the length of
+   the zoom and hands it back to ordinary painting the moment the transition
+   ends — and the hand-back re-snaps it to whole pixels, which is the small
+   jump seen as the zoom settles. With the layer kept, nothing changes hands at
+   the end, so there is nothing to jump. */
+const imageClasses =
+  "tw:h-full tw:w-full tw:object-cover tw:transition-transform tw:duration-760 tw:ease-out-quart tw:group-hover:scale-[1.03] tw:[will-change:transform]"
+---
+
+<a class="tw:group tw:relative tw:isolate tw:block tw:overflow-hidden tw:rounded-lg" href={href}>
+  <div
+    class:list={[
+      'tw:w-full tw:bg-neutral-600',
+      /* The homepage work tile's height, half the featured card's — a height
+         of its own rather than 100%, because the tile has none until its
+         image gives it one. */
+      featured ? 'tw:h-[640px]' : 'tw:h-[320px]',
+    ]}
+  >
+    {
+      image.src && (
+        <img
+          class={imageClasses}
+          src={image.src}
+          alt={image.alt ?? ''}
+          loading={featured ? undefined : 'lazy'}
+        />
+      )
+    }
+  </div>
+
+  {/* The inner card, set in from the outer card's edge by its own padding and
+      rounded one step tighter, so the two corners sit concentric. Pinned to
+      the bottom edge everywhere except the featured tile from the tablet
+      breakpoint up, where it moves top-left and widens to the caption
+      measure so its lines stay short. */}
+  <div
+    class:list={[
+      'tw:absolute tw:right-sm tw:bottom-sm tw:left-sm tw:flex tw:flex-col tw:items-start tw:rounded-md tw:border tw:border-(--writing-glass-edge) tw:p-lg tw:text-white tw:[background-image:linear-gradient(180deg,var(--writing-glass-top),var(--writing-glass-bottom))] tw:[backdrop-filter:blur(26px)_saturate(140%)]',
+      featured &&
+        'tw:sm:top-2xl tw:sm:right-auto tw:sm:bottom-auto tw:sm:left-2xl tw:sm:max-w-caption tw:sm:p-2xl',
+    ]}
+  >
+    {
+      featured ? (
+        <h2 class="tw:font-display tw:text-2xl tw:font-semibold tw:[font-variation-settings:'wght'_600] tw:tracking-snug tw:leading-tight tw:text-balance tw:sm:text-3xl">
+          {title}
+        </h2>
+      ) : (
+        <h3 class="tw:font-display tw:text-md tw:font-semibold tw:[font-variation-settings:'wght'_600] tw:tracking-snug tw:leading-snug tw:text-balance">
+          {title}
+        </h3>
+      )
+    }
+
+    {
+      featured && description && (
+        <p class="tw:mt-md tw:text-white/78 tw:font-display tw:text-base tw:tracking-snug tw:leading-relaxed tw:text-pretty">
+          {description}
+        </p>
+      )
+    }
+
+    {featured && <span class="chip chip-cta tw:mt-xl">Read article</span>}
+  </div>
+</a>

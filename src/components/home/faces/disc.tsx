@@ -21,8 +21,9 @@ const REST: Position = { index: 0, positionMs: 0 }
  * a moment where they disagree about what is playing.
  *
  * `presented` is the folder telling this card it is the one being looked at.
- * Two levels of life, and disc.css keys both: hovered in the scatter, the
- * record slides out and spins — motion only, nothing to read at that size.
+ * Two levels of life, and the `tw:` utilities below key both: hovered in the
+ * scatter, the record slides out and spins — motion only, nothing to read at
+ * that size.
  * Presented, the popover comes up as well, with the track, the time and the
  * skip controls, and the clock below runs for as long as that lasts.
  */
@@ -86,20 +87,67 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
     setPlaying(positionAt(durations, elapsed))
   }
 
-  if (tracks.length === 0) return <span className="disc" />
+  /* The card's own overflow: visible (needed because the record and the
+     popover both poke outside the card's square) targets the folder agent's
+     element, so it is asserted from here with a :has() variant instead of
+     editing the `.card` element's own `tw:overflow-hidden` in
+     hero-folder.tsx. */
+  const rootClass = "tw:absolute tw:inset-0 tw:rounded-[inherit] tw:[.card:has(&)]:overflow-visible!"
+
+  if (tracks.length === 0) return <span className={rootClass} />
 
   const track = tracks[playing.index] ?? tracks[0]
   const duration = durations[playing.index] ?? track.durationMs
   const progress = duration > 0 ? Math.min(playing.positionMs / duration, 1) : 0
 
+  /* The label and cover both cross-fade between the same set of covers by
+     stacking every candidate and showing only the current one — data-current
+     is written above from `playing.index`, never a class, since nothing but
+     this opacity switch depends on it. */
+  const crossfadeImg =
+    "tw:absolute tw:inset-0 tw:size-full tw:object-cover tw:opacity-0 tw:[transition:opacity_var(--duration-slow)_var(--ease-standard)] tw:data-[current=true]:opacity-100"
+
   return (
-    <span className="disc">
-      <span className="disc__record" aria-hidden="true">
-        <span className="disc__platter">
-          <span className="disc__label">
+    <span className={rootClass}>
+      {/* Centred behind the cover at rest, so "shut" and "open but not
+          hovered" both read as a plain cover with nothing behind it. Two
+          things bring it out: the pointer arriving, and the card being
+          presented — a record brought to the middle should not need finding
+          with the cursor as well. Slide and spin are two different elements
+          on purpose: a translate here and a rotate on the platter below
+          compose cleanly, where the same element doing both would need its
+          rotation pivot fighting its own offset.
+
+          The platter inside is a square that rotates, and a rotated square's
+          box is wider than the circle drawn in it — up to 41% wider at 45°.
+          overflow-clip on this sliding box (rather than on the platter
+          itself) keeps that overflow from growing the page a scrollbar on a
+          narrow screen, since the circle fits the square exactly and nothing
+          drawn is lost.
+
+          Below 900px the presented card is two thirds of the screen wide,
+          and a record slid the full 56% would run past its right edge; it
+          comes out only a third of the way there instead — the mobile value
+          is the base, the desktop one a tw:md: override. */}
+      <span
+        className="tw:absolute tw:top-1/2 tw:left-1/2 tw:z-[1] tw:size-[92cqw] tw:overflow-clip tw:rounded-full tw:[transform:translate(-50%,-50%)_translateX(0%)] tw:[transition:transform_var(--duration-base)_var(--ease-out-cubic)] tw:[.folder.is-open_.card:hover_&]:[transform:translate(-50%,-50%)_translateX(30%)] tw:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:[transform:translate(-50%,-50%)_translateX(30%)] tw:md:[.folder.is-open_.card:hover_&]:[transform:translate(-50%,-50%)_translateX(56%)] tw:md:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:[transform:translate(-50%,-50%)_translateX(56%)]"
+        aria-hidden="true"
+      >
+        <span
+          /* Spins only while presented or hovered; paused otherwise. Written
+             as one arbitrary animation shorthand per state (rather than a
+             separate animation-play-state longhand) so there is no ordering
+             question between two rules touching the same sub-property. */
+          className="tw:absolute tw:inset-0 tw:rounded-full tw:bg-[#0e0e0e] tw:[background-image:conic-gradient(from_205deg_at_46%_42%,rgb(255_255_255/7%),transparent_16%,transparent_52%,rgb(255_255_255/5%)_64%,transparent_80%),repeating-radial-gradient(circle_at_50%_50%,rgb(255_255_255/3%)_0,rgb(255_255_255/3%)_1px,transparent_1px,transparent_1.5cqw)] tw:shadow-[inset_0_0_0_1px_rgb(255_255_255/10%)] tw:[animation:disc-spin_1.8s_linear_infinite_paused] tw:[.folder.is-open_.card:hover_&]:[animation:disc-spin_1.8s_linear_infinite_running] tw:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:[animation:disc-spin_1.8s_linear_infinite_running] tw:motion-reduce:[animation:none]"
+        >
+          {/* The label: the current cover, cropped round, so it visibly
+              turns with the platter even though the spindle beneath it does
+              not need to move at all. */}
+          <span className="tw:absolute tw:top-1/2 tw:left-1/2 tw:size-[34cqw] tw:[transform:translate(-50%,-50%)] tw:rounded-full tw:overflow-hidden tw:shadow-[inset_0_0_0_1px_rgb(255_255_255/12%)]">
             {tracks.map((candidate, index) => (
               <img
                 key={candidate.art}
+                className={crossfadeImg}
                 src={candidate.art}
                 alt=""
                 draggable={false}
@@ -108,14 +156,15 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
               />
             ))}
           </span>
-          <span className="disc__spindle" />
+          <span className="tw:absolute tw:top-1/2 tw:left-1/2 tw:size-[4cqw] tw:[transform:translate(-50%,-50%)] tw:rounded-full tw:bg-[#f9f9f9]" />
         </span>
       </span>
 
-      <span className="disc__cover">
+      <span className="tw:absolute tw:inset-0 tw:z-[2] tw:rounded-[inherit] tw:overflow-hidden">
         {tracks.map((candidate, index) => (
           <img
             key={candidate.art}
+            className={`${crossfadeImg} tw:rounded-[inherit]`}
             src={candidate.art}
             alt=""
             draggable={false}
@@ -125,20 +174,33 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
         ))}
       </span>
 
-      <span className="disc__tip" aria-hidden="true">
-        <span className="disc__tip-row">
-          <span className="disc__tip-text">
-            <span className="disc__tip-title">{track.title}</span>
-            <span className="disc__tip-artist">{track.artist}</span>
+      {/* Presented only — never on a scatter hover. Small, the title and the
+          times are not legible, and a label that cannot be read is noise;
+          the record sliding out is enough to say what this is. Brought to
+          the middle, it can be read and used. The popover as a whole is
+          pointer-events: none so it never steals the drag; the skip
+          controls opt back in individually below. */}
+      <span
+        className="tw:absolute tw:bottom-[calc(100%+3cqw)] tw:left-1/2 tw:z-[3] tw:flex tw:flex-col tw:min-w-[66cqw] tw:max-w-[120cqw] tw:pt-[2.2cqw] tw:pr-[2.6cqw] tw:pb-[2cqw] tw:pl-[3.2cqw] tw:rounded-[2.4cqw] tw:bg-[rgb(21_21_21/92%)] tw:[backdrop-filter:blur(8px)] tw:text-[#f9f9f9] tw:font-display tw:leading-tight tw:whitespace-nowrap tw:opacity-0 tw:pointer-events-none tw:[transform:translateX(-50%)_translateY(1.5cqw)] tw:[transition:opacity_var(--duration-fast)_var(--ease-out-cubic),transform_var(--duration-fast)_var(--ease-out-cubic)] tw:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:opacity-100 tw:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:[transform:translateX(-50%)_translateY(0)]"
+        aria-hidden="true"
+      >
+        <span className="tw:flex tw:items-center tw:gap-[3cqw]">
+          <span className="tw:flex tw:flex-1 tw:flex-col tw:gap-[0.3cqw] tw:min-w-0 tw:text-left">
+            <span className="tw:overflow-hidden tw:text-[4.2cqw] tw:font-semibold tw:tracking-snug tw:text-ellipsis">
+              {track.title}
+            </span>
+            <span className="tw:overflow-hidden tw:text-[rgb(249_249_249/72%)] tw:text-[3.4cqw] tw:font-medium tw:text-ellipsis">
+              {track.artist}
+            </span>
           </span>
           {/* Spans with role="button", not real buttons: a <button> nested
               inside the folder's own <button> is invalid HTML. The popover
               they live in is aria-hidden, so there is no accessible name to
               give them — they are pointer-only, which is also why neither
               gets a tabIndex. */}
-          <span className="disc__tip-controls">
+          <span className="tw:flex tw:flex-shrink-0 tw:gap-[1cqw]">
             <span
-              className="disc__tip-skip"
+              className="tw:grid tw:size-[6.4cqw] tw:place-items-center tw:rounded-full tw:bg-[rgb(255_255_255/10%)] tw:cursor-pointer tw:pointer-events-auto tw:[transition:background_var(--duration-fast)] tw:hover:bg-[rgb(255_255_255/18%)] tw:[&_svg]:size-[2.6cqw]"
               role="button"
               aria-label="Previous track"
               data-dir="prev"
@@ -163,7 +225,7 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
               </svg>
             </span>
             <span
-              className="disc__tip-skip"
+              className="tw:grid tw:size-[6.4cqw] tw:place-items-center tw:rounded-full tw:bg-[rgb(255_255_255/10%)] tw:cursor-pointer tw:pointer-events-auto tw:[transition:background_var(--duration-fast)] tw:hover:bg-[rgb(255_255_255/18%)] tw:[&_svg]:size-[2.6cqw]"
               role="button"
               aria-label="Next track"
               data-dir="next"
@@ -180,16 +242,19 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
             </span>
           </span>
         </span>
-        <span className="disc__tip-progress">
-          <span className="disc__tip-track">
-            <span className="disc__tip-fill" style={{ width: `${progress * 100}%` }} />
+        <span className="tw:flex tw:flex-col tw:gap-[1.2cqw] tw:mt-[1.6cqw]">
+          <span className="tw:relative tw:h-[2cqw] tw:rounded-full tw:bg-[rgb(249_249_249/18%)] tw:overflow-hidden">
+            <span
+              className="tw:absolute tw:inset-y-0 tw:left-0 tw:rounded-[inherit] tw:bg-[#f9f9f9] tw:[transition:width_var(--duration-fast)_linear]"
+              style={{ width: `${progress * 100}%` }}
+            />
           </span>
-          <span className="disc__tip-time">
+          <span className="tw:flex tw:justify-between tw:text-[rgb(249_249_249/62%)] tw:font-sans tw:text-[2.8cqw] tw:[font-variant-numeric:tabular-nums]">
             <span>{formatTime(playing.positionMs)}</span>
             <span>{formatTime(duration)}</span>
           </span>
         </span>
-        <span className="disc__tip-arrow" />
+        <span className="tw:absolute tw:bottom-[-1.6cqw] tw:left-1/2 tw:w-[2.8cqw] tw:h-[1.6cqw] tw:[transform:translateX(-50%)] tw:bg-[rgb(21_21_21/92%)] tw:[clip-path:polygon(50%_100%,0_0,100%_0)]" />
       </span>
     </span>
   )

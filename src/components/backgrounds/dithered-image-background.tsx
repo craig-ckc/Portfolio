@@ -84,7 +84,7 @@ export function DitheredImageBackground({
          instead of the footer's own ground. */
       style={state === 'fallback' ? { backgroundImage: `url(${src})` } : undefined}
     >
-      <canvas ref={canvasRef} aria-hidden="true" />
+      <canvas className="tw:absolute tw:inset-0 tw:block tw:w-full tw:h-full" ref={canvasRef} aria-hidden="true" />
     </div>
   )
 }

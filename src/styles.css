@@ -1,27 +1,31 @@
-@import './styles/design-tokens.css';
-
 /*
- * Global base plus the Tailwind v4 foundation. Page styling lives in each
- * page's own stylesheet; nothing below the foundation has been migrated to
- * utilities yet, so the rendered design is byte-for-byte what the bespoke
- * stylesheets already produce.
+ * The site's one stylesheet.
  *
- * What is wired up here, and why it changes nothing on screen:
+ * Everything that styles a page is a `tw:` utility in that page's markup. What
+ * is written here is only what a class cannot be: the design tokens and their
+ * dark-appearance values, the Tailwind theme that exposes them, animations
+ * (keyframes), two custom utilities that need nested selectors, the element
+ * resets, and three small shared components that utilities adjust on top.
  *
- * - The Vite plugin (@tailwindcss/vite, added in astro.config.mjs) compiles
- *   the @theme and @custom-variant rules below and generates utilities on
- *   demand for classes found in source files.
- * - Tailwind is prefixed as `tw:`. That keeps utilities such as `container`
- *   and generated variables such as `--font-sans` from colliding with the
- *   established classes and runtime tokens while pages migrate in stages.
- * - Preflight is deliberately NOT imported (only theme.css and
- *   utilities.css). Preflight is a global reset — margins, borders, font
- *   sizes — and the bespoke stylesheets already own every reset the design
- *   needs. Importing it would restyle the whole site before a single utility
- *   is ever used.
- * - Cascade layers keep generated theme and utility rules predictable while
- *   the bespoke stylesheets remain unlayered during the migration.
+ * How it is wired:
+ *
+ * - The Vite plugin (@tailwindcss/vite, in astro.config.mjs) compiles this
+ *   file and generates utilities on demand for classes found in src/.
+ * - Tailwind is prefixed as `tw:`, and the prefix comes before every variant:
+ *   `tw:sm:px-2xl`, never `sm:tw:px-2xl` (which generates nothing). Durations
+ *   are numeric (`tw:duration-320`); the group class is `tw:group`, so use
+ *   `tw:group-hover:`; and inside an arbitrary selector `_` means a space.
+ * - Preflight is deliberately not imported (only theme.css and
+ *   utilities.css); the resets the design needs are in the base layer below.
+ * - Everything here that is not a token sits in a cascade layer, so a utility
+ *   always outranks it. The one exception is the Lenis override, which has to
+ *   beat Lenis's own unlayered stylesheet.
  */
+
+/* Satoshi is not a Google font. Loaded from Fontshare, the official source.
+   Self-host into public/fonts later if you want to drop the third-party
+   request. First in the file: an @import has to precede every other rule. */
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap');
 
 /* Theme and utilities without the preflight reset — see the note above. */
 @layer theme, base, components, utilities;
@@ -34,29 +38,223 @@
    outside `.hp` never goes dark by accident. */
 @custom-variant dark (&:where(.hp[data-theme='dark'], .hp[data-theme='dark'] *));
 
+/* `hover:` as a plain :hover. Tailwind v4 wraps it in @media (hover: hover),
+   which would drop hover styles on a touch screen; the site has always applied
+   them there. One site, one rule for what a hover is. */
+@custom-variant hover (&:hover);
+
+/* ==========================================================================
+   Tokens
+   ========================================================================== */
+
+/* @tokens:start */
+/*
+ * Design tokens — synced with the Paper file "Understanding canyon".
+ *
+ * Colours are authored in Paper. Typography, spacing, radius, container and
+ * breakpoint scales were synthesised from the measured values in the page
+ * frame and written back into Paper, so both sides now share one source.
+ *
+ * Three values were deliberately normalised on the way in:
+ *   - font-weight 558 (a variable-axis drag) -> 600 / --font-weight-semibold
+ *   - letter-spacing -0.8px on 16px body     -> -0.02em / --tracking-snug
+ *   - border-radius 9px                      -> 8px / --radius-md
+ */
+
+:root {
+  /* Colour */
+  --background: #f9f9f9;
+  --foreground: #151515;
+  --neutral-950: #090a0a;
+  --neutral-900: #2c2c2c;
+  --neutral-800: #434242;
+  --neutral-700: #616161;
+  --neutral-600: #b8b8b8;
+  --neutral-300: #f1f1f1;
+  --neutral-100: #f9f9f8;
+
+  /* Font family */
+  --font-display: 'Satoshi Variable', 'Satoshi', system-ui, sans-serif;
+  --font-sans: 'Manrope', system-ui, sans-serif;
+
+  /* Font size */
+  --text-2xs: 13px;
+  --text-xs: 14px;
+  --text-sm: 15px;
+  --text-base: 16px;
+  --text-md: 17px;
+  --text-lg: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-4xl: 44px;
+  --text-5xl: 60px;
+  --text-6xl: 92px;
+
+  /* Every non-heading text on the page resolves to this one size. If it is not
+     a heading, it is --text-body. */
+  --text-body: var(--text-xs);
+
+  /* Font weight */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Letter spacing */
+  --tracking-tighter: -0.03em;
+  --tracking-tight: -0.026em;
+  --tracking-snug: -0.02em;
+  --tracking-normal: -0.005em;
+  --tracking-wide: 0.005em;
+  --tracking-wider: 0.08em;
+
+  /* Line height */
+  --leading-none: 1;
+  --leading-tight: 1.1;
+  --leading-snug: 1.12;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
+  --leading-loose: 1.65;
+
+  /* Spacing — 2/4px based primitives */
+  --spacing-4xs: 2px;
+  --spacing-3xs: 4px;
+  --spacing-2xs: 6px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+  --spacing-4xl: 64px;
+  --spacing-5xl: 96px;
+  --spacing-6xl: 128px;
+
+  /* Spacing — semantic. These are the three that respond to breakpoint. */
+  --spacing-page-gutter: var(--spacing-4xl);
+  /* Gap BETWEEN work rows (96px). */
+  --spacing-section-y: var(--spacing-5xl);
+  /* Vertical padding INSIDE a section (64px). */
+  --spacing-section-py: var(--spacing-4xl);
+  --spacing-hero-top: var(--spacing-6xl);
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+
+  /* Container */
+  --container-content: 800px;
+  --container-content-wide: 1280px;
+
+  --container-caption: 520px;
+  --container-hero: 1040px;
+  --container-work: 1100px;
+  --container-page: 1792px;
+
+  /* Motion — not in Paper; the design file has no timing layer yet. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  /* Gentler than expo/quart at the head of the curve, so a hover that reverses
+     eases away instead of snapping. Use this for reversible states. */
+  --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+  /* The curve the reference site uses for its card-into-slot move. Snappy out,
+     long settle — reads as a physical object being handled. */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* A spring, for one-shot moves that should read as an object being thrown
+     rather than eased into place — the folder tipping open, its contents
+     landing on screen. Overshoots by 5% and settles. Sampled from a damped
+     spring (zeta 0.68, omega 9), so the tail is a real settle and not a guess.
+     Keep it off reversible states: a hover that crosses the edge repeatedly
+     turns an overshoot into a wobble. */
+  --ease-spring-out: linear(
+    0, 0.059 4.2%, 0.197 8.3%, 0.367 12.5%, 0.538 16.7%,
+    0.691 20.8%, 0.817 25.0%, 0.912 29.2%, 0.979 33.3%, 1.021 37.5%,
+    1.044 41.7%, 1.054 45.8%, 1.053 50.0%, 1.047 54.2%, 1.038 58.3%,
+    1.029 62.5%, 1.02 66.7%, 1.013 70.8%, 1.007 75.0%, 1.003 79.2%,
+    1.0 83.3%, 0.998 87.5%, 0.997 91.7%, 0.997 95.8%, 1
+  );
+  --duration-fast: 180ms;
+  --duration-base: 320ms;
+  --duration-slow: 560ms;
+  --duration-slower: 760ms;
+}
+
+/* Breakpoints are declared as tokens for reference and used literally in media
+   queries below, since @media cannot read a custom property. */
+:root {
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1600px;
+}
+
+@media (max-width: 1199.98px) {
+  :root {
+    --spacing-page-gutter: var(--spacing-3xl);
+    --spacing-section-y: var(--spacing-4xl);
+    --spacing-hero-top: var(--spacing-5xl);
+  }
+}
+
+@media (max-width: 599.98px) {
+  :root {
+    --spacing-page-gutter: var(--spacing-xl);
+    --spacing-section-y: var(--spacing-3xl);
+    --spacing-hero-top: var(--spacing-4xl);
+  }
+}
+
+/* Dark appearance.
+
+   BEYOND THE FRAME: the Paper page is light-only, and the navbar's sun glyph
+   has no defined behaviour there. Rather than ship a control that does nothing,
+   the roles below are reassigned from the nine colours already in the file —
+   no new hues are introduced. Delete this block and the `theme` state in
+   src/components/layout/nav-bar.tsx if you'd rather the page stay light-only. */
+.hp[data-theme='dark'] {
+  --background: #151515;
+  --foreground: #f9f9f9;
+  --neutral-900: #f1f1f1;
+  --neutral-800: #d6d6d6;
+  --neutral-700: #b8b8b8;
+  --neutral-600: #616161;
+  --neutral-300: #2c2c2c;
+  --neutral-100: #090a0a;
+}
+/* @tokens:end */
+
+/* ==========================================================================
+   Tailwind theme
+   ========================================================================== */
+
 /*
  * The token scale, exposed to Tailwind under the same names. Every value is
- * a `var()` reference into design-tokens.css rather than a copy, and the
+ * a `var()` reference into the tokens above rather than a copy, and the
  * block is `inline` so Tailwind substitutes the reference straight into each
  * utility. The import prefix namespaces generated variables as `--tw-*`, so
  * these declarations never create self-referential runtime tokens.
  *
- * That indirection is the whole point: design-tokens.css stays the single
+ * That indirection is the whole point: the token block stays the single
  * runtime source of truth. The responsive semantic spacing (the media queries
  * that retune --spacing-page-gutter and friends) and the
- * .hp[data-theme='dark'] reassignments in home-page.css keep working for
- * utilities exactly as they do for the bespoke rules, because both read the
- * same variable at the same point in the cascade.
+ * .hp[data-theme='dark'] reassignments above keep working for utilities,
+ * because every utility reads the live variable.
  *
  * Two deliberate exceptions:
  * - Breakpoints live in the plain @theme block further down as literal px
  *   values. A media query cannot read a custom property, so a var()
  *   reference would never resolve there; the literals match the breakpoints
- *   declared (and used literally) in design-tokens.css.
+ *   declared (and used literally) in the token block.
  * - Durations (--duration-*) have no per-name namespace in Tailwind v4, so
  *   they are not mapped. The bare-value `duration-180` / `duration-320` /
  *   `duration-560` / `duration-760` utilities already resolve to the same
- *   milliseconds; reach for the variables directly in bespoke CSS.
+ *   milliseconds; reach for a token with `tw:duration-(--duration-fast)` where the
+ *   reference itself matters.
  */
 @theme inline {
   /* Colour */
@@ -126,7 +324,7 @@
   --spacing-6xl: var(--spacing-6xl);
 
   /* Spacing — semantic. Responsive at runtime via the :root media queries in
-     design-tokens.css; utilities read the live value through the var(). */
+     the token block; utilities read the live value through the var(). */
   --spacing-page-gutter: var(--spacing-page-gutter);
   --spacing-section-y: var(--spacing-section-y);
   --spacing-section-py: var(--spacing-section-py);
@@ -158,9 +356,9 @@
 
 /*
  * Breakpoint overrides so `sm:` / `md:` / `lg:` / `xl:` fire at the same
- * widths the bespoke stylesheets use. Literals, not var() references:
+ * widths the token block uses. Literals, not var() references:
  * media queries cannot read custom properties, which is also why
- * design-tokens.css repeats these widths literally in its own queries.
+ * the token block repeats these widths literally in its own queries.
  * `2xl` is untouched and keeps Tailwind's default.
  */
 @theme {
@@ -170,10 +368,255 @@
   --breakpoint-xl: 1600px;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+/* ==========================================================================
+   Animations — each is a `tw:animate-*` utility; the markup decides when it
+   runs (usually behind `tw:motion-safe:`).
+   ========================================================================== */
+
+/* Waving hand beside "Say hello" (see icons.tsx WavingHand) — loops on its
+   own, and a distinct single faster wave on hover. */
+@theme {
+  --animate-chrome-wave: chrome-wave 6s var(--ease-standard) infinite;
+  --animate-chrome-wave-hover: chrome-wave 1.1s var(--ease-standard) 1;
+}
+
+@keyframes chrome-wave {
+  0%,
+  74%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  79% {
+    transform: rotate(13deg);
+  }
+
+  84% {
+    transform: rotate(-9deg);
+  }
+
+  89% {
+    transform: rotate(11deg);
+  }
+
+  94% {
+    transform: rotate(-5deg);
+  }
+}
+
+/* The bracketed CTA label shimmers on its own every few seconds — a periodic
+   hint that it is clickable, since it carries no button chrome. Linear, so
+   the sweep travels at a constant speed (easing made it look like it darted
+   across). See cta.tsx. */
+@theme {
+  --animate-chrome-shimmer: chrome-shimmer 6s linear infinite;
+}
+
+@keyframes chrome-shimmer {
+  /* Holds ~2.7s, then sweeps across over ~3.3s. */
+  0%,
+  45% {
+    background-position: 130% 0;
+  }
+
+  100% {
+    background-position: -30% 0;
+  }
+}
+
+/* The footer's dithered backdrop drifts on its own even when the page is not
+   moving. Alternating rather than looping, so it never jumps; the keyframe
+   itself scales the layer up slightly so the translate cannot expose an
+   edge. See footer.tsx. */
+@theme {
+  --animate-chrome-cloud-drift: chrome-cloud-drift 52s ease-in-out infinite alternate;
+}
+
+@keyframes chrome-cloud-drift {
+  from {
+    transform: translate3d(-1.6%, 0.9%, 0) scale(1.05);
+  }
+
+  to {
+    transform: translate3d(1.6%, -0.9%, 0) scale(1.05);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Project page load-in. The `tw:animate-project-fade-up` utility below
+   supplies the keyframe; `tw:motion-safe:` withholds it for reduced motion,
+   applied at each call site alongside the animation-delay for that step
+   (src/pages/work/[slug].astro, src/components/work/project-section.astro).
+   -------------------------------------------------------------------------- */
+@theme {
+  --animate-project-fade-up: project-fade-up var(--duration-slow) var(--ease-out-cubic) both;
+
+  @keyframes project-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Article page load-in. Same shape as the project page's: a
+   `tw:animate-article-rise` utility, `tw:motion-safe:` withholding it for
+   reduced motion, and the per-step delay written at each call site in
+   src/pages/writing/[slug].astro.
+   -------------------------------------------------------------------------- */
+@theme {
+  --animate-article-rise: article-rise var(--duration-slower) var(--ease-out-quart) both;
+
+  @keyframes article-rise {
+    from {
+      opacity: 0;
+      transform: translateY(var(--spacing-xs));
+    }
+  }
+}
+
+/* The disc platter's spin. Registered here so the keyframe exists as a plain
+   global @keyframes for disc.tsx's own animation shorthand (which toggles
+   play-state between paused/running per card state, so it addresses the
+   keyframe by name directly rather than through the tw:animate-disc-spin
+   utility this variable would generate). */
+@theme {
+  --animate-disc-spin: disc-spin 1.8s linear infinite;
+
+  @keyframes disc-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+/* ==========================================================================
+   Custom utilities — bundles that need nested selectors a variant cannot
+   reach. Used as `tw:social` and `tw:footer-dither`.
+   ========================================================================== */
+
+/* Shared between src/components/sections/cta.tsx and
+   src/components/writing/article-share.astro — a row of round icon buttons.
+   A bundle, not separate utilities, because it needs `& a`/`& svg` nesting
+   and a hover state on the anchor rather than the row itself. */
+@utility social {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+
+  & a {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-md);
+    background: var(--neutral-300);
+    color: var(--neutral-700);
+    transition:
+      background var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard),
+      transform var(--duration-fast) var(--ease-standard);
+  }
+
+  & a:hover {
+    color: var(--foreground);
+    transform: translateY(-1px);
+  }
+
+  & svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* The footer's still/video dither backdrop layer — shared between the two
+   variants footer.tsx mounts (DitheredImageBackground / DitheredVideoBackground
+   in src/components/backgrounds/*). Deliberately no background-color: the
+   image version's shader runs with a transparent colorBack, and what is meant
+   to show through the dark regions of the dither is the footer's own ground.
+   Each version supplies its own background-image, so a fallback photo cannot
+   drift from the source the shader is sampling. */
+@utility footer-dither {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* Top-aligned, matching the shader's own origin, so the fallback photo
+     crops the same way the dither does. */
+  background-position: center top;
+  background-size: cover;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  img,
+  svg {
+    display: block;
+  }
+
+  /* Element resets, wrapped in :where() so they carry no specificity. */
+  :where(.hp p, .hp h1, .hp h2, .hp h3) {
+    margin: 0;
+  }
+
+  :where(.hp a) {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :where(.hp button) {
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
+  .hp :focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 3px;
+  }
+
+  /* Reduced motion: every duration and delay goes to nothing, so the folder,
+     the dialog and the rest still change state — they arrive rather than
+     travel, which is the distinction this preference is about. */
+  @media (prefers-reduced-motion: reduce) {
+    .hp *,
+    .hp *::before,
+    .hp *::after {
+      transition-duration: 1ms !important;
+      transition-delay: 0ms !important;
+      animation-duration: 1ms !important;
+    }
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 html {
@@ -205,18 +648,86 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
   overflow: visible;
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  font-synthesis: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* ==========================================================================
+   Components — in the layer below the utilities, so a utility on the same
+   element adjusts one: a section narrows `.container`, a button adds a margin
+   to `.chip`. Three, because each is shared by many elements across pages.
+   ========================================================================== */
 
-img,
-svg {
-  display: block;
+@layer components {
+  /* The page gutter every section sits inside. */
+  .container {
+    width: 100%;
+    max-width: calc(var(--container-page) + var(--spacing-page-gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--spacing-page-gutter);
+  }
+
+  /* The dark pill / chip surface used by the nav and the page buttons. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    border: 1px solid rgb(0 0 0 / 8%);
+    border-radius: var(--radius-xs);
+    background-color: #1a1a1a;
+    background-image: linear-gradient(in oklab 180deg, oklab(22.6% 0 0) 0%, oklab(11.2% 0 0) 100%);
+    background-origin: border-box;
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 2%),
+      0 2px 6px rgb(142 143 143 / 18%);
+    color: #fff;
+    cursor: pointer;
+    transition:
+      transform var(--duration-fast) var(--ease-standard),
+      box-shadow var(--duration-fast) var(--ease-standard),
+      filter var(--duration-fast) var(--ease-standard);
+  }
+
+  .chip:hover {
+    filter: brightness(1.25);
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 6%),
+      0 4px 12px rgb(142 143 143 / 26%);
+  }
+
+  .chip:active {
+    transform: translateY(1px);
+  }
+
+  /* The larger chip: the primary action on a page — the hero's "Start your
+     project", the writing page's "Read article", the article share row's
+     copy link. Written as `.chip.chip-cta`, after `.chip:hover`, so its own
+     shadow holds on hover too: this button has never swapped shadows under
+     the pointer, only brightened. */
+  .chip.chip-cta {
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--radius-sm);
+    background-image: linear-gradient(in oklab 180deg, oklab(31.1% 0 0) 0%, oklab(22.5% 0 0) 100%);
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 6%),
+      0 2px 6px rgb(142 143 143 / 18%);
+    font-size: var(--text-body);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    line-height: var(--leading-normal);
+  }
+
+  /* Dark: the chip turns light. Written as the more specific selector, after
+     `.chip-cta`, on purpose — it has to outrank `.chip-cta`'s dark gradient
+     too, so the primary buttons go light with every other chip. */
+  .hp[data-theme='dark'] .chip {
+    border-color: rgb(255 255 255 / 10%);
+    background-color: #ededed;
+    background-image: linear-gradient(in oklab 180deg, oklab(96% 0 0) 0%, oklab(88% 0 0) 100%);
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 45%),
+      0 2px 6px rgb(0 0 0 / 32%);
+    color: #151515;
+  }
+
+  .hp[data-theme='dark'] .chip:hover {
+    filter: brightness(1.04);
+  }
 }

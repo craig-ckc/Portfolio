@@ -2,7 +2,6 @@
 // Chrome shared by every page in the site: the `.hp` wrapper, the navbar, the
 // fixed footer. Lifted out of home-next.tsx and placeholder-page.tsx, which
 // both hand-rolled the same shell.
-import '../styles/home-page.css'
 import Base from './base.astro'
 import { BookingDialog } from '../components/booking/booking-dialog'
 import { NavBar } from '../components/layout/nav-bar'
@@ -15,21 +14,30 @@ interface Props {
   description?: string
   /** '#top' on the homepage; '/' anywhere else, where the anchor goes nowhere. */
   homeHref?: string
-  /**
-   * Homepage-only. The placeholder pages have no scroll-linked effects, and
-   * the footer's `--reveal` reads from the shared frame loop in
-   * src/lib/smooth-scroll.ts, which runs with or without Lenis — so there is
-   * nothing for them to gain by paying for it.
-   */
-  smoothScroll?: boolean
   article?: ArticleInfo
 }
 
-const { title, description, homeHref = '#top', smoothScroll = false, article } = Astro.props
+const { title, description, homeHref = '#top', article } = Astro.props
 ---
 
 <Base title={title} description={description} article={article}>
-  <div class="hp" data-theme="light">
+  {/* `hp` is the hook the dark tokens and the `tw:dark:` variant key off
+      (src/styles.css); everything it styles is on it as utilities.
+
+      --footer-h is shared by the footer and the slot that reserves its scroll
+      distance: 380px on a phone, 520px from the sm breakpoint up.
+
+      --veil-fade / --veil-clear are how long the folder's veil takes to come
+      up over the page and to go. Up here rather than with the folder because
+      the navbar answers it too. Not the same either way, and the asymmetry is
+      the point: coming up it is short (a third of the contents' flight — the
+      page losing focus, not a thing arriving; a hard cut would flash), and
+      going it has longer, because it is most of what says the scatter is
+      being put away and it covers the cards' drop back under the flap. */}
+  <div
+    class="hp tw:relative tw:min-w-[320px] tw:[--footer-h:380px] tw:sm:[--footer-h:520px] tw:[--veil-fade:var(--duration-fast)] tw:[--veil-clear:var(--duration-base)] tw:bg-background tw:font-sans tw:font-normal tw:tracking-normal tw:text-foreground tw:[font-synthesis:none] tw:antialiased"
+    data-theme="light"
+  >
     {/* Resolves the appearance before the first paint, which is why it is a
         blocking inline script rather than something the navbar island does:
         `client:load` hydration only runs after paint, so anyone who prefers
@@ -60,7 +68,7 @@ const { title, description, homeHref = '#top', smoothScroll = false, article } =
     <NavBar client:load homeHref={homeHref} />
     {/* Opaque and above the footer — the footer is fixed and revealed as this
         scrolls past it. */}
-    <main class="content">
+    <main class="tw:relative tw:z-[2] tw:bg-background">
       <slot />
     </main>
     <Footer client:visible />
@@ -78,11 +86,11 @@ const { title, description, homeHref = '#top', smoothScroll = false, article } =
   </div>
 </Base>
 
-{
-  smoothScroll && (
-    <script>
-      import { startSmoothScroll } from '../lib/smooth-scroll'
-      startSmoothScroll()
-    </script>
-  )
-}
+{/* Smooth scrolling on every page, not per page: how the site scrolls is one
+    interaction, and a reader moving from the homepage to an article should not
+    feel the page change weight under them. startSmoothScroll leaves it off for
+    anyone who prefers reduced motion. */}
+<script>
+  import { startSmoothScroll } from '../lib/smooth-scroll'
+  startSmoothScroll()
+</script>

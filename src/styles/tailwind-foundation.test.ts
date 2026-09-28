@@ -1,17 +1,24 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
 /**
- * Guards for the Tailwind v4 foundation in src/styles.css.
+ * Guards for the Tailwind v4 foundation in src/styles.css, the site's only
+ * stylesheet.
  *
- * The contract under test: design-tokens.css is the single runtime source of
- * truth, and styles.css only *references* it — so a token renamed on one side
+ * The contract under test: the token block (between the `@tokens:start` and
+ * `@tokens:end` markers) is the single runtime source of truth, and the
+ * `@theme inline` block only *references* it — so a token renamed on one side
  * fails here instead of silently generating utilities that resolve to nothing.
  * These are file-shape assertions, deliberately narrow: they pin the wiring
  * (imports, variant, plugin) without rendering any CSS.
  */
 const stylesCss = readFileSync(new URL('../styles.css', import.meta.url), 'utf8')
-const designTokensCss = readFileSync(new URL('./design-tokens.css', import.meta.url), 'utf8')
+/** The design tokens: everything between the two markers in styles.css. */
+const designTokensCss = (() => {
+  const match = stylesCss.match(/\/\* @tokens:start \*\/([\s\S]*?)\/\* @tokens:end \*\//)
+  if (!match) throw new Error('No @tokens:start / @tokens:end block found in src/styles.css')
+  return match[1]
+})()
 const astroConfig = readFileSync(new URL('../../astro.config.mjs', import.meta.url), 'utf8')
 
 /** The `@theme inline { ... }` body, which holds only var() references. */
@@ -44,8 +51,21 @@ describe('tailwind foundation wiring', () => {
     expect(astroConfig).toContain('tailwindcss()')
   })
 
-  it('carries no !important of its own', () => {
-    expect(stylesCss).not.toContain('!important')
+  /* One exception, and it has to be one: the reduced-motion rule forces every
+     duration down, and it must win over any transition a utility declares. */
+  it('carries no !important outside the reduced-motion rule', () => {
+    const withoutReducedMotion = stylesCss.replace(
+      /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\n  \}\n/,
+      '',
+    )
+    expect(withoutReducedMotion).not.toContain('!important')
+  })
+
+  it('is the only stylesheet in src', () => {
+    const sheets = readdirSync(new URL('../', import.meta.url), { recursive: true, encoding: 'utf8' }).filter((f) =>
+      f.endsWith('.css'),
+    )
+    expect(sheets).toEqual(['styles.css'])
   })
 })
 
@@ -62,7 +82,7 @@ describe('@theme inline token references', () => {
     }
   })
 
-  it('only references tokens design-tokens.css actually defines', () => {
+  it('only references tokens the token block actually defines', () => {
     const defined = new Set(designTokensCss.match(/--[\w-]+(?=\s*:)/g) ?? [])
     const referenced = new Set(inlineThemeBody().match(/var\((--[\w-]+)\)/g)?.map((ref) => ref.slice(4, -1)) ?? [])
 

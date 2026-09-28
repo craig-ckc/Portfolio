@@ -15,11 +15,19 @@ const linkedInShare = new URL('https://www.linkedin.com/sharing/share-offsite/')
 linkedInShare.searchParams.set('url', url)
 ---
 
-<section class="article__share" aria-labelledby="article-share-heading">
-  <h2 class="article__share-title" id="article-share-heading">Share this article</h2>
+<section
+  class="tw:mt-4xl tw:border-t tw:border-neutral-600 tw:pt-xl"
+  aria-labelledby="article-share-heading"
+>
+  <h2
+    class="tw:font-display tw:text-base tw:font-medium tw:[font-variation-settings:'wght'_500] tw:tracking-snug tw:leading-normal"
+    id="article-share-heading"
+  >
+    Share this article
+  </h2>
 
-  <div class="article__share-actions">
-    <div class="social">
+  <div class="tw:mt-lg tw:flex tw:flex-wrap tw:items-center tw:gap-sm">
+    <div class="tw:social">
       <a href={xShare.href} target="_blank" rel="noreferrer" aria-label="Share this article on X">
         <XLogo />
       </a>
@@ -34,12 +42,12 @@ linkedInShare.searchParams.set('url', url)
       </a>
     </div>
 
-    <button class="chip hero__cta" type="button" data-copy-link data-url={url}>
+    <button class="chip chip-cta" type="button" data-copy-link data-url={url}>
       <span data-copy-label>Copy link</span>
     </button>
   </div>
 
-  <p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
+  <p class="tw:sr-only" role="status" aria-live="polite" data-copy-status></p>
 </section>
 
 <script>

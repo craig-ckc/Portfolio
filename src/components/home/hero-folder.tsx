@@ -63,16 +63,97 @@ import { PolaroidsFace } from './faces/polaroids'
  * Nothing in between: the layer changes in the frame the click lands, in both
  * directions. Delayed, the cards spend half their flight still behind the flap
  * and then come whole in one frame out over open screen. It is a plain z-index
- * left out of the transitions in home-page.css, so there is no timer in here.
+ * left out of the transition utilities below, so there is no timer in here.
  *
  * The veil is under the whole object rather than in the middle of it — the page
  * goes out of focus, the folder stays sharp — so nothing ever crosses it, and
  * its fade and the flight above are free of each other.
  *
- * This file measures. Every value being moved between lives in the stylesheet.
+ * This file measures. Every value being moved lives beside the element it
+ * moves, as a Tailwind arbitrary property or an inline custom property.
  */
 
 const metrics = folderMetrics(folderShape)
+
+/**
+ * Places on screen, and the rotation and zoom each card takes there. Widths
+ * vary with what the card is, so a landscape frame gets the room it needs;
+ * rotations are small and alternate, which is what reads as set down by hand
+ * rather than laid out on a grid.
+ *
+ * The corner the folder sits in was the largest empty region on the screen,
+ * so one card comes to rest over the folder and the rest spread out from
+ * there, and what is left over is spread around the edges instead of pooled
+ * in one place.
+ *
+ * --slot-focus is the extra scale a card takes when it is the one being
+ * looked at, picked so that every card arrives at about the same 28vw
+ * however small it sits here. --folder-zoom (set on the folder itself, see
+ * its className below) scales all of them at once, for viewports with less
+ * room to grow into.
+ *
+ * Breakpoints matched to the hero's own. Below 1200px the hero stacks and the
+ * object column goes full width, which moves the folder from the lower right
+ * to the bottom left — both bands below 1200 restyle --slot-x/--slot-y/--slot-r
+ * for that; below 900 there is no room to scatter at all and it becomes two
+ * columns stacked above the folder, which also restyles --slot-w/--slot-focus
+ * (--slot-r stays at the 900–1199 band's value, since the sub-900 band never
+ * touches it — same cascade as the old max-width rules, just written from the
+ * narrow end up).
+ *
+ * Applied identically to every target box and every item: each is the same
+ * literal class list, and `nth-[n]:` picks out which of the six a rule lands
+ * on, so there is one string to keep in step with folder-shape rather than
+ * six near-identical ones.
+ */
+const SLOT_UTILITIES = `
+  tw:nth-[1]:[--slot-x:27vw] tw:nth-[1]:[--slot-y:16svh] tw:nth-[1]:[--slot-w:min(24vw,17svh)] tw:nth-[1]:[--slot-r:7deg] tw:nth-[1]:[--slot-focus:2.75]
+  tw:md:nth-[1]:[--slot-x:88vw] tw:md:nth-[1]:[--slot-y:42svh]
+  tw:lg:nth-[1]:[--slot-x:12vw] tw:lg:nth-[1]:[--slot-y:42svh] tw:lg:nth-[1]:[--slot-w:15vw] tw:lg:nth-[1]:[--slot-r:-7deg] tw:lg:nth-[1]:[--slot-focus:1.87]
+  tw:nth-[2]:[--slot-x:73vw] tw:nth-[2]:[--slot-y:16svh] tw:nth-[2]:[--slot-w:min(24vw,17svh)] tw:nth-[2]:[--slot-r:-5deg] tw:nth-[2]:[--slot-focus:2.75]
+  tw:md:nth-[2]:[--slot-x:70vw] tw:md:nth-[2]:[--slot-y:17svh]
+  tw:lg:nth-[2]:[--slot-x:30vw] tw:lg:nth-[2]:[--slot-y:17svh] tw:lg:nth-[2]:[--slot-w:13vw] tw:lg:nth-[2]:[--slot-r:5deg] tw:lg:nth-[2]:[--slot-focus:2.15]
+  tw:nth-[3]:[--slot-x:30vw] tw:nth-[3]:[--slot-y:42svh] tw:nth-[3]:[--slot-w:min(32vw,23svh)] tw:nth-[3]:[--slot-r:3deg] tw:nth-[3]:[--slot-focus:2.06]
+  tw:md:nth-[3]:[--slot-x:40vw] tw:md:nth-[3]:[--slot-y:22svh]
+  tw:lg:nth-[3]:[--slot-x:60vw] tw:lg:nth-[3]:[--slot-y:22svh] tw:lg:nth-[3]:[--slot-w:20vw] tw:lg:nth-[3]:[--slot-r:-3deg] tw:lg:nth-[3]:[--slot-focus:1.4]
+  tw:nth-[4]:[--slot-x:74vw] tw:nth-[4]:[--slot-y:42svh] tw:nth-[4]:[--slot-w:min(24vw,17svh)] tw:nth-[4]:[--slot-r:-8deg] tw:nth-[4]:[--slot-focus:2.75]
+  tw:md:nth-[4]:[--slot-x:80vw] tw:md:nth-[4]:[--slot-y:76svh]
+  tw:lg:nth-[4]:[--slot-x:20vw] tw:lg:nth-[4]:[--slot-y:76svh] tw:lg:nth-[4]:[--slot-w:14vw] tw:lg:nth-[4]:[--slot-r:8deg] tw:lg:nth-[4]:[--slot-focus:2]
+  tw:nth-[5]:[--slot-x:27vw] tw:nth-[5]:[--slot-y:68svh] tw:nth-[5]:[--slot-w:min(24vw,17svh)] tw:nth-[5]:[--slot-r:5deg] tw:nth-[5]:[--slot-focus:2.75]
+  tw:md:nth-[5]:[--slot-x:55vw] tw:md:nth-[5]:[--slot-y:64svh]
+  tw:lg:nth-[5]:[--slot-x:45vw] tw:lg:nth-[5]:[--slot-y:64svh] tw:lg:nth-[5]:[--slot-w:14vw] tw:lg:nth-[5]:[--slot-r:-5deg] tw:lg:nth-[5]:[--slot-focus:2]
+  tw:nth-[6]:[--slot-x:73vw] tw:nth-[6]:[--slot-y:68svh] tw:nth-[6]:[--slot-w:min(24vw,17svh)] tw:nth-[6]:[--slot-r:-6deg] tw:nth-[6]:[--slot-focus:2.75]
+  tw:md:nth-[6]:[--slot-x:21vw] tw:md:nth-[6]:[--slot-y:62svh]
+  tw:lg:nth-[6]:[--slot-x:79vw] tw:lg:nth-[6]:[--slot-y:62svh] tw:lg:nth-[6]:[--slot-w:18vw] tw:lg:nth-[6]:[--slot-r:6deg] tw:lg:nth-[6]:[--slot-focus:1.56]
+`
+
+/**
+ * The resting fan (idle, tucked to the right of the tab) and the wider fan it
+ * opens into on hover or keyboard focus. The stagger on the way out runs
+ * outward from the middle (--i); coming back everything eases home together,
+ * so --i is never touched by the hover condition, only --x/--y/--r are.
+ *
+ * `:focus-visible` and not `:focus-within`, which would also match the focus
+ * a mouse click leaves behind — the folder would then sit open after being
+ * closed with the pointer. Applied to the item itself as one condition list,
+ * matching the house style already used in nav-bar.tsx's own arbitrary
+ * ancestor-state selector, opacity-0 when the folder is open, for an
+ * arbitrary selector reaching off an ancestor's state.
+ */
+const FAN_UTILITIES = `
+  tw:nth-[1]:[--i:2] tw:nth-[1]:[--x:-36%] tw:nth-[1]:[--y:2%] tw:nth-[1]:[--r:-7deg]
+  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--x:-64%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--y:-18%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--r:-14deg]
+  tw:nth-[2]:[--i:1] tw:nth-[2]:[--x:-21%] tw:nth-[2]:[--y:0%] tw:nth-[2]:[--r:-4deg]
+  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--x:-38%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--y:-21%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--r:-8.5deg]
+  tw:nth-[3]:[--i:0] tw:nth-[3]:[--x:-7%] tw:nth-[3]:[--y:-1%] tw:nth-[3]:[--r:-1.5deg]
+  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--x:-13%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--y:-23%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--r:-3deg]
+  tw:nth-[4]:[--i:0] tw:nth-[4]:[--x:7%] tw:nth-[4]:[--y:-1%] tw:nth-[4]:[--r:1.5deg]
+  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--x:13%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--y:-23%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--r:3deg]
+  tw:nth-[5]:[--i:1] tw:nth-[5]:[--x:21%] tw:nth-[5]:[--y:0%] tw:nth-[5]:[--r:4deg]
+  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--x:38%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--y:-21%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--r:8.5deg]
+  tw:nth-[6]:[--i:2] tw:nth-[6]:[--x:36%] tw:nth-[6]:[--y:2%] tw:nth-[6]:[--r:7deg]
+  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--x:64%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--y:-18%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--r:14deg]
+`
 
 /** Keys that would scroll the page out from under a scatter pinned to it. */
 const SCROLL_KEYS = new Set(['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown'])
@@ -89,7 +170,7 @@ const RETURN_GRACE_MS = 60
 const EDGE_MARGIN = 8
 
 /**
- * How long the return takes, read off the same token the stylesheet animates
+ * How long the return takes, read off the same token the utilities animate
  * it with, so the two cannot drift.
  *
  * Read rather than waited on. The obvious alternative — find the transition
@@ -193,7 +274,7 @@ function paintedParts(element: HTMLElement) {
   return parts
 }
 
-/** Write where a card is and how it is moving, for the transform in home-page.css to read. */
+/** Write where a card is and how it is moving, for the transform utilities to read. */
 function paint(element: HTMLElement, motion: Motion) {
   element.style.setProperty('--drag-x', `${motion.position.x.toFixed(2)}px`)
   element.style.setProperty('--drag-y', `${motion.position.y.toFixed(2)}px`)
@@ -262,33 +343,65 @@ function inertOutside(root: HTMLElement) {
 function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
   switch (item.kind) {
     case 'photo':
-      return <img className="face__photo" src={item.src} alt={item.alt ?? ''} loading="lazy" draggable={false} />
+      return (
+        <img
+          className="tw:block tw:h-full tw:w-full tw:object-cover"
+          src={item.src}
+          alt={item.alt ?? ''}
+          loading="lazy"
+          draggable={false}
+        />
+      )
 
     case 'logo':
       return (
-        <span className="face face--logo">
-          <span className="face__mark">{item.mark}</span>
-          <span className="face__name">{item.label}</span>
+        /* The card frame's inner drawing: a struck-off mark over its name, on
+           a soft paper gradient. BEYOND THE FRAME: the gradient is a themed
+           two-stop wash with no token equivalent. */
+        <span
+          className={`
+            tw:absolute tw:inset-0 tw:flex tw:flex-col tw:items-start tw:justify-between tw:p-[9cqw] tw:gap-[4cqw]
+            tw:font-display tw:tracking-snug tw:leading-snug tw:text-left
+            tw:[background:radial-gradient(120%_90%_at_15%_0%,#ffffff,transparent_60%),linear-gradient(165deg,#f4f3f1,#e7e6e3)]
+          `}
+        >
+          <span className="tw:grid tw:w-[27cqw] tw:h-[27cqw] tw:place-items-center tw:rounded-full tw:bg-[#151515] tw:text-[#f9f9f9] tw:text-[10.5cqw] tw:font-bold tw:tracking-[0]">
+            {item.mark}
+          </span>
+          <span className="tw:text-[#616161] tw:text-[7cqw] tw:font-medium">{item.label}</span>
         </span>
       )
 
     case 'note':
       return (
-        <span className="face face--note">
-          <span className="face__body">{item.body}</span>
-          <span className="face__rule" aria-hidden="true" />
+        /* BEYOND THE FRAME: the paper gradient again has no token — a warm
+           off-white wash behind a handwritten-feeling note. */
+        <span
+          className={`
+            tw:absolute tw:inset-0 tw:flex tw:flex-col tw:justify-between tw:p-[9cqw] tw:gap-[4cqw]
+            tw:font-display tw:tracking-snug tw:leading-snug tw:text-left
+            tw:[background:linear-gradient(170deg,#fffdf6,#f6f2e6)]
+          `}
+        >
+          <span className="tw:text-[#2c2c2c] tw:text-[9cqw] tw:font-medium tw:text-pretty">{item.body}</span>
+          <span aria-hidden="true" className="tw:h-px tw:shrink-0 tw:rounded-full tw:bg-[rgb(21_21_21/14%)]" />
         </span>
       )
 
     case 'swatch':
       return (
-        <span className="face face--swatch">
-          <span className="face__chips" aria-hidden="true">
+        <span
+          className={`
+            tw:absolute tw:inset-0 tw:flex tw:flex-col tw:justify-between tw:p-[6cqw] tw:gap-[5cqw]
+            tw:font-display tw:tracking-snug tw:leading-snug tw:text-left
+          `}
+        >
+          <span aria-hidden="true" className="tw:flex tw:flex-1 tw:flex-col tw:overflow-hidden tw:rounded-[1.25cqw]">
             {item.colors.map((color) => (
-              <span key={color} style={{ background: color }} />
+              <span key={color} className="tw:flex-1" style={{ background: color }} />
             ))}
           </span>
-          <span className="face__name">{item.label}</span>
+          <span className="tw:pl-[2cqw] tw:text-[#616161] tw:text-[7cqw] tw:font-medium">{item.label}</span>
         </span>
       )
 
@@ -317,7 +430,27 @@ function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
 
 function Card({ item, focused }: { item: FolderItem; focused: boolean }) {
   return (
-    <span className="card" data-kind={item.kind} data-ratio={item.ratio ?? 'portrait'}>
+    /* `card` stays a bare marker: each face component keys its own hover,
+       held and focused styling off `.card[data-kind=…]` in its `tw:`
+       utilities, and the screenshot harness drives it too. The face sizes
+       itself in cqw off the card's own width — the container is the item
+       (below), since an element cannot be its own. */
+    <span
+      className={`
+        card
+        tw:relative tw:block tw:overflow-hidden tw:w-full tw:rounded-[1.5cqw] tw:bg-[#fdfdfd]
+        tw:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_3px_8px_rgb(21_21_21/10%)]
+        tw:[transition:transform_var(--duration-fast)_var(--ease-out-cubic),box-shadow_var(--duration-fast)_var(--ease-standard)]
+        tw:data-[ratio=portrait]:aspect-[3/4]
+        tw:data-[ratio=landscape]:aspect-[4/3]
+        tw:data-[ratio=square]:aspect-square
+        tw:data-[ratio=bar]:aspect-[24/5]
+        tw:[.folder-slot.is-focused_&]:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_10px_30px_rgb(21_21_21/18%)]
+        tw:[.folder-slot.is-held_&]:scale-[1.04] tw:[.folder-slot.is-held_&]:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_14px_30px_rgb(21_21_21/16%)]
+      `}
+      data-kind={item.kind}
+      data-ratio={item.ratio ?? 'portrait'}
+    >
       <FolderFace item={item} focused={focused} />
     </span>
   )
@@ -347,8 +480,9 @@ export function HeroFolder({ caption }: { caption: string }) {
   const closeRef = useRef<HTMLButtonElement>(null)
   /**
    * Empty boxes, never painted, laid out where the contents are meant to land.
-   * They are here so the arrangement — and its breakpoints — can stay in the
-   * stylesheet with everything else, and this file only has to measure it.
+   * They are here so the arrangement — and its breakpoints — can stay beside
+   * SLOT_UTILITIES above with everything else, and this file only has to
+   * measure it.
    */
   const targetsRef = useRef<HTMLSpanElement>(null)
   const openRef = useRef<HTMLButtonElement>(null)
@@ -372,11 +506,11 @@ export function HeroFolder({ caption }: { caption: string }) {
    * Give every item the offset and scale that lands it on its target.
    *
    * The offset is a plain difference of centres, which it can only be because
-   * the transform in the stylesheet brackets the scale and rotation with a
-   * half-height shift each way. That moves their pivot to the middle of the
-   * card, so a translate means what it says even though the fan turns the cards
-   * about their bottom edge. Without it, the rotation would have to be unpicked
-   * here to work out where the centre had ended up.
+   * the transform below brackets the scale and rotation with a half-height
+   * shift each way. That moves their pivot to the middle of the card, so a
+   * translate means what it says even though the fan turns the cards about
+   * their bottom edge. Without it, the rotation would have to be unpicked here
+   * to work out where the centre had ended up.
    */
   const aim = useCallback(() => {
     const items = stackRef.current?.children
@@ -736,12 +870,74 @@ export function HeroFolder({ caption }: { caption: string }) {
   const inFolder = stage !== 'open'
 
   return (
+    /* PAINT ORDER is what makes the whole thing work, so it is worth reading
+       before anything else here. There is one copy of each card and it is the
+       one that travels — nothing is cloned, nothing cross-fades. Within the
+       stage:
+
+         0  back        the flat panel behind everything
+         1  contents    while the folder is shut, which is what hides all but a sliver
+         2  flap
+         3  veil        the blurred layer that takes the page out of focus
+         4  contents    while they are out, over the veil
+         5  chrome      close and caption
+
+       The folder goes under the veil with the rest of the page. It is the
+       object the contents came out of, not one of them: once they are out, it
+       has nothing left to say, and leaving it sharp in the corner gives the
+       eye a second thing to look at while it is trying to look at six.
+
+       The step from 1 to 4 happens in the frame the folder is opened, and the
+       step back down in the frame it is closed. There is no third state part
+       way through the flight: z-index is left out of the transition utilities
+       so that it simply applies, which is also why nothing here needs a timer
+       in JavaScript.
+
+       `folder`, `folder__open`, `folder__item`, `folder__close` and `card`
+       stay bare markers throughout: JS classList and the faces' own
+       stylesheets key off them, and the screenshot harness drives them too.
+       Everything else that used to be a BEM hook has become plain elements
+       styled with tw: utilities directly, since nothing outside this file
+       ever selected them. */
     <div
-      className={`folder${stage === 'open' ? ' is-open' : ''}${stage === 'closing' ? ' is-closing' : ''}`}
+      className={`
+        folder
+        tw:block tw:w-(--folder-size) tw:max-w-content
+        tw:[--folder-tilt:32deg] tw:[--folder-perspective:1200px] tw:[--folder-card:40%]
+        tw:[--folder-size:min(88%,380px,47svh)] tw:lg:[--folder-size:min(75%,47svh)]
+        tw:[@media(max-height:760px)]:[--folder-zoom:0.78]
+        tw:[--folder-shadow-rest:0_1px_2px_rgb(21_21_21/6%),0_8px_20px_rgb(21_21_21/8%)]
+        tw:dark:[--folder-shadow-rest:0_1px_2px_rgb(0_0_0/30%),0_8px_20px_rgb(0_0_0/34%)]
+        tw:[--folder-drop:drop-shadow(0_1px_2px_rgb(21_21_21/6%))_drop-shadow(0_8px_20px_rgb(21_21_21/8%))]
+        tw:dark:[--folder-drop:drop-shadow(0_1px_2px_rgb(0_0_0/30%))_drop-shadow(0_8px_20px_rgb(0_0_0/36%))]
+        tw:[--folder-face-drop:drop-shadow(0_-1px_1px_rgb(21_21_21/5%))_drop-shadow(0_6px_16px_rgb(21_21_21/10%))]
+        tw:dark:[--folder-face-drop:drop-shadow(0_-1px_1px_rgb(0_0_0/24%))_drop-shadow(0_6px_16px_rgb(0_0_0/34%))]
+        tw:[--folder-face-drop-raised:drop-shadow(0_-1px_1px_rgb(21_21_21/5%))_drop-shadow(0_2px_6px_rgb(142_143_143/18%))_drop-shadow(0_16px_30px_rgb(21_21_21/14%))]
+        tw:dark:[--folder-face-drop-raised:drop-shadow(0_-1px_1px_rgb(0_0_0/24%))_drop-shadow(0_2px_6px_rgb(0_0_0/30%))_drop-shadow(0_16px_30px_rgb(0_0_0/44%))]
+        tw:[--folder-paper:#ebe9e4] tw:dark:[--folder-paper:#2b2b2b]
+        tw:[--folder-paper-edge:rgb(255_255_255/82%)] tw:dark:[--folder-paper-edge:rgb(255_255_255/13%)]
+        tw:[--folder-face-top:rgb(255_255_255/80%)] tw:dark:[--folder-face-top:rgb(45_45_45/82%)]
+        tw:[--folder-face-bottom:rgb(246_246_245/68%)] tw:dark:[--folder-face-bottom:rgb(29_29_29/72%)]
+        tw:[--folder-flap-edge:rgb(255_255_255/76%)] tw:dark:[--folder-flap-edge:rgb(255_255_255/8%)]
+        tw:[--folder-veil:rgb(249_249_249/82%)] tw:dark:[--folder-veil:rgb(15_15_15/78%)]
+        tw:[--folder-chrome:rgb(255_255_255/82%)] tw:dark:[--folder-chrome:rgb(38_38_38/82%)]
+        tw:[--folder-chrome-edge:rgb(21_21_21/10%)] tw:dark:[--folder-chrome-edge:rgb(255_255_255/10%)]
+        tw:[&.is-open]:relative tw:[&.is-closing]:relative tw:[&.is-open]:z-10 tw:[&.is-closing]:z-10
+        ${stage === 'open' ? ' is-open' : ''}${stage === 'closing' ? ' is-closing' : ''}
+      `}
       ref={rootRef}
     >
+      {/* A stacking context of its own, so the layer numbers above mean what
+          they say locally and do not have to be reconciled with the rest of
+          the page. `isolate` and not a transform: a transform here would make
+          the veil's `position: fixed` resolve against this box instead of the
+          viewport, and the whole overlay would be trapped inside the folder.
+          Same reason the flap carries its own `perspective()` rather than
+          taking one from here. aspect-ratio and --folder-contents-top are set
+          inline from folderMetrics(), so folder-shape.ts stays the single
+          source. */}
       <span
-        className="folder__stage"
+        className="tw:relative tw:block tw:w-full tw:isolate"
         style={
           {
             aspectRatio: metrics.aspectRatio,
@@ -751,8 +947,9 @@ export function HeroFolder({ caption }: { caption: string }) {
       >
         {/* The front's edge, twice over: once as the clip that shapes the
             frosted layer, once as the gradient that fills the drawn face. Both
-            come off the same path in src/lib/folder-shape.ts. */}
-        <svg className="folder__defs" aria-hidden="true" focusable="false">
+            come off the same path in src/lib/folder-shape.ts. Definitions
+            only, never drawn, kept out of the layout. */}
+        <svg className="tw:absolute tw:w-0 tw:h-0 tw:overflow-hidden" aria-hidden="true" focusable="false">
           <defs>
             <clipPath id={clipId} clipPathUnits="objectBoundingBox">
               <path d={metrics.frontClip} />
@@ -764,14 +961,88 @@ export function HeroFolder({ caption }: { caption: string }) {
           </defs>
         </svg>
 
-        <svg className="folder__back" viewBox={metrics.viewBox} aria-hidden="true">
-          <path d={metrics.back} />
+        {/* The silhouette. One generated path, and the only shadow that
+            touches the page — which is why it is a drop-shadow on the path and
+            not a box-shadow on a rectangle: the tab has to cast a shadow too.
+            No transform, no transition: this layer is nailed down. */}
+        <svg
+          className="tw:absolute tw:inset-0 tw:z-0 tw:w-full tw:h-full tw:[overflow:visible] tw:[filter:var(--folder-drop)]"
+          viewBox={metrics.viewBox}
+          aria-hidden="true"
+        >
+          <path d={metrics.back} className="tw:fill-(--folder-paper) tw:stroke-(--folder-paper-edge) tw:stroke-1" />
         </svg>
 
-        <span className="folder__stack" ref={stackRef} inert={inFolder}>
+        {/* No z-index of its own, deliberately: the cards have to be able to
+            move between layers 1 and 4, and a positioned parent with a
+            z-index would trap them in one of its own. */}
+        <span className="tw:absolute tw:inset-0" ref={stackRef} inert={inFolder}>
           {folderItems.map((item) => (
+            /* Every card hangs from the body's top edge, so they all peek by
+               the same amount however tall they are, and the taller ones
+               simply reach further down into the folder where nothing sees
+               them.
+
+               The fan comes from rotation about each card's bottom edge, which
+               swings the top out past the flap while the bottom stays inside
+               it. --x is a share of the card's own width, so the fan scales
+               with the object instead of blowing out of it in a narrower
+               column.
+
+               Positioned by `left` alone rather than centred with a translate,
+               so that the resting transform is nothing but the move — which is
+               what lets aim() work it out as a plain difference of centres.
+
+               Coming back is a plain ease. The spring is for going out only:
+               transitions take their timing from the state being entered, so
+               the two directions can differ just by declaring both.
+
+               BEYOND THE FRAME: `left: calc(50% - var(--folder-card) / 2)` has
+               no token equivalent — it centres the card off its own width
+               share of the stage.
+
+               `folder-slot` rides alongside the mandatory `folder__item` marker
+               purely so Card's arbitrary selectors (below) have an ancestor
+               class with no underscore to key off: a literal `\_` meant for
+               Tailwind's own escaping is indistinguishable from a JS string
+               escape inside a template literal, so it never survives to the
+               DOM as typed — the double underscore in a BEM name cannot be
+               escaped from inside a class attribute written this way.
+
+               Two of the rules below repeat `.folder` in their selector
+               (`.folder.is-open.folder …`) rather than writing `.folder.is-open`
+               once: as plain classes every one of these arbitrary-selector
+               rules sits in the same cascade layer, so a genuine tie in
+               class-count specificity falls back to source order, which
+               Tailwind is not obliged to keep in the order written here. The
+               plain is-open transform ties with the hover-fan transform
+               (three classes each) without the repeat, and the focused
+               transform in turn ties with the (repeated) plain is-open
+               transform without a second repeat of its own — so it carries
+               one more than that. */
             <button
-              className={`folder__item${focused === item.id ? ' is-focused' : ''}`}
+              className={`
+                folder__item folder-slot${focused === item.id ? ' is-focused' : ''}
+                tw:absolute tw:top-(--folder-contents-top) tw:left-[calc(50%_-_var(--folder-card)/2)] tw:z-1 tw:w-(--folder-card)
+                tw:p-0 tw:@container tw:cursor-pointer tw:origin-bottom
+                tw:[transform:translate(var(--x,0%),var(--y,0%))_rotate(var(--r,0deg))]
+                tw:[transition:transform_var(--duration-base)_var(--ease-out-cubic)]
+                tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
+                tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:[transition-delay:calc(var(--i,0)_*_40ms)]
+                tw:focus-visible:outline-offset-[6px]
+                ${FAN_UTILITIES}
+                ${SLOT_UTILITIES}
+                tw:[.folder.is-open.folder_&]:[transform:translate(var(--out-x,0px),var(--out-y,0px))_translate(var(--drag-x,0px),var(--drag-y,0px))_translateY(-50%)_scale(var(--out-scale,1))_rotate(calc(var(--slot-r,0deg)_+_var(--drag-r,0deg)))_translateY(50%)]
+                tw:[.folder.is-open_&]:z-[calc(10+var(--raised,0))] tw:[.folder.is-open_&]:cursor-grab tw:[.folder.is-open_&]:touch-none
+                tw:[.folder.is-open_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
+                tw:[.folder.is-open_&]:[transition-delay:calc(var(--i,0)_*_40ms)]
+                tw:[.folder.is-open_&.is-held]:[transition:none] tw:[.folder.is-open_&.is-coasting]:[transition:none]
+                tw:[.folder.is-open_&.is-held]:cursor-grabbing
+                tw:[.folder.is-open_&.is-focused]:z-[17] tw:[.folder.is-open_&.is-focused]:cursor-zoom-out
+                tw:[.folder.is-open.folder_&.is-focused]:[transform:translate(var(--out-x,0px),var(--out-y,0px))_translate(calc(50vw_-_var(--slot-x)),calc(50svh_-_var(--slot-y)))_translateY(-50%)_scale(calc(var(--out-scale,1)_*_var(--slot-focus,2)_*_var(--folder-zoom,1)))_rotate(0deg)_translateY(50%)]
+                tw:[.folder.is-closing_&]:[transition:transform_var(--duration-slow)_var(--ease-standard)]
+                tw:[.folder.is-open:has(.is-focused)_&:not(.is-focused)]:opacity-[0.28]
+              `}
               key={item.id}
               type="button"
               aria-pressed={focused === item.id}
@@ -788,7 +1059,7 @@ export function HeroFolder({ caption }: { caption: string }) {
               }}
             >
               <Card item={item} focused={focused === item.id} />
-              <span className="sr-only">
+              <span className="tw:sr-only">
                 {item.label}
                 {item.note ? `, ${item.note}` : ''}
               </span>
@@ -797,76 +1068,190 @@ export function HeroFolder({ caption }: { caption: string }) {
         </span>
 
         {/* The front. Two layers, because no one element can be both shapes at
-            once: a div carries the frost, since backdrop-filter needs a real
+            once: a span carries the frost, since backdrop-filter needs a real
             box to blur behind, and is cut to the edge with a clip; the drawn
             face over it carries the fill, the hairline and the cast shadow,
             since a clip would have taken a box-shadow off with it.
 
             The stickers ride here rather than on the stage, so they tip with
-            the front — which is most of the reason to put them on it. */}
-        <span className="folder__flap" aria-hidden="true">
-          <span className="folder__frost" style={{ clipPath: `url(#${clipId})` }} />
+            the front — which is most of the reason to put them on it.
 
-          <svg className="folder__face" viewBox={metrics.viewBox}>
-            <path d={metrics.front} fill={`url(#${fillId})`} />
+            Decorative to the last pixel, so it takes no pointer events — the
+            shut folder's hit target sits above it, and once open the contents
+            do.
+
+            The perspective is on this transform rather than on the stage,
+            which puts the vanishing point on the hinge where it belongs and
+            leaves the stage free of the transform that would otherwise capture
+            the veil's `position: fixed`. */}
+        <span
+          aria-hidden="true"
+          className={`
+            tw:absolute tw:inset-0 tw:z-2 tw:pointer-events-none tw:origin-bottom tw:[will-change:transform]
+            tw:[transform:perspective(var(--folder-perspective))_rotateX(0deg)]
+            tw:[transition:transform_var(--duration-base)_var(--ease-out-cubic)]
+            tw:[.folder:hover_&,.folder:has(:focus-visible)_&,.folder.is-open_&]:[transform:perspective(var(--folder-perspective))_rotateX(calc(var(--folder-tilt)_*_-1))]
+            tw:[.folder:hover_&,.folder:has(:focus-visible)_&,.folder.is-open_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
+            tw:[.folder.is-closing.folder_&]:[transition:transform_var(--duration-slow)_var(--ease-standard)]
+          `}
+        >
+          {/* The frost, cut to the front's edge. It has to be a real box:
+              backdrop-filter blurs what is behind an element's own background,
+              and an SVG path has no background to blur behind. So the shape
+              arrives as a clip instead — which is also why the fill, the
+              hairline and the shadow are on the face below rather than here. A
+              clip takes a box-shadow off with it.
+
+              Blur chosen so what is behind reads as tone rather than as
+              objects: at 16px the cards were still recognisable through it and
+              the panel looked smudged rather than frosted. */}
+          <span
+            className="tw:absolute tw:inset-0 tw:backdrop-blur-[26px] tw:backdrop-saturate-[140%]"
+            style={{ clipPath: `url(#${clipId})` }}
+          />
+
+          {/* The drawn front: the gradient over the frost, the hairline on the
+              edge, and the cast shadow. */}
+          <svg
+            className={`
+              tw:absolute tw:inset-0 tw:w-full tw:h-full tw:[overflow:visible]
+              tw:[filter:var(--folder-face-drop)] tw:transition-[filter] tw:duration-320 tw:ease-standard
+              tw:[.folder:hover_&,.folder:has(:focus-visible)_&,.folder.is-open_&]:[filter:var(--folder-face-drop-raised)]
+            `}
+            viewBox={metrics.viewBox}
+          >
+            <path d={metrics.front} fill={`url(#${fillId})`} className="tw:stroke-(--folder-flap-edge) tw:stroke-1" />
           </svg>
 
-          <span className="folder__sticker folder__sticker--stamp">
+          {/* Placed on the stage, not on the drawn front, since the layer they
+              sit in spans the whole object while the shape inside it starts a
+              quarter of the way down. So these are stage percentages that
+              happen to land on the front.
+
+              A touch of their own on top of the flap's move, so they read as
+              stuck on rather than printed. */}
+          <span
+            className={`
+              tw:absolute tw:top-[41%] tw:left-[12%] tw:w-[22%] tw:[--r:-7deg]
+              tw:[filter:drop-shadow(0_4px_8px_rgb(21_21_21/18%))] tw:[transform:rotate(var(--r))]
+              tw:transition-transform tw:duration-320 tw:ease-out-cubic
+              tw:[.folder:hover_&,.folder.is-open_&]:[transform:rotate(-11deg)_scale(1.04)]
+            `}
+          >
             <StampSticker />
           </span>
-          <span className="folder__sticker folder__sticker--torii">
+          <span
+            className={`
+              tw:absolute tw:top-[53%] tw:left-[62%] tw:w-[20%] tw:[--r:6deg]
+              tw:[filter:drop-shadow(0_4px_8px_rgb(21_21_21/18%))] tw:[transform:rotate(var(--r))]
+              tw:transition-transform tw:duration-320 tw:ease-out-cubic
+              tw:[.folder:hover_&,.folder.is-open_&]:[transform:rotate(10deg)_scale(1.04)]
+            `}
+          >
             <ToriiSticker />
           </span>
         </span>
 
-        <span className="folder__targets" ref={targetsRef} aria-hidden="true">
+        {/* Never painted and never touched by the pointer. They are here to
+            be measured: the arrangement, its sizes and its breakpoints stay in
+            SLOT_UTILITIES above, and the cards are sent to wherever these end
+            up. Each entry is read by two rules: the target box takes the
+            position and width, the card itself takes the rotation and the
+            zoom. */}
+        <span className="tw:fixed tw:inset-0 tw:z-[-1] tw:invisible tw:pointer-events-none" ref={targetsRef} aria-hidden="true">
           {folderItems.map((item) => (
-            <span className="folder__target" key={item.id} />
+            <span
+              key={item.id}
+              className={`tw:absolute tw:left-(--slot-x) tw:top-(--slot-y) tw:w-(--slot-w) tw:h-px tw:[transform:translate(-50%,-50%)] ${SLOT_UTILITIES}`}
+            />
           ))}
         </span>
 
-        {/* Empty space is the way out of a card. It only closes the folder once
-            nothing is being looked at, so putting a card down never costs you
-            the whole scatter. */}
+        {/* Empty space is the way out of a card. It only closes the folder
+            once nothing is being looked at, so putting a card down never costs
+            you the whole scatter.
+
+            Fixed to the viewport from inside the folder, which only works
+            because nothing between here and the root has a transform. Above
+            the flap and below the contents, so the folder goes soft with the
+            page while the cards that came out of it stay sharp over the top. */}
         <button
-          className="folder__veil"
           type="button"
           inert={inFolder}
           aria-label={focused ? 'Put this back' : `Close ${caption}`}
           onClick={dismiss}
+          className={`
+            tw:fixed tw:inset-0 tw:z-3 tw:w-full tw:h-full tw:p-0 tw:bg-(--folder-veil)
+            tw:backdrop-blur-[28px] tw:backdrop-saturate-[125%] tw:cursor-zoom-out tw:opacity-0
+            tw:[transition:opacity_var(--veil-clear)_var(--ease-standard)]
+            tw:[.folder.is-open_&]:opacity-100 tw:[.folder.is-open_&]:[transition-duration:var(--veil-fade)]
+          `}
         />
 
         {/* One caption for whichever card is being looked at. A single strip
             rather than a label per card: a label riding a card that scales up
             twice over either scales with it or has to be unscaled by hand, and
-            neither ends up legible. */}
-        <p className="folder__caption" aria-live="polite">
+            neither ends up legible.
+
+            One beat behind the veil for the close button (below), so the
+            control lands on a page that has already gone soft rather than
+            racing the contents out of the folder. */}
+        <p
+          aria-live="polite"
+          className={`
+            tw:fixed tw:z-20 tw:m-0 tw:bottom-md tw:md:bottom-2xl tw:left-1/2 tw:flex tw:max-w-[min(90vw,30rem)] tw:items-baseline tw:gap-xs
+            tw:py-xs tw:px-md tw:rounded-full tw:text-body tw:leading-normal tw:pointer-events-none
+            tw:[transform:translate(-50%,var(--spacing-xs))]
+            tw:border tw:border-(--folder-chrome-edge) tw:bg-(--folder-chrome) tw:shadow-(--folder-shadow-rest)
+            tw:backdrop-blur-[12px] tw:backdrop-saturate-[150%] tw:opacity-0
+            tw:[transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)]
+            tw:[.folder.is-open:has(.is-focused)_&]:opacity-100 tw:[.folder.is-open:has(.is-focused)_&]:[transform:translate(-50%,0)]
+          `}
+        >
           {folderItems.map((item) => (
-            <span key={item.id} hidden={focused !== item.id}>
-              <strong>{item.label}</strong>
-              {item.note ? <span>{item.note}</span> : null}
+            <span
+              key={item.id}
+              hidden={focused !== item.id}
+              className="tw:flex tw:min-w-0 tw:items-baseline tw:gap-xs tw:[&[hidden]]:hidden"
+            >
+              <strong className="tw:overflow-hidden tw:text-foreground tw:font-semibold tw:tracking-snug tw:text-ellipsis tw:whitespace-nowrap">
+                {item.label}
+              </strong>
+              {item.note ? <span className="tw:shrink-0 tw:text-neutral-700">{item.note}</span> : null}
             </span>
           ))}
         </p>
 
-        <button className="folder__close" type="button" ref={closeRef} inert={inFolder} onClick={closeScatter}>
-          <svg viewBox="0 0 16 16" aria-hidden="true">
+        <button
+          className="folder__close tw:fixed tw:top-md tw:right-md tw:md:top-xl tw:md:right-xl tw:z-20 tw:grid tw:w-10 tw:h-10 tw:place-items-center tw:p-0 tw:rounded-full tw:text-foreground tw:cursor-pointer tw:scale-[0.92] tw:border tw:border-(--folder-chrome-edge) tw:bg-(--folder-chrome) tw:shadow-(--folder-shadow-rest) tw:backdrop-blur-[12px] tw:backdrop-saturate-[150%] tw:opacity-0 tw:[transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)] tw:hover:brightness-[1.04] tw:[.folder.is-open_&]:opacity-100 tw:[.folder.is-open_&]:scale-100 tw:[.folder.is-open_&]:[transition-delay:var(--veil-fade)]"
+          type="button"
+          ref={closeRef}
+          inert={inFolder}
+          onClick={closeScatter}
+        >
+          <svg
+            viewBox="0 0 16 16"
+            aria-hidden="true"
+            className="tw:w-[15px] tw:h-[15px] tw:fill-none tw:stroke-current tw:[stroke-linecap:round] tw:[stroke-width:1.4]"
+          >
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
-          <span className="sr-only">Close {caption}</span>
+          <span className="tw:sr-only">Close {caption}</span>
         </button>
 
-        {/* The folder as one hit target while it is shut, over the whole object
-            so the flap and the tab open it too. */}
+        {/* The folder as one hit target while it is shut, over the whole
+            object so the flap and the tab open it too. Made inert once it is
+            open, which takes it out of both the tab order and the pointer's
+            way in one word. */}
         <button
-          className="folder__open"
+          className="folder__open tw:absolute tw:inset-0 tw:z-6 tw:p-0 tw:rounded-lg tw:cursor-pointer tw:focus-visible:outline-offset-[6px]"
           type="button"
           ref={openRef}
           inert={stage === 'open'}
           aria-expanded={active}
           onClick={() => setStage('open')}
         >
-          <span className="sr-only">Open {caption}</span>
+          <span className="tw:sr-only">Open {caption}</span>
         </button>
       </span>
     </div>

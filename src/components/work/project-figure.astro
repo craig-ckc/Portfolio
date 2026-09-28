@@ -7,13 +7,28 @@
  * a broken image or a slot that collapses to nothing — it is the same fill the
  * homepage tiles fall back to, so an unfinished project page and an unfinished
  * homepage row look unfinished in the same way.
+ *
+ * The shape is the caller's decision rather than this file's, because it comes
+ * from where the figure sits: the cover fills the hero it is dropped into, and
+ * a lone image beside a section's prose is worth more wide than square. Two
+ * props cover both without this component having to know what a hero is.
  */
 import type { WorkMedia } from '../../content/work'
 
 interface Props {
   media: WorkMedia
-  /** 'wide' is the cover's shape; 'still' is everything in the body. */
-  shape?: 'wide' | 'still'
+  /**
+   * The frame takes the height of its container instead of holding a shape of
+   * its own, and drops the border and radius it wears in the body. The cover
+   * only: it is the whole hero rather than a box on the page.
+   */
+  fill?: boolean
+  /**
+   * A 16/10 frame rather than the page's square. A single image beside a
+   * section's prose has the column's width to spend, and that reads better
+   * wide than square.
+   */
+  wide?: boolean
   /**
    * The cover is the one image above the fold and the page's largest asset, so
    * it is the one image not deferred. Everything else waits until the reader is
@@ -22,16 +37,30 @@ interface Props {
   loading?: 'eager' | 'lazy'
 }
 
-const { media, shape = 'still', loading = 'lazy' } = Astro.props
+const { media, fill = false, wide = false, loading = 'lazy' } = Astro.props
 ---
 
-<figure class:list={['project__figure', `project__figure--${shape}`]}>
-  <div class="project__frame">
+<figure class:list={['tw:flex tw:min-w-0 tw:flex-col tw:m-0 tw:gap-xs', fill && 'tw:h-full']}>
+  <div
+    class:list={[
+      'tw:relative tw:overflow-hidden tw:border tw:rounded-lg tw:bg-neutral-600',
+      /* Three mutually exclusive shapes, so exactly one of these is ever on the
+         element and the base utilities above never have to be overridden. */
+      fill ? 'tw:h-full tw:aspect-auto tw:border-0 tw:rounded-none' : wide ? 'tw:aspect-[16/10]' : 'tw:aspect-square',
+      !fill && 'tw:border-(--project-box-rule)',
+    ]}
+  >
     {
       media.src && (
-        <img src={media.src} alt={media.alt ?? ''} loading={loading} decoding="async" />
+        <img
+          class="tw:h-full tw:w-full tw:object-cover"
+          src={media.src}
+          alt={media.alt ?? ''}
+          loading={loading}
+          decoding="async"
+        />
       )
     }
   </div>
-  {media.caption && <figcaption class="project__caption">{media.caption}</figcaption>}
+  {media.caption && <figcaption class="tw:mt-xs tw:text-neutral-700 tw:text-2xs tw:leading-normal">{media.caption}</figcaption>}
 </figure>

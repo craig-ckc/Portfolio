@@ -17,12 +17,19 @@
  * the width of the screen rather than the width of a paragraph. Everything
  * after it lives in a single centred column, the way a long-form page reads
  * rather than the two-column dossier the old layout drew.
+ *
+ * Only the two placements of the live link and the reading column itself are
+ * decided here; the link, the sections and the images are components in
+ * src/components/work/. The frame and the pill's themed custom properties are
+ * arbitrary-property utilities on the article root below; the load-in is
+ * `tw:animate-project-fade-up`, staged in src/styles/tw/pages.css.
  */
 import PageShell from '../../layouts/page-shell.astro'
 import ProjectFigure from '../../components/work/project-figure.astro'
+import ProjectLiveLink from '../../components/work/project-live-link.astro'
+import ProjectSection from '../../components/work/project-section.astro'
 import { Cta } from '../../components/sections/cta'
 import { work, type WorkEntry } from '../../content/work'
-import '../../styles/project-page.css'
 
 export function getStaticPaths() {
   return work.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }))
@@ -41,8 +48,17 @@ const { entry } = Astro.props
 const description = entry.description
 ---
 
-<PageShell title={`${entry.title} | Craig Chihururu`} description={description} homeHref="/" smoothScroll>
-  <article class="project">
+<PageShell title={`${entry.title} | Craig Chihururu`} description={description} homeHref="/">
+  {
+    /* Same four themed custom properties `.project` declared in
+       project-page.css, now arbitrary-property utilities with a `tw:dark:`
+       pair each instead of a class and a `.hp[data-theme='dark'] .project`
+       override. (--project-pill-bg is still gone: it was only ever
+       var(--background), which is `tw:bg-background` at each call site.) */
+  }
+  <article
+    class="tw:[--project-rule:rgb(21_21_21/10%)] tw:dark:[--project-rule:rgb(255_255_255/12%)] tw:[--project-box-rule:rgb(21_21_21/6%)] tw:dark:[--project-box-rule:rgb(255_255_255/8%)] tw:[--project-pill-border:rgb(21_21_21/10%)] tw:dark:[--project-pill-border:rgb(255_255_255/14%)] tw:[--project-pill-shadow:0_1px_2px_rgb(0_0_0/4%),0_4px_12px_rgb(0_0_0/4%)] tw:dark:[--project-pill-shadow:0_1px_2px_rgb(0_0_0/24%),0_4px_16px_rgb(0_0_0/32%)]"
+  >
     {
       /* The live link, when there is one, sits wherever the top of the page
          actually is: centred over the fade when there is a cover to fade into,
@@ -51,83 +67,72 @@ const description = entry.description
     }
     {
       entry.cover ? (
-        <div class="project__hero">
-          <div class="project__hero-media">
-            <ProjectFigure media={entry.cover} shape="wide" loading="eager" />
+        <div class="tw:relative tw:overflow-hidden tw:h-[clamp(320px,42svh,520px)]">
+          {/* BEYOND THE FRAME: no token on the spacing or container scales
+              describes a hero's height — it is sized against the viewport, not
+              against type or other content. 42svh lands it near the reference's
+              proportion (roughly 42% of a 964px viewport) at any window height;
+              the clamp keeps it from going stark on a short laptop screen or
+              huge on an ultrawide monitor. */}
+          <div class="tw:h-full">
+            <ProjectFigure media={entry.cover} fill loading="eager" />
           </div>
-          <div class="project__hero-fade" aria-hidden="true" />
+          {/* Fades the foot of the cover into the page background rather than
+              cutting to it, so the link sitting on the fade is readable over
+              photograph and page alike. */}
+          <div
+            class="tw:absolute tw:right-0 tw:bottom-0 tw:left-0 tw:h-[45%] tw:bg-[linear-gradient(to_bottom,transparent,var(--background))] tw:pointer-events-none"
+            aria-hidden="true"
+          />
           {entry.live && (
-            <div class="project__pills">
-              <a class="project__pill" href={entry.live.href} target="_blank" rel="noreferrer">
-                {entry.live.label}
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                  <path
-                    d="M3.75 8.25 8.25 3.75M4.5 3.75h3.75V7.5"
-                    stroke="currentColor"
-                    stroke-width="1.25"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </a>
+            <div class="tw:absolute tw:right-md tw:bottom-xl tw:left-md tw:flex tw:justify-center tw:sm:right-page-gutter tw:sm:left-page-gutter">
+              <ProjectLiveLink live={entry.live} />
             </div>
           )}
         </div>
       ) : null
     }
 
-    <div class:list={['project__column', { 'project__column--no-hero': !entry.cover }]}>
+    {/* With no cover there is no fade to clear the navbar for, so the column
+        takes over that job directly — the same reserved space every other page
+        gives the fixed navbar. One padding-top or the other, never both. The
+        last section ends the article: there is nothing after it but the closing
+        invitation, which brings its own space above it, so this is only the
+        breath before that begins. */}
+    <div
+      class:list={[
+        'tw:mx-auto tw:max-w-content tw:px-md tw:sm:px-2xl tw:pb-section-y',
+        entry.cover ? 'tw:pt-4xl' : 'tw:pt-hero-top',
+      ]}
+    >
       {
         !entry.cover && entry.live && (
-          <div class="project__pills project__pills--top">
-            <a class="project__pill" href={entry.live.href} target="_blank" rel="noreferrer">
-              {entry.live.label}
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                <path
-                  d="M3.75 8.25 8.25 3.75M4.5 3.75h3.75V7.5"
-                  stroke="currentColor"
-                  stroke-width="1.25"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </a>
+          <div class="tw:flex tw:pt-xl">
+            <ProjectLiveLink live={entry.live} />
           </div>
         )
       }
 
-      <div class="project__intro">
-        <h1 class="project__title">{entry.title}</h1>
-        {entry.summary && <p class="project__lede">{entry.summary}</p>}
-      </div>
+      <h1
+        class="tw:font-display tw:text-2xl tw:font-bold tw:[font-variation-settings:'wght'_700] tw:tracking-snug tw:leading-tight tw:text-pretty tw:motion-safe:animate-project-fade-up tw:motion-safe:[animation-delay:calc(var(--duration-fast)*0.5)]"
+      >
+        {entry.title}
+      </h1>
+      {entry.summary && (
+        <p
+          class="tw:mt-xl tw:text-neutral-700 tw:text-body tw:leading-loose tw:text-pretty tw:motion-safe:animate-project-fade-up tw:motion-safe:[animation-delay:var(--duration-fast)]"
+        >
+          {entry.summary}
+        </p>
+      )}
 
-      {
-        entry.sections?.map((section) => (
-          <section class="project__section">
-            <h2 class="project__heading">{section.heading}</h2>
-
-            <div class="project__prose">
-              {section.body.map((paragraph) => (
-                <p>{paragraph}</p>
-              ))}
-            </div>
-
-            {section.media?.length ? (
-              <div class:list={['project__media', { 'project__media--pair': section.media.length > 1 }]}>
-                {section.media.map((media) => (
-                  <ProjectFigure media={media} />
-                ))}
-              </div>
-            ) : null}
-          </section>
-        ))
-      }
+      {entry.sections?.map((section) => <ProjectSection section={section} />)}
 
       {
         entry.quote && (
-          <blockquote class="project__quote">
-            <p class="project__quote-body">{entry.quote.body}</p>
-            <footer class="project__quote-by">
+          <blockquote class="tw:mx-0 tw:mb-0 tw:mt-section-y tw:pl-lg tw:border-l-2 tw:[border-left-color:var(--project-rule)]">
+            <p class="tw:text-md tw:font-normal tw:leading-loose tw:text-pretty">{entry.quote.body}</p>
+            <footer class="tw:mt-md tw:text-neutral-700 tw:text-2xs tw:leading-normal">
               {entry.quote.name}, {entry.quote.role}
             </footer>
           </blockquote>

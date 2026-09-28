@@ -81,17 +81,35 @@ export function Footer() {
   }, [])
 
   return (
-    <div className="footer-slot" ref={slotRef}>
-      <footer className="footer" ref={footerRef}>
+    // `--footer-h` (mobile override in src/styles/tw/chrome.css, base value
+    // on `.hp` in shell.css) sizes both this slot and the fixed footer below it.
+    <div className="tw:relative tw:z-[1] tw:h-(--footer-h)" ref={slotRef}>
+      <footer
+        // BEYOND THE FRAME: #0b0b0b is the footer's own ground colour, with no
+        // token behind it — the dither's dark regions are meant to show it
+        // through, not a token colour of their own (see footer.css).
+        className="tw:fixed tw:right-0 tw:bottom-0 tw:left-0 tw:flex tw:h-(--footer-h) tw:flex-col tw:items-center tw:justify-end tw:overflow-clip tw:pt-4xl tw:px-page-gutter tw:pb-[40px] tw:bg-[#0b0b0b] tw:text-background tw:isolate"
+        ref={footerRef}
+      >
         {/* Two nested layers because they animate from different sources: the
-            outer one is driven by scroll (--reveal), the inner one drifts on its
-            own so the backdrop is never completely still. */}
-        <div className="footer__shader" aria-hidden="true">
-          <div className="footer__drift">
+            outer one is driven by scroll (--reveal) — oversized (-18% inset)
+            so there is room to drift, and moved at a fraction of the reveal
+            rate (the parallax). Sign matters: as you scroll DOWN the backdrop
+            must travel UP, the same direction as the page — starting at +13%
+            and easing to 0 does that; the inverse would make the image slide
+            down against the scroll, reading as the whole footer fighting you.
+            The inner one drifts on its own (`tw:animate-chrome-cloud-drift`,
+            src/styles/tw/chrome.css) so the backdrop is never completely
+            still even when the page is not moving. */}
+        <div
+          aria-hidden="true"
+          className="tw:absolute tw:inset-x-0 tw:-inset-y-[18%] tw:z-[-1] tw:pointer-events-none tw:will-change-transform tw:[transform:translateY(calc((1_-_var(--reveal,_1))*13%))] tw:motion-reduce:[transform:none]!"
+        >
+          <div className="tw:w-full tw:h-full tw:will-change-transform tw:animate-chrome-cloud-drift tw:motion-reduce:animate-none! tw:motion-reduce:[transform:none]!">
             {FOOTER_DITHER_VARIANT === 'video' ? (
               <DitheredVideoBackground
                 active={videoActive}
-                className="footer__dither"
+                className="tw:footer-dither"
                 colorBack={DITHER_PALETTE_VIDEO.back}
                 colorFront={DITHER_PALETTE_VIDEO.front}
                 colorHighlight={DITHER_PALETTE_VIDEO.highlight}
@@ -100,7 +118,7 @@ export function Footer() {
               />
             ) : (
               <DitheredImageBackground
-                className="footer__dither"
+                className="tw:footer-dither"
                 colorBack={DITHER_PALETTE_IMAGE.back}
                 colorFront={DITHER_PALETTE_IMAGE.front}
                 colorHighlight={DITHER_PALETTE_IMAGE.highlight}
@@ -109,7 +127,14 @@ export function Footer() {
             )}
           </div>
         </div>
-        <p className="footer__baseline">{footer.copyright}</p>
+        {/* Reveal-driven opacity/transform, timed with the shader above:
+            clamp(0, (reveal - 0.4) * 2.6, 1) so the baseline only starts
+            fading in once the footer is already well uncovered. */}
+        <p
+          className="tw:relative tw:flex tw:w-full tw:items-center tw:justify-center tw:gap-2xl tw:text-white tw:text-body tw:leading-normal tw:[opacity:clamp(0,calc((var(--reveal,_1)_-_0.4)*2.6),1)] tw:[transform:translateY(calc((1_-_var(--reveal,_1))*14px))] tw:motion-reduce:[transform:none]!"
+        >
+          {footer.copyright}
+        </p>
       </footer>
     </div>
   )

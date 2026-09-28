@@ -79,23 +79,42 @@ export function NavBar({
   }
 
   return (
-    <nav className="nav" aria-label="Primary" ref={navRef}>
+    <nav
+      // Out of the way while the folder's contents are out (see the note this
+      // rule used to carry in nav.css). Keyed off the folder's own class, not
+      // the page's data-scatter attribute — that attribute stays on for the
+      // whole return, so the navbar would come back only once the cards were
+      // home, a beat later than the fault this is fixing.
+      className="tw:absolute tw:top-0 tw:inset-x-0 tw:z-50 tw:flex tw:items-center tw:justify-between tw:p-md tw:transition-opacity tw:duration-(--veil-clear) tw:ease-standard tw:[.hp:has(.folder.is-open)_&]:opacity-0 tw:[.hp:has(.folder.is-open)_&]:duration-(--veil-fade)"
+      aria-label="Primary"
+      ref={navRef}
+    >
       <a href={homeHref} aria-label="Craig Chihururu, home">
-        <span className="nav__logo" />
+        {/* BEYOND THE FRAME: 78.57px/20px and the mask's own values have no
+            token behind them — the mark is drawn at the logo svg's native
+            size. */}
+        <span className="tw:block tw:w-[78.57px] tw:h-lg tw:bg-current tw:[mask:url(/figma/logo.svg)_center/contain_no-repeat] tw:[-webkit-mask:url(/figma/logo.svg)_center/contain_no-repeat]" />
       </a>
 
-      <div className="nav__actions">
-        <a className="chip nav__pill" href={contact.href}>
+      <div className="tw:flex tw:gap-3xs">
+        <a
+          className="chip tw:h-[26px] tw:px-xs tw:py-3xs tw:text-body tw:leading-tight tw:tracking-snug"
+          href={contact.href}
+        >
           Contact
         </a>
         <button
-          className="chip nav__icon"
+          className="chip tw:group tw:h-[26px] tw:w-[26px] tw:p-0"
           type="button"
           aria-pressed={theme === 'dark'}
           aria-label={theme === 'dark' ? 'Switch to light appearance' : 'Switch to dark appearance'}
           onClick={() => choose(appliedTheme(navRef.current) === 'light' ? 'dark' : 'light')}
         >
-          <AppearanceGlyph />
+          {/* BEYOND THE FRAME: drawn at 12px rather than filling the button —
+              the glyphs are on a 12 unit grid, so at 12px their 1px strokes
+              land on whole pixels; at 16 they fell between them and the dots
+              around the sun read as smudges. */}
+          <AppearanceGlyph className="tw:w-[12px] tw:h-[12px] tw:group-hover:rotate-[60deg]" />
         </button>
       </div>
     </nav>

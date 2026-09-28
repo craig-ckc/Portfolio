@@ -271,8 +271,8 @@ export const bookingDialog = {
 
 /* The order here is the order they sit in the folder, left to right, and the
    order they take their places on screen when it opens. Six is what the fan and
-   the scatter are tuned for; add a seventh and both need a new slot in
-   home-page.css. The slots are also shaped: 1 and 5 are portrait, 2 and 4
+   the scatter are tuned for; add a seventh and both need a new `nth-[7]` slot
+   in hero-folder.tsx. The slots are also shaped: 1 and 5 are portrait, 2 and 4
    square, 3 the one wide slot (the dock bar), 6 the big square that lands on
    the folder. The
    record wants slot 4 in particular: it is the low one, so the popover that

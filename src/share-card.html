@@ -19,8 +19,8 @@
        then run `npm test` — share-image.test.ts checks the size still matches
        what the og:image:width/height tags promise.
 
-  Tokens below are copied from src/styles/design-tokens.css. Satoshi comes
-  from Fontshare and Manrope from Google Fonts, matching the site.
+  Tokens below are copied from the :root block in src/styles.css. Satoshi
+  comes from Fontshare and Manrope from Google Fonts, matching the site.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,8 +28,8 @@
 <style>
   @import url('https://api.fontshare.com/v2/css?f[]=satoshi@700&display=swap');
 
-  /* Tokens lifted verbatim from src/styles/design-tokens.css so the card and
-     the site cannot drift apart. */
+  /* Tokens lifted verbatim from the :root block in src/styles.css so the
+     card and the site cannot drift apart. */
   :root {
     --background: #f9f9f9;
     --foreground: #151515;

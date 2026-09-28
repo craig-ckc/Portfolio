@@ -9,10 +9,23 @@ const blurb = "Prototypes, half-built tools, and whatever I'm poking at this mon
 ---
 
 <PageShell title="Experiments — Craig Chihururu" description={blurb} homeHref="/">
-  <section class="placeholder container">
-    <h1 class="placeholder__title">{title}</h1>
-    <p class="placeholder__blurb">{blurb}</p>
-    <a class="placeholder__back" href="/">Back to the homepage</a>
+  {/* Sized by its own padding, not the viewport — it used to fill the screen
+      because it was the only thing on the page; now the CTA sits underneath
+      it. */}
+  <section class="container tw:flex tw:flex-col tw:items-start tw:pt-hero-top tw:pb-section-py">
+    {/* BEYOND THE FRAME: the clamp() and the font-variation-settings axis have
+        no token behind them, same as the equivalent heading in
+        project-page.css. */}
+    <h1 class="tw:font-display tw:text-[clamp(2.5rem,4.8vw,5.75rem)] tw:font-bold tw:[font-variation-settings:'wght'_700] tw:tracking-snug tw:leading-tight">
+      {title}
+    </h1>
+    <p class="tw:mt-xl tw:max-w-caption tw:text-neutral-700 tw:text-body tw:leading-normal">{blurb}</p>
+    <a
+      class="tw:mt-2xl tw:pb-4xs tw:border-b tw:border-neutral-600 tw:text-foreground tw:text-body tw:leading-normal tw:transition-[border-color] tw:duration-320 tw:ease-standard tw:hover:border-foreground"
+      href="/"
+    >
+      Back to the homepage
+    </a>
   </section>
 
   <Cta />

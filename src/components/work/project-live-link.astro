@@ -1,0 +1,51 @@
+---
+/**
+ * The way on to where the work is still up, wherever on the page that turns out
+ * to be: centred over the cover's fade, or at the head of a coverless column.
+ * The two placements are the page's to decide — the pill itself does not move.
+ *
+ * Its surface is the page background rather than a colour of its own, so it
+ * reads as the page lifting off the photograph it is sitting on rather than a
+ * control drawn on top of it. The border and the resting shadow are the two
+ * values with no token behind them, so they are the themed custom properties
+ * declared by project-page.css.
+ *
+ * The hover states use the plain `tw:hover:` variant (re-declared as `:hover`
+ * in src/styles.css, not gated behind `@media (hover: hover)`), so it agrees
+ * with the page's own hovers — none of which are guarded either — instead of
+ * quietly dropping on a touch screen the way Tailwind's default `hover:` would.
+ */
+import type { WorkEntry } from '../../content/work'
+
+interface Props {
+  /** The record's `live`, which is always an outward link. */
+  live: NonNullable<WorkEntry['live']>
+}
+
+const { live } = Astro.props
+---
+
+<a
+  class="tw:group tw:inline-flex tw:items-center tw:gap-2xs tw:border tw:border-(--project-pill-border) tw:rounded-full tw:bg-background tw:shadow-(--project-pill-shadow) tw:px-lg tw:py-sm tw:text-2xs tw:leading-normal tw:transition-[box-shadow,translate] tw:duration-320 tw:ease-standard tw:hover:-translate-y-px tw:hover:shadow-[0_2px_4px_rgb(0_0_0/6%),0_8px_20px_rgb(0_0_0/8%)]"
+  href={live.href}
+  target="_blank"
+  rel="noreferrer"
+>
+  {live.label}
+  <svg
+    class="tw:transition-transform tw:duration-320 tw:ease-out-cubic tw:group-hover:translate-x-px tw:group-hover:-translate-y-px"
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M3.75 8.25 8.25 3.75M4.5 3.75h3.75V7.5"
+      stroke="currentColor"
+      stroke-width="1.25"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+</a>

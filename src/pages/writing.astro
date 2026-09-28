@@ -8,66 +8,98 @@
  * way in; every article, including the feature, follows in a grid. No
  * categories, no dates — those wait on the article's own page.
  */
-import PageShell from '../layouts/page-shell.astro'
-import { Cta } from '../components/sections/cta'
-import { articles, writingPath } from '../content/writing'
-import '../styles/writing.css'
+import PageShell from "../layouts/page-shell.astro";
+import { Cta } from "../components/sections/cta";
+import WritingTile from "../components/writing/writing-tile.astro";
+import { articles, writingPath } from "../content/writing";
 
-const blurbLead = 'Notes on design, on code, and on the bits in between that nobody writes down.'
+const blurbLead =
+  "Notes on design, on code, and on the bits in between that nobody writes down.";
 /* The placeholder sentence is true only until the first article lands — once
    `articles` holds something, saying nothing is published would be wrong
    twice over: once about the page, and once about the entry sitting right
    underneath it. */
-const blurb = articles.length > 0 ? blurbLead : `${blurbLead} Nothing published yet.`
+const blurb =
+  articles.length > 0 ? blurbLead : `${blurbLead} Nothing published yet.`;
 
-const sortedArticles = [...articles].sort((a, b) => b.published.localeCompare(a.published))
-const featured = sortedArticles.find((article) => article.featured) ?? sortedArticles[0]
+const sortedArticles = [...articles].sort((a, b) =>
+  b.published.localeCompare(a.published),
+);
+const featured =
+  sortedArticles.find((article) => article.featured) ?? sortedArticles[0];
+
+/* The two sections' shared width: the work list's measure, plus the page
+   gutter doubled back in since neither reaches the container's own edge —
+   wider than .container's default, so it overrides it here rather than there. */
+const wideMaxWidth =
+  "tw:max-w-[calc(var(--container-content-wide)+var(--spacing-page-gutter)*2)]";
 ---
 
 <PageShell title="Writing | Craig Chihururu" description={blurb} homeHref="/">
   {
     featured ? (
-      <section class="writing__featured container" aria-labelledby="writing-heading">
+      <section
+        class:list={[
+          "container",
+          /* The frosted-glass tint the tiles inside read from — was
+             .writing__featured in writing.css, now declared where it cascades
+             from instead of on a class of its own. */
+          "tw:[--writing-glass-top:rgb(255_255_255/18%)] tw:[--writing-glass-bottom:rgb(255_255_255/8%)] tw:[--writing-glass-edge:rgb(255_255_255/22%)]",
+          wideMaxWidth,
+          "tw:py-hero-top",
+        ]}
+        aria-labelledby="writing-heading"
+      >
         {/* The page still has a name for anyone navigating by headings; it is
             only the featured piece that is seen at the top. */}
-        <h1 class="sr-only" id="writing-heading">Writing</h1>
+        <h1 class="tw:sr-only" id="writing-heading">
+          Writing
+        </h1>
 
         {/* One link around the whole card. The button inside it is the
             homepage hero's own, drawn as a span so it is not a second link to
             the same place. */}
-        <a class="writing__tile writing__tile--feature" href={writingPath(featured.slug)}>
-          <div class="writing__image">
-            {featured.card.src ? <img src={featured.card.src} alt={featured.card.alt ?? ''} /> : null}
-          </div>
-          <div class="writing__glass">
-            <h2 class="writing__glass-title">{featured.title}</h2>
-            <p class="writing__glass-text">{featured.description}</p>
-            <span class="chip hero__cta writing__read">Read article</span>
-          </div>
-        </a>
+        <WritingTile
+          href={writingPath(featured.slug)}
+          image={featured.card}
+          title={featured.title}
+          description={featured.description}
+          featured
+        />
       </section>
     ) : (
-      <section class="writing__intro container">
-        <h1 class="writing__title">Writing</h1>
-        <p class="writing__blurb">{blurb}</p>
+      <section class="tw:flex tw:flex-col tw:items-start tw:pt-hero-top tw:pb-section-py container">
+        {/* Clears the fixed navbar the same way the placeholder pages' intro
+            does — there is no hero and no cover above this one to do that
+            job instead. */}
+        <h1 class="tw:font-display tw:text-[clamp(2.5rem,4.8vw,5.75rem)] tw:font-bold tw:[font-variation-settings:'wght'_700] tw:tracking-snug tw:leading-tight">
+          Writing
+        </h1>
+        <p class="tw:mt-xl tw:max-w-caption tw:text-neutral-700 tw:text-body tw:leading-normal">
+          {blurb}
+        </p>
       </section>
     )
   }
 
   {
     sortedArticles.length > 0 && (
-      <section class="writing__all container" aria-labelledby="all-writing-heading">
-        <h2 class="writing__all-title" id="all-writing-heading">All writing</h2>
-        <div class="writing__grid">
+      <section
+        class:list={["container", wideMaxWidth, "tw:pb-section-y"]}
+        aria-labelledby="all-writing-heading"
+      >
+        <h2 class="tw:sr-only" id="all-writing-heading">
+          All writing
+        </h2>
+        {/* Three across at the work list's width, two on a tablet, one on a
+            phone. */}
+        <div class="tw:[--writing-glass-top:rgb(255_255_255/18%)] tw:[--writing-glass-bottom:rgb(255_255_255/8%)] tw:[--writing-glass-edge:rgb(255_255_255/22%)] tw:grid tw:grid-cols-1 tw:gap-xl tw:sm:grid-cols-2 tw:md:grid-cols-3">
           {sortedArticles.map((article) => (
-            <a class="writing__tile" href={writingPath(article.slug)}>
-              <div class="writing__image">
-                {article.card.src ? <img src={article.card.src} alt={article.card.alt ?? ''} loading="lazy" /> : null}
-              </div>
-              <div class="writing__glass">
-                <h3 class="writing__glass-title">{article.title}</h3>
-              </div>
-            </a>
+            <WritingTile
+              href={writingPath(article.slug)}
+              image={article.card}
+              title={article.title}
+            />
           ))}
         </div>
       </section>

@@ -1,0 +1,43 @@
+---
+/**
+ * One beat of a project page: a heading, the paragraphs under it, and whatever
+ * the record says goes with them.
+ *
+ * Taken out of the route because the shape is the same on every project and the
+ * record is what varies — a heading, some prose, and either no image, one
+ * image worth the width of the column, or a pair side by side. The count is the
+ * page's only decision about media, so it is made here rather than left to the
+ * figure.
+ */
+import type { WorkSection } from '../../content/work'
+import ProjectFigure from './project-figure.astro'
+
+interface Props {
+  section: WorkSection
+}
+
+const { section } = Astro.props
+const media = section.media ?? []
+/* A pair of frames side by side on a phone is two thumbnails, so the grid drops
+   to one column below the sm breakpoint; a single image keeps the wide shape
+   either way. */
+const single = media.length === 1
+---
+
+<section class="tw:mt-[calc(var(--spacing-4xl)+var(--spacing-xs))] tw:motion-safe:animate-project-fade-up">
+  <h2 class="tw:mb-sm tw:font-display tw:text-body tw:font-bold tw:[font-variation-settings:'wght'_700] tw:tracking-normal tw:leading-tight">
+    {section.heading}
+  </h2>
+
+  <div class="tw:mb-xl tw:flex tw:flex-col tw:gap-lg tw:text-neutral-700 tw:text-body tw:leading-loose tw:text-pretty">
+    {section.body.map((paragraph) => <p>{paragraph}</p>)}
+  </div>
+
+  {
+    media.length > 0 && (
+      <div class:list={['tw:grid tw:grid-cols-1 tw:gap-sm', !single && 'tw:sm:grid-cols-2']}>
+        {media.map((item) => <ProjectFigure media={item} wide={single} />)}
+      </div>
+    )
+  }
+</section>
