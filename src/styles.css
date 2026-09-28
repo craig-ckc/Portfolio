@@ -1,12 +1,174 @@
 @import './styles/design-tokens.css';
 
 /*
- * Global base only. Page styling lives in each page's own stylesheet.
+ * Global base plus the Tailwind v4 foundation. Page styling lives in each
+ * page's own stylesheet; nothing below the foundation has been migrated to
+ * utilities yet, so the rendered design is byte-for-byte what the bespoke
+ * stylesheets already produce.
  *
- * This file previously carried the Tailwind import, a @theme layer and the
- * retired homepage's component styles. Nothing left in the project used any of
- * it: the new pages are all written against the design tokens directly.
+ * What is wired up here, and why it changes nothing on screen:
+ *
+ * - The Vite plugin (@tailwindcss/vite, added in astro.config.mjs) compiles
+ *   the @theme and @custom-variant rules below and generates utilities on
+ *   demand for classes found in source files.
+ * - Tailwind is prefixed as `tw:`. That keeps utilities such as `container`
+ *   and generated variables such as `--font-sans` from colliding with the
+ *   established classes and runtime tokens while pages migrate in stages.
+ * - Preflight is deliberately NOT imported (only theme.css and
+ *   utilities.css). Preflight is a global reset — margins, borders, font
+ *   sizes — and the bespoke stylesheets already own every reset the design
+ *   needs. Importing it would restyle the whole site before a single utility
+ *   is ever used.
+ * - Cascade layers keep generated theme and utility rules predictable while
+ *   the bespoke stylesheets remain unlayered during the migration.
  */
+
+/* Theme and utilities without the preflight reset — see the note above. */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme) prefix(tw);
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(tw);
+
+/* `dark:` follows the site's own appearance switch: the `data-theme`
+   attribute on the `.hp` wrapper in src/layouts/page-shell.astro, toggled by
+   src/lib/theme.ts. Scoped to the wrapper rather than :root so a utility used
+   outside `.hp` never goes dark by accident. */
+@custom-variant dark (&:where(.hp[data-theme='dark'], .hp[data-theme='dark'] *));
+
+/*
+ * The token scale, exposed to Tailwind under the same names. Every value is
+ * a `var()` reference into design-tokens.css rather than a copy, and the
+ * block is `inline` so Tailwind substitutes the reference straight into each
+ * utility. The import prefix namespaces generated variables as `--tw-*`, so
+ * these declarations never create self-referential runtime tokens.
+ *
+ * That indirection is the whole point: design-tokens.css stays the single
+ * runtime source of truth. The responsive semantic spacing (the media queries
+ * that retune --spacing-page-gutter and friends) and the
+ * .hp[data-theme='dark'] reassignments in home-page.css keep working for
+ * utilities exactly as they do for the bespoke rules, because both read the
+ * same variable at the same point in the cascade.
+ *
+ * Two deliberate exceptions:
+ * - Breakpoints live in the plain @theme block further down as literal px
+ *   values. A media query cannot read a custom property, so a var()
+ *   reference would never resolve there; the literals match the breakpoints
+ *   declared (and used literally) in design-tokens.css.
+ * - Durations (--duration-*) have no per-name namespace in Tailwind v4, so
+ *   they are not mapped. The bare-value `duration-180` / `duration-320` /
+ *   `duration-560` / `duration-760` utilities already resolve to the same
+ *   milliseconds; reach for the variables directly in bespoke CSS.
+ */
+@theme inline {
+  /* Colour */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+  --color-neutral-950: var(--neutral-950);
+
+  /* Font family */
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+
+  /* Font size */
+  --text-2xs: var(--text-2xs);
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-md: var(--text-md);
+  --text-lg: var(--text-lg);
+  --text-2xl: var(--text-2xl);
+  --text-3xl: var(--text-3xl);
+  --text-4xl: var(--text-4xl);
+  --text-5xl: var(--text-5xl);
+  --text-6xl: var(--text-6xl);
+  --text-body: var(--text-body);
+
+  /* Font weight */
+  --font-weight-normal: var(--font-weight-normal);
+  --font-weight-medium: var(--font-weight-medium);
+  --font-weight-semibold: var(--font-weight-semibold);
+  --font-weight-bold: var(--font-weight-bold);
+
+  /* Letter spacing */
+  --tracking-tighter: var(--tracking-tighter);
+  --tracking-tight: var(--tracking-tight);
+  --tracking-snug: var(--tracking-snug);
+  --tracking-normal: var(--tracking-normal);
+  --tracking-wide: var(--tracking-wide);
+  --tracking-wider: var(--tracking-wider);
+
+  /* Line height */
+  --leading-none: var(--leading-none);
+  --leading-tight: var(--leading-tight);
+  --leading-snug: var(--leading-snug);
+  --leading-normal: var(--leading-normal);
+  --leading-relaxed: var(--leading-relaxed);
+  --leading-loose: var(--leading-loose);
+
+  /* Spacing — primitives */
+  --spacing-4xs: var(--spacing-4xs);
+  --spacing-3xs: var(--spacing-3xs);
+  --spacing-2xs: var(--spacing-2xs);
+  --spacing-xs: var(--spacing-xs);
+  --spacing-sm: var(--spacing-sm);
+  --spacing-md: var(--spacing-md);
+  --spacing-lg: var(--spacing-lg);
+  --spacing-xl: var(--spacing-xl);
+  --spacing-2xl: var(--spacing-2xl);
+  --spacing-3xl: var(--spacing-3xl);
+  --spacing-4xl: var(--spacing-4xl);
+  --spacing-5xl: var(--spacing-5xl);
+  --spacing-6xl: var(--spacing-6xl);
+
+  /* Spacing — semantic. Responsive at runtime via the :root media queries in
+     design-tokens.css; utilities read the live value through the var(). */
+  --spacing-page-gutter: var(--spacing-page-gutter);
+  --spacing-section-y: var(--spacing-section-y);
+  --spacing-section-py: var(--spacing-section-py);
+  --spacing-hero-top: var(--spacing-hero-top);
+
+  /* Radius */
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-full: var(--radius-full);
+
+  /* Container — `max-w-content`, `max-w-page`, and friends. */
+  --container-content: var(--container-content);
+  --container-content-wide: var(--container-content-wide);
+  --container-caption: var(--container-caption);
+  --container-hero: var(--container-hero);
+  --container-work: var(--container-work);
+  --container-page: var(--container-page);
+
+  /* Motion — easing only; see the durations note above. */
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-out-quart: var(--ease-out-quart);
+  --ease-out-cubic: var(--ease-out-cubic);
+  --ease-out-quint: var(--ease-out-quint);
+  --ease-standard: var(--ease-standard);
+  --ease-spring-out: var(--ease-spring-out);
+}
+
+/*
+ * Breakpoint overrides so `sm:` / `md:` / `lg:` / `xl:` fire at the same
+ * widths the bespoke stylesheets use. Literals, not var() references:
+ * media queries cannot read custom properties, which is also why
+ * design-tokens.css repeats these widths literally in its own queries.
+ * `2xl` is untouched and keeps Tailwind's default.
+ */
+@theme {
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1600px;
+}
 
 *,
 *::before,

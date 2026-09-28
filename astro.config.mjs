@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config'
 import react from '@astrojs/react'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   // The canonical origin. /sitemap.xml, /robots.txt, and every page's
@@ -13,6 +14,13 @@ export default defineConfig({
   // site rather than pointing at it.
   site: 'https://www.craigchihururu.com',
   integrations: [react()],
+  vite: {
+    // Tailwind v4's official Vite integration: it compiles the @theme and
+    // @custom-variant rules in src/styles.css and generates utilities on
+    // demand for classes found in source files. No tailwind.config file —
+    // v4 configures entirely through CSS.
+    plugins: [tailwindcss()],
+  },
   server: {
     // Bind all interfaces so the dev server is reachable from other devices
     // (phone, tablet) over Tailscale. Note this also exposes it to any local
