@@ -34,12 +34,7 @@ function Siteline() {
           <span className="inline-flex w-lg h-xl shrink-0 items-center justify-center text-neutral-900">
             <WavingHand />
           </span>
-          {/* BEYOND THE FRAME: the label's own three-property transition mixes
-              two timings (320ms quint for the width/padding wipe, 200ms
-              standard for the fade), which a single transition-* utility
-              cannot express — kept as one arbitrary declaration rather than
-              split across utilities that would silently share one timing. */}
-          <span className="inline-block max-w-0 overflow-clip opacity-0 [transition:max-width_320ms_var(--ease-out-quint),padding-left_320ms_var(--ease-out-quint),opacity_200ms_var(--ease-standard)] group-hover:max-w-[8rem] group-hover:pl-3xs group-hover:opacity-100 group-focus-visible:max-w-[8rem] group-focus-visible:pl-3xs group-focus-visible:opacity-100">
+          <span className="inline-block max-w-0 overflow-clip opacity-0 transition-contact-label group-hover:max-w-[8rem] group-hover:pl-3xs group-hover:opacity-100 group-focus-visible:max-w-[8rem] group-focus-visible:pl-3xs group-focus-visible:opacity-100">
             {contact.label}
           </span>
         </a>
@@ -99,8 +94,8 @@ export function Cta() {
               runs (and reduced motion turns it off and restores a flat
               colour, rather than leaving the label clipped to a static
               gradient). The animation itself (`animate-chrome-shimmer`)
-              lives in src/styles/tw/chrome.css. */}
-          <span className="[background-image:linear-gradient(100deg,var(--foreground)_0%,var(--foreground)_24%,var(--neutral-600)_40%,var(--neutral-300)_50%,var(--neutral-600)_60%,var(--foreground)_76%,var(--foreground)_100%)] [background-size:250%_100%] [background-position:130%_0] bg-clip-text text-transparent animate-chrome-shimmer motion-reduce:animate-none! motion-reduce:bg-none! motion-reduce:text-foreground!">
+              lives in src/styles.css, alongside the `cta-shimmer` utility. */}
+          <span className="cta-shimmer animate-chrome-shimmer motion-reduce:animate-none! motion-reduce:bg-none! motion-reduce:text-foreground!">
             {cta.invitationLink.label}
           </span>
         </a>

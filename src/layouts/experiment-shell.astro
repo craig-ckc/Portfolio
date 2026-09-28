@@ -15,7 +15,7 @@ const { title, description } = Astro.props
     <ThemeResolver />
     <main class="min-h-svh">
       <section
-        class="relative flex min-h-svh items-center justify-center overflow-hidden bg-background bg-[radial-gradient(circle,var(--neutral-300)_1px,transparent_1px)] bg-size-[12px_12px] px-xl py-5xl sm:px-4xl"
+        class="experiment-grid relative flex min-h-svh items-center justify-center overflow-hidden bg-background px-xl py-5xl sm:px-4xl"
         aria-labelledby="experiment-title"
       >
         <h1
@@ -25,7 +25,7 @@ const { title, description } = Astro.props
           {title}
         </h1>
         <a
-          class="absolute top-md left-md z-10 grid size-10 place-items-center rounded-full border border-neutral-600/60 bg-background text-foreground shadow-[0_8px_24px_rgb(21_21_21/8%)] transition-transform duration-320 ease-out-cubic hover:-translate-x-3xs focus-visible:-translate-x-3xs"
+          class="absolute top-md left-md z-10 grid size-10 place-items-center rounded-full border border-neutral-600/60 bg-background text-foreground shadow-experiment-back transition-transform duration-320 ease-out-cubic hover:-translate-x-3xs focus-visible:-translate-x-3xs"
           href="/experiments"
           aria-label="Back to experiments"
         >

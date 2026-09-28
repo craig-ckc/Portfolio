@@ -182,6 +182,27 @@
   --duration-base: 320ms;
   --duration-slow: 560ms;
   --duration-slower: 760ms;
+
+  /* Effects — reusable values for treatments that are too specific for the
+     core Tailwind scales. Components consume these through semantic utilities
+     below, so the values have one place to change. */
+  --effect-shadow-experiment-back: 0 8px 24px rgb(21 21 21 / 8%);
+  --effect-shadow-project-pill-hover: 0 2px 4px rgb(0 0 0 / 6%), 0 8px 20px rgb(0 0 0 / 8%);
+  --effect-background-experiment-grid: radial-gradient(circle, var(--neutral-300) 1px, transparent 1px);
+  --effect-background-cta-shimmer: linear-gradient(
+    100deg,
+    var(--foreground) 0%,
+    var(--foreground) 24%,
+    var(--neutral-600) 40%,
+    var(--neutral-300) 50%,
+    var(--neutral-600) 60%,
+    var(--foreground) 76%,
+    var(--foreground) 100%
+  );
+  --effect-transition-contact-label:
+    max-width var(--duration-base) var(--ease-out-quint),
+    padding-left var(--duration-base) var(--ease-out-quint),
+    opacity var(--duration-fast) var(--ease-standard);
 }
 
 /* Breakpoints are declared as tokens for reference and used literally in media
@@ -375,6 +396,8 @@
     1.029 62.5%, 1.02 66.7%, 1.013 70.8%, 1.007 75.0%, 1.003 79.2%,
     1.0 83.3%, 0.998 87.5%, 0.997 91.7%, 0.997 95.8%, 1
   );
+  --shadow-experiment-back: var(--effect-shadow-experiment-back);
+  --shadow-project-pill-hover: var(--effect-shadow-project-pill-hover);
 }
 
 /*
@@ -521,8 +544,33 @@
 
 /* ==========================================================================
    Custom utilities — bundles that need nested selectors a variant cannot
-   reach. Used as `social` and `footer-dither`.
+   reach, plus semantic bundles for complex visual treatments.
    ========================================================================== */
+
+/* The experiment canvas grid is a single visual treatment shared by every
+   detail page. Keeping both image and scale together prevents a page from
+   accidentally changing one half of the pattern. */
+@utility experiment-grid {
+  background-image: var(--effect-background-experiment-grid);
+  background-size: 12px 12px;
+}
+
+/* The CTA invitation is a text-only shimmer. Its gradient, clipping, and
+   positioning travel together so the animation always has the surface it
+   expects. */
+@utility cta-shimmer {
+  background-image: var(--effect-background-cta-shimmer);
+  background-position: 130% 0;
+  background-size: 250% 100%;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Contact is intentionally a width-and-fade reveal. The semantic utility
+   keeps the three timings in sync wherever the contact label is reused. */
+@utility transition-contact-label {
+  transition: var(--effect-transition-contact-label);
+}
 
 /* Shared between src/components/sections/cta.tsx and
    src/components/writing/article-share.astro — a row of round icon buttons.
