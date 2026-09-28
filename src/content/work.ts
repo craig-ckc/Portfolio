@@ -14,12 +14,9 @@
  * just a shorter one, so a new entry can go in the moment the work exists and
  * be filled out afterwards.
  *
- * NOTE(craig): the page copy here is DRAFTED, not verified. The three
- * one-line descriptions were cut down from ones already in the project;
- * everything under them — summaries and section copy — is written out from
- * those sentences to give the template real prose to hold, and to read the way
- * the rest of the site reads. None of it has been checked against the actual
- * engagements. Read this file through before the pages go live.
+ * The copy is grounded in each project's source repository and current
+ * product model. Keep outcomes factual: do not add performance figures,
+ * testimonials or client claims unless the project provides them.
  */
 
 /** A tile in the homepage row. Falls back to a flat --neutral-600 fill. */
@@ -94,33 +91,33 @@ export const work: WorkEntry[] = [
   {
     slug: 'designing-minds',
     title: 'Designing Minds',
-    description: 'A brand and website for an education consultancy.',
+    description: 'An online shop for CAPS-aligned learning resources for Grades 3 to 7.',
     tiles: [{}, {}],
     summary:
-      'An education consultancy with good work and no way to show it. The brief was a name and a set of services; what it needed first was a way of looking at itself, and then somewhere to put it that would open anywhere.',
+      'Designing Minds turns teacher-made tests, summaries and assessment material into a clear online catalogue that parents can browse, buy and download. I designed and built the shop, customer account, checkout and publishing tools as one connected product.',
     cover: {},
     sections: [
       {
-        heading: 'Where it started',
+        heading: 'Making the catalogue easy to understand',
         body: [
-          'The consultancy had been running on a logo made in a hurry and a slide deck that got rewritten for every meeting. Nothing was wrong with any single piece of it. The problem was that no two pieces agreed, so every new thing had to be argued from scratch.',
-          'We started with the one idea everybody in the room already believed: that the work is about curiosity rather than instruction. That gave the identity something to be about, and gave me a test to hold every later decision against.',
+          'Parents usually arrive with a practical question: what can I use to help a child in a particular grade, subject or term? The catalogue is organised around that question. Resources can be explored by grade, subject, term and format, with plain descriptions that explain what is included before anyone reaches checkout.',
+          'CAPS is written out as South Africa’s Curriculum and Assessment Policy Statement wherever the meaning matters. That small choice helps parents who know the school system but not the acronym, and it gives search and answer engines a clearer account of what each resource is for.',
         ],
         media: [{}, {}],
       },
       {
-        heading: 'A system of marks',
+        heading: 'Buying once, finding it again',
         body: [
-          'The identity is built from a small set of marks that combine rather than one logo that gets placed. Each one stands for a way of asking a question, and they sit together differently depending on what the piece is for, so a worksheet and a conference banner come out of the same kit without either looking borrowed from the other.',
-          'Type is kept deliberately plain underneath it. The marks are the voice; anything else competing at that level would have made the system louder every time it was used, which is the opposite of what a consultancy wants after the third year of using it.',
+          'The product supports single resources, discounted bundles and access plans without turning the buying journey into a subscription puzzle. A customer can see what a package contains, pay once and return to the order whenever the files are needed again.',
+          'Downloads live with the order that unlocked them. That keeps receipts, purchases and files in one place, and avoids creating a separate downloads area that customers have to learn and remember.',
         ],
         media: [{}],
       },
       {
-        heading: 'Built to open anywhere',
+        heading: 'A store the team can run',
         body: [
-          'A good share of the audience reads on a phone, on a connection that is doing them no favours. So the site ships as static pages with the type and the marks inlined, no framework hydrating on arrival, and images sized for the slot they land in rather than scaled down by the browser after the fact.',
-          'The result is a site that is legible before it is finished loading, and finished loading before most sites have decided what to render.',
+          'The public shop is only half of the work. The administration side gives the team a structured way to publish products, set prices, group resources into bundles and manage the information customers rely on. Orders, payments and customer records stay visible without being treated as editable website content.',
+          'That separation matters. It gives the team control over the catalogue while protecting the operational records that should only ever be created by the system.',
         ],
         media: [{}, {}],
       },
@@ -133,33 +130,33 @@ export const work: WorkEntry[] = [
   {
     slug: 'preflight',
     title: 'Preflight',
-    description: 'A sign-off tool for creative teams.',
+    description: 'A marketing product that turns evidence into prioritised, verifiable actions.',
     tiles: [{}, {}],
     summary:
-      'Creative teams were approving work in three places at once and losing track of which approval counted. Preflight is one place where a piece of work is looked at, marked up and signed off, and where the sign-off is the thing that moves it on.',
+      'Preflight helps teams decide what to change across websites and connected marketing systems, why it matters and how they will know it worked. I have been shaping the product, interface and implementation around one loop: scan, prioritise, act and track.',
     cover: {},
     sections: [
       {
-        heading: 'The thing that was actually broken',
+        heading: 'From more data to a better decision',
         body: [
-          'Everyone described the problem as feedback being messy. Watching a few rounds of it, the mess was a symptom. The real trouble was that approval had no single home: a comment in one tool, a thumbs up in another and a reply to an email all felt like sign-off to whoever gave them, and none of them were.',
-          'So the model came first, before any screen. One piece of work, one open round, one decision that ends it. Everything the interface does afterwards is in service of keeping that sentence true.',
+          'Marketing teams rarely struggle because they have too little information. The harder problem is knowing which signal deserves attention, which change is worth making and which result can actually be trusted. A dashboard can display the evidence without helping anyone make that decision.',
+          'Preflight turns material findings into actions that carry their reasoning with them. Each action explains what changed, why it matters, what evidence supports it and what remains uncertain, so a person can make a decision without reconstructing the investigation first.',
         ],
         media: [{}, {}],
       },
       {
-        heading: 'Designing the sign-off',
+        heading: 'Keeping the proof attached',
         body: [
-          'A decision that ends a round has to feel heavier than a comment, and it has to be obvious who is allowed to make it. The reviewer list is visible from the first frame, the round shows what it is waiting on, and approving is a deliberate act with a confirmation rather than a button you brush past on the way to the next thing.',
-          'The states got the same attention. A round can be open, waiting, changes requested or closed, and each one had to read at a glance from across an open-plan office, because that is genuinely how these boards get checked.',
+          'An approved action is not the end of the story. It needs a clear handoff, a way to check the live result and a record of what was learned. Preflight keeps the evidence, decision, implementation state and verification receipt connected instead of scattering them across a report, task manager and chat thread.',
+          'The product is deliberately careful about confidence. It can show that a page changed and that a check passed. It should not pretend that one correlated metric proves business impact when the evidence does not support that claim.',
         ],
         media: [{}],
       },
       {
-        heading: 'Designed and built by the same hands',
+        heading: 'A product built around trust',
         body: [
-          'I built the front end as well as designing it, which is the part I would keep if I could keep one thing. There was no handover document, no set of redlines, and no negotiation about which parts of the interaction survived the build. Where something did not work once it was real, it got changed in the design and in the code in the same afternoon.',
-          'What that bought the product is small things that usually get dropped: the markup layer stays put under a zoom, the keyboard path through a review round works end to end, and a round with two hundred comments scrolls at the same rate as an empty one.',
+          'The interface has to make authority visible. People can inspect evidence, discuss a recommendation and approve bounded work, but the system does not quietly turn a suggestion into an external change. Access, approval and verification are treated as product design questions rather than settings added at the end.',
+          'Designing while building lets those rules stay intact from the data model to the screen. When the product says an action is verified, the interface, workflow and underlying record all have to mean the same thing.',
         ],
         media: [{}, {}],
       },
@@ -168,27 +165,35 @@ export const work: WorkEntry[] = [
   {
     slug: 'richard-james',
     title: 'Richard James',
-    description: 'A fast portfolio for a film photographer.',
+    description: 'An artist portfolio and editorial system for Richard James.',
     tiles: [{}, {}],
     summary:
-      'Film scans are big, slow files and the whole point of them is the detail. The site had to show them at a size worth looking at, on a page that does not ask to be noticed, and still arrive quickly enough that nobody leaves before the first frame lands.',
+      'Richard James is a South African and British artist whose work draws on sculpture, Zen practice, counselling and affect theory. I designed and built a portfolio that gives decades of work room to be seen, while giving Richard a private system for managing it himself.',
     cover: {},
     sections: [
       {
-        heading: 'Get out of the way',
+        heading: 'A body of work, not a feed',
         body: [
-          'The brief for the design was mostly a list of things not to do. No captions competing with the frames, no hover effects on the images, no typography with an opinion of its own. What is left is a small type scale, a lot of white, and generous space around every photograph so two frames are never asking for the same attention.',
-          'The grid varies the size of a frame but never the space around it, which is what lets a landscape and a portrait sit in the same row without the row looking rearranged.',
+          'The archive spans work made across many years, with recurring materials and ideas that are easier to understand together than as isolated posts. The home experience lets visitors move through the work by year, while individual pages hold the title, medium, text and full image sequence for each project.',
+          'The interface stays quiet, but it is not neutral. Scale, pacing and transitions are used to give each work a clear moment without turning the site itself into the performance.',
         ],
         media: [{}, {}],
       },
       {
-        heading: 'Making large scans feel immediate',
+        heading: 'The thinking belongs beside the work',
         body: [
-          'Every frame is served at the size the slot actually renders it, in a modern format, with the dimensions declared so the page never reflows once a scan lands. Below the fold, images load as the gallery approaches them rather than all at once on arrival.',
-          'The first frame gets special treatment: it is preloaded, and a tiny blurred version of it is inlined into the page so there is something of the photograph on screen from the first paint instead of an empty box. On a slow connection that is the difference between a site that is loading and a site that is broken.',
+          'Richard’s practice is informed by Buddhist thought, affect theory and his experience as a counsellor. The About page and his essay, The Unborn Rags of the Mind, are part of the portfolio rather than background material hidden away from it. They give visitors a direct way to understand the questions running through the work.',
+          'Project pages remain visually led, while longer writing uses a calmer reading layout. The two modes share one identity without asking the artwork and the essay to behave like the same kind of content.',
         ],
         media: [{}],
+      },
+      {
+        heading: 'Simple to visit, practical to maintain',
+        body: [
+          'The public site is built as fast static pages, with images prepared for the places they appear. Behind it is a private editorial system where Richard can add projects, arrange galleries, edit page copy and control search and social descriptions without touching the code.',
+          'Publishing creates a fresh version of the public site. Visitors get a focused portfolio with no editing software attached to the experience, while Richard keeps the control needed for the archive to continue growing.',
+        ],
+        media: [{}, {}],
       },
     ],
   },
