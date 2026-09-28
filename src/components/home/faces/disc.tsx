@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from 'react'
 import type { DiscItem } from '../../../content/home-page'
 import { formatTime, positionAt, skip as skipTo, type Position } from '../../../lib/now-playing'
 
@@ -27,7 +27,17 @@ const REST: Position = { index: 0, positionMs: 0 }
  * Presented, the popover comes up as well, with the track, the time and the
  * skip controls, and the clock below runs for as long as that lasts.
  */
-export function DiscFace({ item, presented = false }: { item: DiscItem; presented?: boolean }) {
+export function DiscFace({
+  item,
+  presented = false,
+  standalone = false,
+}: {
+  item: DiscItem
+  presented?: boolean
+  /** The experiment page is not nested inside the folder's button, so its
+   * transport controls can and should be real, keyboard-accessible buttons. */
+  standalone?: boolean
+}) {
   const tracks = item.tracks
   const durations = useMemo(() => tracks.map((track) => track.durationMs), [tracks])
 
@@ -182,7 +192,7 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
           controls opt back in individually below. */}
       <span
         className="absolute bottom-[calc(100%+3cqw)] left-1/2 z-3 flex flex-col min-w-[66cqw] max-w-[120cqw] pt-[2.2cqw] pr-[2.6cqw] pb-[2cqw] pl-[3.2cqw] rounded-[2.4cqw] bg-[rgb(21_21_21/92%)] [backdrop-filter:blur(8px)] text-[#f9f9f9] font-display leading-tight whitespace-nowrap opacity-0 pointer-events-none [translateX(-50%)_translateY(1.5cqw)] [transition:opacity_var(--duration-fast)_var(--ease-out-cubic),transform_var(--duration-fast)_var(--ease-out-cubic)] [.folder.is-open_.folder\_\_item.is-focused_.card_&]:opacity-100 [.folder.is-open_.folder\_\_item.is-focused_.card_&]:[translateX(-50%)_translateY(0)]"
-        aria-hidden="true"
+        aria-hidden={standalone ? undefined : 'true'}
       >
         <span className="flex items-center gap-[3cqw]">
           <span className="flex flex-1 flex-col gap-[0.3cqw] min-w-0 text-left">
@@ -193,53 +203,51 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
               {track.artist}
             </span>
           </span>
-          {/* Spans with role="button", not real buttons: a <button> nested
-              inside the folder's own <button> is invalid HTML. The popover
-              they live in is aria-hidden, so there is no accessible name to
-              give them — they are pointer-only, which is also why neither
-              gets a tabIndex. */}
+          {/* The homepage face is nested inside the folder's button, so its
+              controls remain pointer-only spans there. The standalone
+              experiment has no nesting constraint and renders real buttons. */}
           <span className="flex shrink-0 gap-[1cqw]">
-            <span
-              className="grid size-[6.4cqw] place-items-center rounded-full bg-[rgb(255_255_255/10%)] cursor-pointer pointer-events-auto [transition:background_var(--duration-fast)] hover:bg-[rgb(255_255_255/18%)] [&_svg]:size-[2.6cqw]"
-              role="button"
-              aria-label="Previous track"
-              data-dir="prev"
-              /* The folder begins a drag on pointerdown. Stopping it here
-                 means this press never becomes a grip, so the button still
-                 gets its own pointerup and click rather than the card being
-                 grabbed instead — the trade is that the card can't be
-                 dragged by this control, which is fine. */
-              onPointerDown={(event) => event.stopPropagation()}
-              /* Chrome fires click on the nearest common ancestor of the
-                 pointerdown and pointerup targets, which is the folder's
-                 <button> unless this is stopped — without it every skip
-                 would also toggle the card's focused state. */
-              onClick={(event) => {
+            {([-1, 1] as const).map((direction) => {
+              const label = direction === -1 ? 'Previous track' : 'Next track'
+              const icon = direction === -1 ? (
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M13 3l-8 5 8 5z" fill="currentColor" />
+                  <rect x="2.2" y="3" width="1.8" height="10" rx="0.5" fill="currentColor" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M3 3l8 5-8 5z" fill="currentColor" />
+                  <rect x="12" y="3" width="1.8" height="10" rx="0.5" fill="currentColor" />
+                </svg>
+              )
+              const className =
+                "grid size-[6.4cqw] place-items-center rounded-full border-0 bg-[rgb(255_255_255/10%)] p-0 text-inherit cursor-pointer pointer-events-auto [transition:background_var(--duration-fast)] hover:bg-[rgb(255_255_255/18%)] [&_svg]:size-[2.6cqw]"
+              const activate = (event: ReactMouseEvent) => {
                 event.stopPropagation()
-                skip(-1)
-              }}
-            >
-              <svg viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M13 3l-8 5 8 5z" fill="currentColor" />
-                <rect x="2.2" y="3" width="1.8" height="10" rx="0.5" fill="currentColor" />
-              </svg>
-            </span>
-            <span
-              className="grid size-[6.4cqw] place-items-center rounded-full bg-[rgb(255_255_255/10%)] cursor-pointer pointer-events-auto [transition:background_var(--duration-fast)] hover:bg-[rgb(255_255_255/18%)] [&_svg]:size-[2.6cqw]"
-              role="button"
-              aria-label="Next track"
-              data-dir="next"
-              onPointerDown={(event) => event.stopPropagation()}
-              onClick={(event) => {
-                event.stopPropagation()
-                skip(1)
-              }}
-            >
-              <svg viewBox="0 0 16 16" aria-hidden="true">
-                <path d="M3 3l8 5-8 5z" fill="currentColor" />
-                <rect x="12" y="3" width="1.8" height="10" rx="0.5" fill="currentColor" />
-              </svg>
-            </span>
+                skip(direction)
+              }
+
+              return standalone ? (
+                <button key={direction} className={className} type="button" aria-label={label} onClick={activate}>
+                  {icon}
+                </button>
+              ) : (
+                <span
+                  key={direction}
+                  className={className}
+                  role="button"
+                  aria-label={label}
+                  data-dir={direction === -1 ? 'prev' : 'next'}
+                  /* The folder begins a drag on pointerdown. Stopping it here
+                     means this press never becomes a grip, so the control
+                     still receives the click instead of moving the card. */
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onClick={activate}
+                >
+                  {icon}
+                </span>
+              )
+            })}
           </span>
         </span>
         <span className="flex flex-col gap-[1.2cqw] mt-[1.6cqw]">

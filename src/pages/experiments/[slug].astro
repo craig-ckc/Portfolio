@@ -1,0 +1,18 @@
+---
+import { ExperimentDemo } from '../../components/experiments/experiment-demo'
+import { experiments } from '../../content/experiments'
+import ExperimentShell from '../../layouts/experiment-shell.astro'
+
+export function getStaticPaths() {
+  return experiments.map((experiment) => ({
+    params: { slug: experiment.slug },
+    props: { experiment },
+  }))
+}
+
+const { experiment } = Astro.props
+---
+
+<ExperimentShell title={experiment.title} description={experiment.description}>
+  <ExperimentDemo kind={experiment.kind} client:load />
+</ExperimentShell>

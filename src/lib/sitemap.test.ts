@@ -2,6 +2,7 @@ import { readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { work, workPath } from '../content/work'
 import { articles, writingPath } from '../content/writing'
+import { experiments, experimentPath } from '../content/experiments'
 import { INDEXABLE_PATHS, canonicalUrl, indexableUrls, requireSite, robotsTxt, sitemapXml } from './sitemap'
 
 const SITE = new URL('https://www.craigchihururu.com')
@@ -10,6 +11,8 @@ const SITE = new URL('https://www.craigchihururu.com')
 const WORK_ROUTE = '/work/[slug]'
 /** The article route, as it is spelled on disk. */
 const WRITING_ROUTE = '/writing/[slug]'
+/** The experiment route, as it is spelled on disk. */
+const EXPERIMENT_ROUTE = '/experiments/[slug]'
 
 /**
  * Every .astro route on disk, as the path a visitor would type.
@@ -33,6 +36,7 @@ function routesInPagesDir(): string[] {
     .flatMap((route) => {
       if (route === WORK_ROUTE) return work.map((entry) => workPath(entry.slug))
       if (route === WRITING_ROUTE) return articles.map((article) => writingPath(article.slug))
+      if (route === EXPERIMENT_ROUTE) return experiments.map((experiment) => experimentPath(experiment.slug))
       return [route]
     })
 }

@@ -1,32 +1,16 @@
 ---
-// Replaces the '/experiments' case in the old switch router (src/App.tsx) —
-// file routing gives this page its own <title> for free, which the SPA couldn't do.
 import PageShell from '../layouts/page-shell.astro'
-import { Cta } from '../components/sections/cta'
+import ExperimentCard from '../components/experiments/experiment-card.astro'
+import { experiments } from '../content/experiments'
 
-const title = 'Experiments'
-const blurb = "Prototypes, half-built tools, and whatever I'm poking at this month. Nothing here to show yet."
+const description = 'Small interface and interaction experiments by Craig Chihururu.'
 ---
 
-<PageShell title="Experiments — Craig Chihururu" description={blurb} homeHref="/">
-  {/* Sized by its own padding, not the viewport — it used to fill the screen
-      because it was the only thing on the page; now the CTA sits underneath
-      it. */}
-  <section class="mx-auto flex w-full max-w-[calc(var(--container-page)+var(--spacing-page-gutter)*2)] flex-col items-start px-page-gutter pt-hero-top pb-section-py">
-    {/* BEYOND THE FRAME: the clamp() and the font-variation-settings axis have
-        no token behind them, same as the equivalent heading in
-        project-page.css. */}
-    <h1 class="font-display text-[clamp(2.5rem,4.8vw,5.75rem)] font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight">
-      {title}
-    </h1>
-    <p class="mt-xl max-w-caption text-neutral-700 text-body leading-normal">{blurb}</p>
-    <a
-      class="mt-2xl pb-4xs border-b border-neutral-600 text-foreground text-body leading-normal transition-[border-color] duration-320 ease-standard hover:border-foreground"
-      href="/"
-    >
-      Back to the homepage
-    </a>
+<PageShell title="Experiments | Craig Chihururu" description={description} homeHref="/">
+  <section class="mx-auto w-full max-w-[calc(var(--container-page)+var(--spacing-page-gutter)*2)] px-page-gutter pt-hero-top pb-section-y">
+    <h1 class="sr-only">Experiments</h1>
+    <div class="grid grid-cols-1 gap-x-md gap-y-3xl sm:grid-cols-2">
+      {experiments.map((experiment) => <ExperimentCard experiment={experiment} />)}
+    </div>
   </section>
-
-  <Cta />
 </PageShell>

@@ -1,0 +1,42 @@
+---
+import Base from './base.astro'
+
+interface Props {
+  title: string
+  description: string
+}
+
+const { title, description } = Astro.props
+---
+
+<Base title={`${title} | Craig Chihururu`} description={description}>
+  <div class="hp min-h-svh min-w-[320px] bg-background font-sans text-foreground antialiased" data-theme="light">
+    <main class="min-h-svh p-sm sm:p-md">
+      <section
+        class="relative flex min-h-[calc(100svh-var(--spacing-sm)*2)] items-center justify-center overflow-hidden rounded-lg border border-neutral-600/40 bg-background px-xl py-5xl sm:min-h-[calc(100svh-var(--spacing-md)*2)] sm:px-4xl [background-image:radial-gradient(circle,var(--neutral-600)_1px,transparent_1px)] [background-size:18px_18px]"
+        aria-labelledby="experiment-title"
+      >
+        <a
+          class="absolute top-md left-md z-10 grid size-10 place-items-center rounded-full border border-neutral-600/60 bg-background text-foreground shadow-[0_8px_24px_rgb(21_21_21/8%)] transition-transform duration-320 ease-out-cubic hover:-translate-x-3xs focus-visible:-translate-x-3xs"
+          href="/experiments"
+          aria-label="Back to experiments"
+        >
+          <svg class="size-md" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="m9.5 4-4 4 4 4M6 8h6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+
+        <div class="w-full max-w-[1100px]">
+          <slot />
+        </div>
+
+        <h1
+          class="absolute bottom-0 left-1/2 max-w-[calc(100%-var(--spacing-xl)*2)] -translate-x-1/2 truncate rounded-t-md border border-b-0 border-neutral-600/50 bg-background px-lg py-sm font-display text-body font-semibold tracking-snug"
+          id="experiment-title"
+        >
+          {title}
+        </h1>
+      </section>
+    </main>
+  </div>
+</Base>

@@ -1,0 +1,32 @@
+---
+import type { Experiment } from '../../content/experiments'
+import { experimentPath } from '../../content/experiments'
+import ExperimentPreview from './experiment-preview.astro'
+
+interface Props {
+  experiment: Experiment
+}
+
+const { experiment } = Astro.props
+---
+
+<a class="group block" href={experimentPath(experiment.slug)}>
+  <article>
+    <div class="aspect-[4/3] overflow-hidden rounded-lg bg-neutral-300">
+      <ExperimentPreview kind={experiment.kind} />
+    </div>
+    <div class="mt-md flex items-start justify-between gap-xl">
+      <div class="min-w-0">
+        <h2 class="font-display text-md font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight underline decoration-transparent underline-offset-[4px] transition-[text-decoration-color] duration-320 ease-out-cubic group-hover:decoration-current group-focus-visible:decoration-current">
+          {experiment.title}
+        </h2>
+        <p class="mt-2xs max-w-[58ch] text-body leading-normal text-neutral-700 text-pretty">
+          {experiment.description}
+        </p>
+      </div>
+      <svg class="mt-3xs size-md shrink-0 transition-transform duration-320 ease-out-cubic group-hover:translate-x-3xs group-focus-visible:translate-x-3xs" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+  </article>
+</a>

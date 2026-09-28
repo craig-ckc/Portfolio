@@ -19,6 +19,7 @@
  */
 import { work, workPath } from '../content/work'
 import { articles, writingPath } from '../content/writing'
+import { experiments, experimentPath } from '../content/experiments'
 
 /**
  * Every path the site wants indexed, root-relative.
@@ -36,6 +37,7 @@ export const INDEXABLE_PATHS: readonly string[] = [
   '/',
   '/writing',
   '/experiments',
+  ...experiments.map((experiment) => experimentPath(experiment.slug)),
   ...work.map((entry) => workPath(entry.slug)),
   ...articles.map((article) => writingPath(article.slug)),
 ]
