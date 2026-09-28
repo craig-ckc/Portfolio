@@ -1,5 +1,6 @@
 ---
 import Base from './base.astro'
+import ThemeResolver from '../components/layout/theme-resolver.astro'
 
 interface Props {
   title: string
@@ -11,6 +12,7 @@ const { title, description } = Astro.props
 
 <Base title={`${title} | Craig Chihururu`} description={description}>
   <div class="hp min-h-svh min-w-[320px] bg-background font-sans text-foreground antialiased" data-theme="light">
+    <ThemeResolver />
     <main class="min-h-svh p-sm sm:p-md">
       <section
         class="relative flex min-h-[calc(100svh-var(--spacing-sm)*2)] items-center justify-center overflow-hidden rounded-lg border border-neutral-600/40 bg-background px-xl py-5xl sm:min-h-[calc(100svh-var(--spacing-md)*2)] sm:px-4xl [background-image:radial-gradient(circle,var(--neutral-600)_1px,transparent_1px)] [background-size:18px_18px]"

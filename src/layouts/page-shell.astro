@@ -6,7 +6,7 @@ import Base from './base.astro'
 import { BookingDialog } from '../components/booking/booking-dialog'
 import { NavBar } from '../components/layout/nav-bar'
 import { Footer } from '../components/layout/footer'
-import { THEME_STORAGE_KEY } from '../lib/theme'
+import ThemeResolver from '../components/layout/theme-resolver.astro'
 import type { ArticleInfo } from '../lib/structured-data'
 
 interface Props {
@@ -48,23 +48,7 @@ const { title, description, homeHref = '#top', article } = Astro.props
         A stored choice wins; without one the operating system decides. The
         static `data-theme="light"` above stays as the answer for a visitor
         with no JavaScript at all. */}
-    <script is:inline define:vars={{ storageKey: THEME_STORAGE_KEY }}>
-      const wrapper = document.currentScript.parentElement
-
-      let stored = null
-      try {
-        stored = localStorage.getItem(storageKey)
-      } catch {
-        // Storage is locked down; the system preference is the fallback.
-      }
-
-      wrapper.dataset.theme =
-        stored === 'light' || stored === 'dark'
-          ? stored
-          : matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light'
-    </script>
+    <ThemeResolver />
     <NavBar client:load homeHref={homeHref} />
     {/* Opaque and above the footer — the footer is fixed and revealed as this
         scrolls past it. */}

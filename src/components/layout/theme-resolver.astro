@@ -1,0 +1,23 @@
+---
+import { THEME_STORAGE_KEY } from '../../lib/theme'
+---
+
+{/* Resolve appearance before first paint. This component must remain a direct
+    child of the `.hp` wrapper because the inline script writes to its parent. */}
+<script is:inline define:vars={{ storageKey: THEME_STORAGE_KEY }}>
+  const wrapper = document.currentScript.parentElement
+
+  let stored = null
+  try {
+    stored = localStorage.getItem(storageKey)
+  } catch {
+    // Storage is unavailable, so the operating-system preference takes over.
+  }
+
+  wrapper.dataset.theme =
+    stored === 'light' || stored === 'dark'
+      ? stored
+      : matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+</script>
