@@ -195,7 +195,10 @@ export class DitheredBackgroundRenderer {
 
     this.setUniform1i('u_image', 0)
     this.setUniform1f('u_originX', 0.5)
-    this.setUniform1f('u_originY', 0.5)
+    /* Top, not centre: the image is cropped to cover, and what is worth
+       keeping of the footer's is its top edge, so the crop comes off the
+       bottom. 0 is the top in Paper's sizing. */
+    this.setUniform1f('u_originY', 0)
     this.setUniform1f('u_worldWidth', 0)
     this.setUniform1f('u_worldHeight', 0)
     this.setUniform1f('u_fit', ShaderFitOptions.cover)

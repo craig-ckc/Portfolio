@@ -1864,7 +1864,9 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background-position: center;
+  /* Top-aligned, matching the shader's own origin, so the fallback photo
+     crops the same way the dither does. */
+  background-position: center top;
   background-size: cover;
 }
 

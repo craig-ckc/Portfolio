@@ -18,17 +18,17 @@ const FOOTER_IMAGE = '/img/footer-dither.webp'
    purpose: the dark regions of the dither are meant to be the footer's own
    ground rather than a colour of the shader's own. */
 const DITHER_PALETTE_IMAGE = {
-  back: '#00000000',
-  front: '#1F1F1F',
-  highlight: '#313131',
+  back: '#131313',
+  front: '#A4A4A4',
+  highlight: '#FFFFFF',
 }
 
 /* The video's own palette, opaque where the image's is transparent — a moving
    texture behind translucent dither reads as smeared rather than as clouds. */
 const DITHER_PALETTE_VIDEO = {
-  back: '#000000',
-  front: '#2A2A2A',
-  highlight: '#707070',
+  back: '#131313',
+  front: '#A4A4A4',
+  highlight: '#FFFFFF',
 }
 
 /**
