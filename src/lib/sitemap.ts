@@ -18,22 +18,26 @@
  * reconcile, and picks the fight over which is canonical for no gain.
  */
 import { work, workPath } from '../content/work'
+import { articles, writingPath } from '../content/writing'
 
 /**
  * Every path the site wants indexed, root-relative.
  *
- * The static pages are listed by hand, per the note above. The project pages
- * are not: they are generated from `work` by src/pages/work/[slug].astro, and
- * writing them out again here would only create a second list that can fall
- * behind the first. The deliberate choice is still being made, one level up —
- * it is "every project in the work list", and adding a project to that list is
- * the act of publishing it.
+ * The static pages are listed by hand, per the note above. The two data-built
+ * routes are not: project pages are generated from `work` by
+ * src/pages/work/[slug].astro, and articles from `articles` by
+ * src/pages/writing/[slug].astro, and writing either list out again here would
+ * only create a second list that can fall behind the first. The deliberate
+ * choice is still being made, one level up — it is "every entry in the work
+ * or writing list", and adding an entry to either list is the act of
+ * publishing it.
  */
 export const INDEXABLE_PATHS: readonly string[] = [
   '/',
   '/writing',
   '/experiments',
   ...work.map((entry) => workPath(entry.slug)),
+  ...articles.map((article) => writingPath(article.slug)),
 ]
 
 /**

@@ -1,20 +1,76 @@
 ---
-// Replaces the '/writing' case in the old switch router (src/App.tsx) — file
-// routing gives this page its own <title> for free, which the SPA couldn't do.
+/**
+ * The writing list, at /writing.
+ *
+ * Every piece is a card within a card: its image is the whole card, and a
+ * small pane of the homepage folder's frosted glass sits inside it carrying
+ * the words. The newest leads, wide, with its title, subtitle and a way in;
+ * everything older follows in a grid, each pane holding the title alone. No
+ * categories, no dates — those wait on the article's own page.
+ */
 import PageShell from '../layouts/page-shell.astro'
 import { Cta } from '../components/sections/cta'
+import { articles, writingPath } from '../content/writing'
+import '../styles/writing.css'
 
-const title = 'Writing'
-const blurb =
-  'Notes on design, on code, and on the bits in between that nobody writes down. Nothing published yet.'
+const blurbLead = 'Notes on design, on code, and on the bits in between that nobody writes down.'
+/* The placeholder sentence is true only until the first article lands — once
+   `articles` holds something, saying nothing is published would be wrong
+   twice over: once about the page, and once about the entry sitting right
+   underneath it. */
+const blurb = articles.length > 0 ? blurbLead : `${blurbLead} Nothing published yet.`
+
+/* Newest first, though the list never says so: the order is the only place a
+   date still shows. */
+const [featured, ...rest] = [...articles].sort((a, b) => b.published.localeCompare(a.published))
 ---
 
 <PageShell title="Writing — Craig Chihururu" description={blurb} homeHref="/">
-  <section class="placeholder container">
-    <h1 class="placeholder__title">{title}</h1>
-    <p class="placeholder__blurb">{blurb}</p>
-    <a class="placeholder__back" href="/">Back to the homepage</a>
-  </section>
+  {
+    featured ? (
+      <section class="writing__featured container" aria-labelledby="writing-heading">
+        {/* The page still has a name for anyone navigating by headings; it is
+            only the featured piece that is seen at the top. */}
+        <h1 class="sr-only" id="writing-heading">Writing</h1>
+
+        {/* One link around the whole card. The button inside it is the
+            homepage hero's own, drawn as a span so it is not a second link to
+            the same place. */}
+        <a class="writing__tile writing__tile--feature" href={writingPath(featured.slug)}>
+          <div class="writing__image">
+            {featured.card.src ? <img src={featured.card.src} alt={featured.card.alt ?? ''} /> : null}
+          </div>
+          <div class="writing__glass">
+            <h2 class="writing__glass-title">{featured.title}</h2>
+            <p class="writing__glass-text">{featured.description}</p>
+            <span class="chip hero__cta writing__read">Read article</span>
+          </div>
+        </a>
+      </section>
+    ) : (
+      <section class="writing__intro container">
+        <h1 class="writing__title">Writing</h1>
+        <p class="writing__blurb">{blurb}</p>
+      </section>
+    )
+  }
+
+  {
+    rest.length > 0 && (
+      <section class="writing__grid container" aria-label="More writing">
+        {rest.map((article) => (
+          <a class="writing__tile" href={writingPath(article.slug)}>
+            <div class="writing__image">
+              {article.card.src ? <img src={article.card.src} alt={article.card.alt ?? ''} loading="lazy" /> : null}
+            </div>
+            <div class="writing__glass">
+              <h3 class="writing__glass-title">{article.title}</h3>
+            </div>
+          </a>
+        ))}
+      </section>
+    )
+  }
 
   <Cta />
 </PageShell>

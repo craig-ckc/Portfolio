@@ -1,0 +1,24 @@
+---
+/**
+ * One image on an article page: the site's own frame — the radius the
+ * homepage tiles and the project pages use, and the same --neutral-600
+ * fallback fill until the image exists.
+ */
+import type { WorkMedia } from '../../content/work'
+
+interface Props {
+  media: WorkMedia
+  /** The cover is above the fold; every other image waits to be reached. */
+  eager?: boolean
+}
+
+const { media, eager = false } = Astro.props
+---
+
+<div class="article__frame">
+  {
+    media.src && (
+      <img src={media.src} alt={media.alt ?? ''} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    )
+  }
+</div>

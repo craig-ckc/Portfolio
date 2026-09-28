@@ -1,0 +1,87 @@
+---
+/**
+ * One article, at /writing/<slug>.
+ *
+ * Its own template, not the project page's. A project page opens on the work
+ * — a full-bleed cover, then facts about the job — where an article opens on
+ * what it is called: a centred header with the title, a subtitle, and
+ * when it went up and how long it takes to read. Then the cover, held to the
+ * page rather than bled off it, and then the reading.
+ *
+ * The body is the one thing it keeps in common with a project: the same
+ * section shape from src/content/work.ts, heading, paragraphs and a single or
+ * paired image.
+ *
+ * No way back and no next article, the same as a project page. The navbar is
+ * the way home, and the end of a piece is allowed to be the end.
+ */
+import PageShell from '../../layouts/page-shell.astro'
+import { Cta } from '../../components/sections/cta'
+import { articles, formatPublished, type Article } from '../../content/writing'
+import Frame from '../../components/writing/article-frame.astro'
+import type { WorkMedia } from '../../content/work'
+import '../../styles/article.css'
+
+export function getStaticPaths() {
+  return articles.map((article) => ({ params: { slug: article.slug }, props: { article } }))
+}
+
+interface Props {
+  article: Article
+}
+
+const { article } = Astro.props
+
+---
+
+<PageShell title={`${article.title} — Craig Chihururu`} description={article.description} homeHref="/">
+  <article class="article">
+    <header class="article__header">
+      <h1 class="article__title">{article.title}</h1>
+      <p class="article__subtitle">{article.description}</p>
+      <p class="article__meta">
+        <time datetime={article.published}>{formatPublished(article.published)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{article.readingMinutes} min read</span>
+      </p>
+    </header>
+
+    {
+      article.cover && (
+        <figure class="article__cover">
+          <Frame media={article.cover} eager />
+        </figure>
+      )
+    }
+
+    <div class="article__body">
+      <p class="article__lede">{article.summary}</p>
+
+      {
+        article.sections.map((section) => (
+          <section class="article__section">
+            <h2 class="article__heading">{section.heading}</h2>
+
+            {section.body.map((paragraph) => (
+              <p class="article__paragraph">{paragraph}</p>
+            ))}
+
+            {section.media?.length ? (
+              <div class:list={['article__media', { 'article__media--pair': section.media.length > 1 }]}>
+                {section.media.map((media: WorkMedia) => (
+                  <figure class="article__figure">
+                    <Frame media={media} />
+                    {media.caption && <figcaption class="article__caption">{media.caption}</figcaption>}
+                  </figure>
+                ))}
+              </div>
+            ) : null}
+          </section>
+        ))
+      }
+    </div>
+  </article>
+
+  <Cta />
+</PageShell>
+
