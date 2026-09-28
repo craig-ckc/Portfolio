@@ -59,13 +59,17 @@
   /* Every state below writes the same terms, just with different numbers —
      scale and the lift default to 1 and 0, the drag pair to 0, so nothing
      ever changes the shape of the transform, only the values inside it.
-     --drag-x / --drag-r are written by polaroids.tsx while the front print
-     is in hand on the presented card, and cleared the moment it is let go. */
+     --print-drag-x / --print-drag-r are written by polaroids.tsx while the
+     front print is in hand on the presented card, and cleared the moment it
+     is let go. Not --drag-*: hero-folder.tsx writes those on the card itself
+     while the whole card is dragged, and custom properties inherit — sharing
+     the name, every print took the card's drag a second time and flew off
+     ahead of it. */
   transform:
     translate(-50%, 0)
     translate(var(--x, 0cqw), var(--y, 0cqw))
-    translate(var(--drag-x, 0px), 0)
-    rotate(calc(var(--r, 0deg) + var(--drag-r, 0deg)))
+    translate(var(--print-drag-x, 0px), 0)
+    rotate(calc(var(--r, 0deg) + var(--print-drag-r, 0deg)))
     translateY(var(--lift, 0cqw))
     scale(var(--scale, 1));
   transition:

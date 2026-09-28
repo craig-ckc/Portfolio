@@ -166,13 +166,13 @@ export function PolaroidsFace({ item, presented = false }: { item: PolaroidsItem
 
   /* Write where the hand has the print, for the transform in polaroids.css. */
   const paint = (element: HTMLElement, dx: number) => {
-    element.style.setProperty('--drag-x', `${dx.toFixed(2)}px`)
-    element.style.setProperty('--drag-r', `${(dx * DRAG_LEAN).toFixed(2)}deg`)
+    element.style.setProperty('--print-drag-x', `${dx.toFixed(2)}px`)
+    element.style.setProperty('--print-drag-r', `${(dx * DRAG_LEAN).toFixed(2)}deg`)
   }
 
   const clear = (element: HTMLElement) => {
-    element.style.removeProperty('--drag-x')
-    element.style.removeProperty('--drag-r')
+    element.style.removeProperty('--print-drag-x')
+    element.style.removeProperty('--print-drag-r')
   }
 
   const onPointerDown = (event: ReactPointerEvent<HTMLSpanElement>) => {

@@ -134,6 +134,65 @@ function scatterCentre(element: HTMLElement): Point {
   }
 }
 
+/**
+ * How far a card's offset may go before any of it would leave the screen.
+ *
+ * Measured off everything the card paints, not just its own box: some faces
+ * draw past their card — the polaroids are a fanned pile on a card with
+ * overflow left visible, and they fan wider still under the pointer — and a
+ * print hanging past the edge is overflow all the same, with a scrollbar
+ * grown under the scatter to reach it. So the box is the union of the card
+ * and what it paints (see paintedParts), rotation and the lift included, and
+ * it is taken again every frame the card moves, since the fan and the lean
+ * both change while it is in hand.
+ */
+function reach(element: HTMLElement, parts: Element[], centre: Point, position: Point): Bounds {
+  let { left, top, right, bottom } = element.getBoundingClientRect()
+
+  for (const child of parts) {
+    const box = child.getBoundingClientRect()
+    if (box.width === 0 && box.height === 0) continue
+    left = Math.min(left, box.left)
+    top = Math.min(top, box.top)
+    right = Math.max(right, box.right)
+    bottom = Math.max(bottom, box.bottom)
+  }
+
+  /* Where the card's centre is now, so the extent can be carried to wherever
+     the offset would put it. */
+  const x = centre.x + position.x
+  const y = centre.y + position.y
+
+  return {
+    minX: x - left + EDGE_MARGIN - centre.x,
+    maxX: document.documentElement.clientWidth - (right - x) - EDGE_MARGIN - centre.x,
+    minY: y - top + EDGE_MARGIN - centre.y,
+    maxY: window.innerHeight - (bottom - y) - EDGE_MARGIN - centre.y,
+  }
+}
+
+/**
+ * The elements inside a card that can paint outside it: all of them, except
+ * whatever sits inside something that clips. A rect does not know about
+ * clipping, and the lanyard's foil and glare are laid out several times the
+ * badge's size inside a badge that cuts them off — counted, they would hold
+ * the lanyard far off every edge. Walked once, when the card is picked up;
+ * which elements clip does not change while it is in hand.
+ */
+function paintedParts(element: HTMLElement) {
+  const parts: Element[] = []
+  const walk = (node: Element) => {
+    for (const child of node.children) {
+      parts.push(child)
+      const style = getComputedStyle(child)
+      if (style.overflowX === 'visible' && style.overflowY === 'visible') walk(child)
+    }
+  }
+
+  walk(element)
+  return parts
+}
+
 /** Write where a card is and how it is moving, for the transform in home-page.css to read. */
 function paint(element: HTMLElement, motion: Motion) {
   element.style.setProperty('--drag-x', `${motion.position.x.toFixed(2)}px`)
@@ -157,7 +216,11 @@ type Grip = {
   /** Where the hand is asking the card to be. */
   target: Point
   motion: Motion
-  /** How far the offset may go before the card's centre would leave the screen. */
+  /** Where the scatter put the card's centre: the point the offset is from. */
+  centre: Point
+  /** What inside the card is measured for its reach. */
+  parts: Element[]
+  /** How far the offset may go before any of the card would leave the screen. */
   bounds: Bounds
   /** How quickly it sheds speed once let go. Set at that moment. */
   rate: number
@@ -346,10 +409,15 @@ export function HeroFolder({ caption }: { caption: string }) {
     for (const [element, grip] of grips.current) {
       if (grip.mode === 'pressed') continue
 
+      /* Taken off the card as it was last painted, before it is moved on. */
+      grip.bounds = reach(element, grip.parts, grip.centre, grip.motion.position)
+
       if (grip.mode === 'held') {
-        grip.motion = grip.instant
-          ? { position: grip.target, velocity: { x: 0, y: 0 } }
-          : follow(grip.motion, grip.target, dt)
+        grip.target = within(grip.target, grip.bounds)
+        grip.motion = confine(
+          grip.instant ? { position: grip.target, velocity: { x: 0, y: 0 } } : follow(grip.motion, grip.target, dt),
+          grip.bounds,
+        )
         moving = true
       } else {
         const coasted = coast(grip.motion, grip.rate, dt)
@@ -394,21 +462,14 @@ export function HeroFolder({ caption }: { caption: string }) {
       const centre = scatterCentre(element)
       const box = element.getBoundingClientRect()
       const offset = { x: box.left + box.width / 2 - centre.x, y: box.top + box.height / 2 - centre.y }
-      /* The box of the card as it sits, rotation included, so the reach is
-         measured to its corner and not to the edge of an upright card. */
-      const reachX = box.width / 2 + EDGE_MARGIN
-      const reachY = box.height / 2 + EDGE_MARGIN
 
       grip.mode = 'held'
       grip.base = offset
       grip.target = offset
       grip.motion = { position: offset, velocity: { x: 0, y: 0 } }
-      grip.bounds = {
-        minX: reachX - centre.x,
-        maxX: document.documentElement.clientWidth - reachX - centre.x,
-        minY: reachY - centre.y,
-        maxY: window.innerHeight - reachY - centre.y,
-      }
+      grip.centre = centre
+      grip.parts = paintedParts(element)
+      grip.bounds = reach(element, grip.parts, centre, offset)
       grip.instant = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
       /* Class and offset land in the same frame, and the class is what turns
@@ -469,6 +530,8 @@ export function HeroFolder({ caption }: { caption: string }) {
         base: { x: 0, y: 0 },
         target: { x: 0, y: 0 },
         motion: { position: { x: 0, y: 0 }, velocity: { x: 0, y: 0 } },
+        centre: { x: 0, y: 0 },
+        parts: [],
         bounds: { minX: 0, maxX: 0, minY: 0, maxY: 0 },
         rate: 0,
         instant: false,
@@ -556,6 +619,18 @@ export function HeroFolder({ caption }: { caption: string }) {
     /* The folder's layer has to clear the navbar, which by default paints above
        the whole content column. */
     host?.setAttribute('data-scatter', 'open')
+
+    /* And the page never grows sideways under the scatter. Cards are kept on
+       screen by reach(), but that is measured, and a face that draws past its
+       card in some way it does not catch would otherwise hand the page a
+       horizontal scrollbar. Clipping only the x axis leaves the vertical bar
+       exactly where it was — the one the note on Lenis below is protecting.
+       Inline, because the rule in styles.css that undoes Lenis's own clip sets
+       the whole overflow shorthand at a weight a stylesheet rule here would
+       have to fight. */
+    const page = document.documentElement
+    const overflowX = page.style.overflowX
+    page.style.overflowX = 'clip'
     const releaseInert = root ? inertOutside(root) : undefined
 
     /* Lenis owns the scroll position, so stopping it is the lock. Nothing here
@@ -600,6 +675,7 @@ export function HeroFolder({ caption }: { caption: string }) {
 
     return () => {
       host?.removeAttribute('data-scatter')
+      page.style.overflowX = overflowX
       releaseInert?.()
       lenis?.start()
       window.removeEventListener('wheel', blockWheel)
