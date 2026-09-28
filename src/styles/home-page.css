@@ -9,6 +9,10 @@
 @import './faces/lanyard.css';
 @import './faces/phone.css';
 
+/* The booking dialog every "start your project" opens. Its own file for the
+   same reason: it is a screen of its own rather than a section of this one. */
+@import './booking.css';
+
 /* ==========================================================================
    Homepage — built from the Paper page frame.
    All values come from get_computed_styles / get_jsx on that frame, expressed
@@ -340,6 +344,28 @@
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--tracking-wide);
   line-height: var(--leading-normal);
+}
+
+/* What the button leads to, said under it. Narrower than the standfirst above
+   and a size down from it, so it reads as a footnote to the button rather than
+   as a second paragraph competing with the first. */
+.hero__note {
+  max-width: 440px;
+  padding-top: var(--spacing-sm);
+  color: var(--neutral-700);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-relaxed);
+}
+
+.hero__note a {
+  padding-bottom: var(--spacing-4xs);
+  border-bottom: 1px solid var(--neutral-600);
+  color: var(--foreground);
+  transition: border-color var(--duration-base) var(--ease-standard);
+}
+
+.hero__note a:hover {
+  border-bottom-color: var(--foreground);
 }
 
 .hero__object {
@@ -1467,7 +1493,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-block: var(--spacing-section-py);
+  padding-top: calc(4 * var(--spacing-section-py));
+  padding-bottom: var(--spacing-section-py);
 }
 
 .cta__mark {
@@ -1505,6 +1532,22 @@
   color: var(--neutral-700);
   font-size: var(--text-body);
   line-height: var(--leading-normal);
+}
+
+/* The second way in, under the invitation. Same arrangement, a size down and
+   without the shimmer, which belongs to the one action this section is really
+   asking for. */
+.cta__fallback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding-top: var(--spacing-md);
+  color: var(--neutral-700);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-normal);
+  text-align: center;
 }
 
 .cta__link {
@@ -1901,6 +1944,25 @@
   border-color: var(--neutral-300);
 }
 
+/* The dialog itself is already dark: its surface is --background, which the
+   block above has reassigned. What is left is the edges, which have to invert
+   rather than darken, and the shadow, which on a dark ground is doing a
+   different job — separating the panel from the page rather than lifting it
+   off one — and so goes deeper and blacker. */
+.hp[data-theme='dark'] .booking {
+  --booking-edge: rgb(255 255 255 / 12%);
+  --booking-rule: rgb(255 255 255 / 10%);
+  --booking-shadow:
+    0 2px 8px rgb(0 0 0 / 44%),
+    0 28px 64px rgb(0 0 0 / 56%);
+}
+
+/* Not a custom property, for the reason given where the light one is set:
+   `::backdrop` cannot be relied on to inherit. */
+.hp[data-theme='dark'] .booking::backdrop {
+  background: rgb(12 12 12 / 70%);
+}
+
 /* The folder is a paper object, so only its own surfaces change: the
    silhouette and the flap go dark, the shadows go black instead of grey. The
    cards stay paper — a folder full of dark rectangles stops reading as
@@ -1973,6 +2035,13 @@
   .hello__hand svg {
     animation: none !important;
     transform: none !important;
+  }
+
+  /* The blanket rule above reaches every element inside .hp, which is where the
+     dialog lives, but not a pseudo-element of one — so the veil behind it would
+     otherwise be the one thing still fading. */
+  .booking::backdrop {
+    transition-duration: 1ms !important;
   }
 }
 

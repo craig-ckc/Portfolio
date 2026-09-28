@@ -12,11 +12,10 @@ export function Hero() {
           </h1>
 
           <div className="hero__lower">
-            <p className="hero__standfirst">{hero.standfirst}</p>
             <div className="hero__actions">
               {/* No trailing arrow — the frame dropped it. The href is the
-                  booking page; `bookingTrigger` is what opens it in a modal
-                  instead. */}
+                  booking page; `bookingTrigger` is what opens it in the site's
+                  own dialog instead. */}
               <a className="chip hero__cta" href={hero.cta.href} {...bookingTrigger}>
                 {hero.cta.label}
               </a>

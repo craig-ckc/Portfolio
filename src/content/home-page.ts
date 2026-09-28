@@ -4,6 +4,8 @@
    and on its own page at /work/<slug>, so one record covers both and it lives
    in src/content/work.ts alongside the rest of what that page renders. */
 
+import { inquiryMailto } from '../lib/booking-inquiry'
+
 /**
  * One thing tucked in the hero folder.
  *
@@ -103,39 +105,102 @@ export const email = 'craigchihururu@gmail.com'
 
 const mailto = (subject: string) => `mailto:${email}?subject=${encodeURIComponent(subject)}`
 
-/* Where a project starts now: the two project-shaped CTAs — the hero button
-   and the closing invitation — open Cal's booking modal rather than an empty
-   draft email. The "say hello" links keep the mailto, which is the right shape
-   for a question that isn't a project yet.
+/* Where a project starts: the two project-shaped CTAs — the hero button and
+   the closing invitation — open the booking dialog in
+   src/components/booking/booking-dialog.tsx, which is this site's own and
+   holds Cal's calendar inside it. The "say hello" link in the siteline keeps
+   its plain mailto, which is the right shape for a question that isn't a
+   project yet.
  *
- * `href` is the same booking page the modal shows, so the CTAs stay real links
- * for a visitor whose JavaScript never arrives; the embed in
- * src/components/embeds/cal-booking.astro cancels that navigation once it is
- * live, because Cal's own click handler opens the modal without cancelling
- * anything itself. */
+ * `href` is the booking page Cal would show anyway, so the CTAs stay real
+ * links for a visitor whose JavaScript never arrives. The dialog cancels that
+ * navigation once it is live, and leaves a modified click alone, so
+ * cmd-clicking still opens Cal in its own tab. */
 export const booking = {
   link: 'craig-chihururu/30min',
   namespace: '30min',
   origin: 'https://app.cal.com',
   href: 'https://cal.com/craig-chihururu/30min',
-  /* Cal parses this off the element as JSON, so it is authored as a string
-     rather than as an object that would have to be stringified at every use. */
-  config: '{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}',
+  /** Both read off the event type above ("30 min meeting", on Google Meet), so
+      no line of copy can claim a length or a place Cal will not actually book.
+      Change the event in Cal and these two change with it. */
+  minutes: 30,
+  place: 'Google Meet',
 } as const
 
-/* Spread onto whichever element should open the modal. */
-export const bookingTrigger = {
-  'data-cal-link': booking.link,
-  'data-cal-namespace': booking.namespace,
-  'data-cal-config': booking.config,
-} as const
+/* Spread onto whichever element should open the dialog. One attribute, found
+   by a single listener on the document rather than wired up per element: the
+   triggers are spread across a hydrated hero, a static closing section and
+   every page's copy of it, none of which share a React tree with the dialog. */
+export const bookingTrigger = { 'data-booking': '' } as const
+
+/* The draft behind every "email me instead". Same three things a short inquiry
+   form would ask for, written into the body as prompts — see
+   src/lib/booking-inquiry.ts for why it is prompts and not an empty message. */
+const projectInquiry = inquiryMailto(email, {
+  subject: 'Starting a project',
+  greeting: 'Hi Craig,',
+  prompts: ['My name', 'What I’m building', 'When I’d want it live'],
+})
 
 export const hero = {
-  title: 'I help brands build websites that convert and apps people enjoy.',
+  /* The plain-text twin of the <h1> in src/components/home/hero.tsx, which
+     renders the same sentence with three words wrapped in <span> for emphasis
+     and so cannot read this string directly. Nothing rendered reads it; the
+     JSON-LD service summary does. Reword the heading and reword this with it. */
+  title: 'I help brands build websites worth visiting and apps worth using.',
   standfirst:
     'Independent designer and front-end developer. Usually taking what’s already there, turning it into an interface, then staying with it until it ships.',
-  cta: { label: 'Start a project', href: booking.href },
+  cta: { label: 'Start your project', href: booking.href },
+  /* Under the button, and the answer to what the button leads to — how long,
+     what gets talked about, that there is nothing to bring — said before it is
+     clicked rather than on somebody else's site afterwards. It ends on the
+     second way in, for anybody who would rather not put a time in a diary at
+     all. */
+  ctaNote: {
+    lead: `${booking.minutes} minutes to talk through the idea, the budget and the timing. Nothing to prepare. If you’d rather write first,`,
+    link: { label: 'email me instead', href: projectInquiry },
+  },
   objectCaption: 'Work, and everything around it',
+} as const
+
+/* The booking dialog.
+ *
+ * Written to answer the thing a bare calendar leaves hanging: what am I
+ * agreeing to. It says the length, what gets covered and that there is nothing
+ * to prepare, and it says plainly that booking one commits nobody to anything
+ * — because the visitor most likely to back out of a scheduler is the one who
+ * is curious rather than ready, and a calendar on its own reads as a decision
+ * they have not made yet. */
+export const bookingDialog = {
+  /* Where it happens as well as how long it takes, because Cal's own line
+     saying so is the one `hideEventTypeDetails` turns off. */
+  eyebrow: `${booking.minutes} minutes, on ${booking.place}`,
+  title: 'Start with a conversation',
+  lead: 'Nothing has to come of it. Bring a brief, a rough idea, or just the question of whether we’d work well together. We talk it through, and you decide from there.',
+  coversLead: 'Usually we cover',
+  covers: [
+    'What you’re building, and what it actually has to do',
+    'Roughly what it costs, and what that gets you',
+    'When you want it live, and whether that’s realistic',
+  ],
+  prep: 'Nothing to prepare. Pick a time that suits and the invite arrives straight away.',
+  /* Beside the calendar rather than after it, so it is a choice being offered
+     and not a consolation for having failed at the first one. */
+  fallbackLead: 'Rather write first?',
+  fallbackLink: { label: 'Email me', href: projectInquiry },
+  fallbackTrail: 'and I’ll come back to you, usually within a day.',
+  /* Shown in the calendar's place when Cal's script never arrives, which is
+     most often an extension blocking third parties. It carries both ways round
+     itself rather than pointing back at the fallback beside it, because on a
+     phone that fallback has scrolled off the top by the time this appears. */
+  loading: 'Bringing up the calendar.',
+  unavailable: 'The calendar isn’t loading, which is usually something in the browser blocking it.',
+  unavailableLinks: [
+    { label: 'Email me instead', href: projectInquiry, external: false },
+    { label: 'Open the booking page', href: booking.href, external: true },
+  ],
+  close: 'Close',
 } as const
 
 /* The order here is the order they sit in the folder, left to right, and the
@@ -266,6 +331,12 @@ export const cta = {
   invitationLead: 'If that sounds interesting to you,',
   /* Brackets are part of the label in the frame, not decoration added in CSS. */
   invitationLink: { label: "[ let's start your project ]", href: booking.href },
+  /* The same second way in as the hero's, in the same bracketed shape as the
+     invitation above it. This section closes every page on the site, so it is
+     the last thing anybody sees — and the last chance to catch somebody who is
+     interested but not ready to open a calendar. */
+  fallbackLead: 'Or, if you’d rather not book a call yet,',
+  fallbackLink: { label: '[ send me an email ]', href: projectInquiry },
 } as const
 
 export const siteNav = [
@@ -311,5 +382,5 @@ export const statement = {
 } as const
 
 export const footer = {
-  copyright: '© Craig Chihururu 2019-2026',
+  copyright: '© Craig Chihururu',
 } as const

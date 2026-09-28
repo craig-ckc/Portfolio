@@ -4,7 +4,7 @@
 // both hand-rolled the same shell.
 import '../styles/home-page.css'
 import Base from './base.astro'
-import CalBooking from '../components/embeds/cal-booking.astro'
+import { BookingDialog } from '../components/booking/booking-dialog'
 import { NavBar } from '../components/layout/nav-bar'
 import { Footer } from '../components/layout/footer'
 import { THEME_STORAGE_KEY } from '../lib/theme'
@@ -62,9 +62,18 @@ const { title, description, homeHref = '#top', smoothScroll = false } = Astro.pr
       <slot />
     </main>
     <Footer client:visible />
-  </div>
 
-  <CalBooking />
+    {/* Inside `.hp` rather than beside it, even though showModal() lifts it
+        into the top layer: the top layer changes what paints over what, not
+        what inherits from what, so this is still where the dialog picks up the
+        appearance the wrapper is carrying.
+
+        `client:load` and not `client:idle`, because the thing it answers is the
+        page's primary action and a click that lands before hydration leaves for
+        cal.com instead. It costs almost nothing to have here: Cal's own script
+        is not fetched until somebody opens it. */}
+    <BookingDialog client:load />
+  </div>
 </Base>
 
 {
