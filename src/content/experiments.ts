@@ -1,10 +1,7 @@
-export type ExperimentKind = 'dock' | 'disc'
-
 export type Experiment = {
   slug: string
   title: string
   description: string
-  kind: ExperimentKind
 }
 
 export function experimentPath(slug: string): string {
@@ -13,15 +10,13 @@ export function experimentPath(slug: string): string {
 
 export const experiments: Experiment[] = [
   {
-    slug: 'magnetic-dock',
-    title: 'Magnetic dock',
-    description: 'A dock that makes room for the icon under the pointer instead of simply scaling over its neighbours.',
-    kind: 'dock',
+    slug: 'experiment-one',
+    title: 'Experiment 01',
+    description: 'Placeholder for a future interaction experiment.',
   },
   {
-    slug: 'now-playing',
-    title: 'Now playing',
-    description: 'An album cover that reveals the record, track details and simple playback controls when it comes into focus.',
-    kind: 'disc',
+    slug: 'experiment-two',
+    title: 'Experiment 02',
+    description: 'Placeholder for a future interaction experiment.',
   },
 ]
