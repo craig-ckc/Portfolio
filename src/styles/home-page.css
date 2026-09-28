@@ -1425,6 +1425,11 @@
   height: 100%;
   object-fit: cover;
   transition: transform var(--duration-slower) var(--ease-out-quart);
+  /* Kept on its own compositor layer at rest as well as mid-zoom. Otherwise
+     the browser promotes it for the transition and drops it back to ordinary
+     painting when the transition ends, re-snapping it to whole pixels — the
+     slight jump seen as the zoom settles back out. */
+  will-change: transform;
 }
 
 .work__item:hover .work__tile img {
