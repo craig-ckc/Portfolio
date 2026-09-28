@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { socials } from '../content/home-page'
+import { booking, hero, service, serviceOfferings, socials } from '../content/home-page'
 import { serializeJsonLd, structuredData } from './structured-data'
 
 const SITE = new URL('https://www.craigchihururu.com')
 const HOME = 'https://www.craigchihururu.com/'
+/* Any page that is not the homepage. The Service node and the references to it
+   are the homepage's alone, so most of what follows needs a page to be absent
+   from as well as a page to be present on. */
+const INNER = 'https://www.craigchihururu.com/writing'
 
 const graphFor = (url: string, title = 'Title', description = 'Description') =>
   structuredData(SITE, { url, title, description })
@@ -21,6 +25,11 @@ const node = (url: string, type: string): Node => {
   if (!found) throw new Error(`no ${type} node in the graph for ${url}`)
   return found
 }
+
+/* The Service and the nested Service in its offer catalog share a @type, so
+   the top-level one is found by its @id. */
+const serviceNode = (url: string): Node | undefined =>
+  nodes(url).find((n: Node) => n['@id']?.endsWith('#service'))
 
 describe('structuredData', () => {
   it('declares the schema.org context', () => {
@@ -43,21 +52,24 @@ describe('structuredData', () => {
   })
 
   it('describes the page it is embedded in, not just the site', () => {
-    const url = 'https://www.craigchihururu.com/writing'
-    expect(node(url, 'WebPage')).toMatchObject({ url, name: 'Title', description: 'Description' })
+    expect(node(INNER, 'WebPage')).toMatchObject({
+      url: INNER,
+      name: 'Title',
+      description: 'Description',
+    })
   })
 
   it('names the homepage as the page about Craig, and no other page', () => {
     expect(node(HOME, 'WebPage')).toHaveProperty('mainEntity')
-    expect(node('https://www.craigchihururu.com/writing', 'WebPage')).not.toHaveProperty('mainEntity')
+    expect(node(INNER, 'WebPage')).not.toHaveProperty('mainEntity')
   })
 })
 
 describe('graph wiring', () => {
   /* A dangling @id reference is the quiet failure mode of a JSON-LD graph: it
      parses, it validates, and the nodes never join up. */
-  it('resolves every @id reference against a node in the same graph', () => {
-    const graph = nodes(HOME)
+  it.each([HOME, INNER])('resolves every @id reference against a node in %s', (url) => {
+    const graph = nodes(url)
     const ids = new Set(graph.map((n: Node) => n['@id']))
     const references = JSON.stringify(graph).matchAll(/\{"@id":"([^"]+)"\}/g)
 
@@ -67,16 +79,16 @@ describe('graph wiring', () => {
   })
 
   it('gives the Person and the WebSite the same ids on every page', () => {
-    const writing = 'https://www.craigchihururu.com/writing'
     for (const type of ['Person', 'WebSite']) {
-      expect(node(HOME, type)['@id']).toBe(node(writing, type)['@id'])
+      expect(node(HOME, type)['@id']).toBe(node(INNER, type)['@id'])
       expect(node(HOME, type)['@id']).toContain('https://www.craigchihururu.com/#')
     }
   })
 
   /* Anything naming the site itself — every @id and every url — has to sit on
-     the configured origin. sameAs is exempt by definition: it is the one field
-     whose whole job is to point somewhere else. */
+     the configured origin. The two exemptions are fields whose whole job is to
+     point somewhere else: sameAs, and the booking URLs on the Service, which
+     are nested rather than top-level and so are not reached from here. */
   it('keeps the ids and urls it owns on the configured origin', () => {
     for (const n of nodes(HOME)) {
       expect(new URL(n['@id']).origin).toBe(SITE.origin)
@@ -110,6 +122,85 @@ describe('sameAs', () => {
     for (const profile of socials.filter((s) => s.verified)) {
       expect(published).toContain(profile.href)
     }
+  })
+})
+
+describe('the service on offer', () => {
+  /* The audit's bar: a Service entity, provided by the Person, that names the
+     booking URL. Everything it claims is read off `service` in home-page.ts, so
+     these assertions fail on a value being dropped or renamed, not on the copy
+     being edited. */
+  it('describes the service, in the terms the content file sets', () => {
+    expect(serviceNode(HOME)).toMatchObject({
+      '@type': 'Service',
+      name: service.name,
+      serviceType: service.serviceType,
+      description: service.summary,
+      url: HOME,
+      areaServed: service.areaServed,
+    })
+  })
+
+  it('lists every offering the content file names', () => {
+    const offers = serviceNode(HOME)!.hasOfferCatalog.itemListElement
+
+    expect(offers.length).toBeGreaterThan(0)
+    expect(offers).toHaveLength(serviceOfferings.length)
+
+    for (const [index, offer] of offers.entries()) {
+      expect(offer).toMatchObject({ '@type': 'Offer' })
+      expect(offer.itemOffered).toEqual({
+        '@type': 'Service',
+        name: serviceOfferings[index].name,
+        description: serviceOfferings[index].description,
+      })
+    }
+  })
+
+  /* `source` says where on the page an offering is already visible. It is a
+     note to whoever edits the copy next, and publishing it would state
+     something about the site rather than about the service. */
+  it('publishes what each offering is, not where its copy came from', () => {
+    const published = JSON.stringify(serviceNode(HOME))
+    for (const offering of serviceOfferings) {
+      expect(published).toContain(offering.name)
+      expect(published).not.toContain(offering.source)
+    }
+  })
+
+  it('says where to book, both as a channel and as an action', () => {
+    const offer = serviceNode(HOME)!
+
+    expect(offer.availableChannel).toMatchObject({
+      '@type': 'ServiceChannel',
+      serviceUrl: booking.href,
+    })
+    expect(offer.potentialAction).toMatchObject({
+      '@type': 'ReserveAction',
+      target: booking.href,
+    })
+  })
+
+  /* An engine that surfaces the action should offer the reader the same words
+     the page's own button does. */
+  it('names the action after the button a visitor would have clicked', () => {
+    expect(serviceNode(HOME)!.potentialAction.name).toBe(hero.cta.label)
+  })
+
+  it('joins the person and the service in both directions', () => {
+    const person = node(HOME, 'Person')
+    const offer = serviceNode(HOME)!
+
+    expect(offer.provider).toEqual({ '@id': person['@id'] })
+    expect(person.makesOffer.itemOffered).toEqual({ '@id': offer['@id'] })
+  })
+
+  /* Homepage-only, and the Person's reference to it has to go with it — see the
+     dangling-@id test above, which is what would catch one being dropped
+     without the other. */
+  it('makes the offer on the homepage and nowhere else', () => {
+    expect(serviceNode(INNER)).toBeUndefined()
+    expect(node(INNER, 'Person')).not.toHaveProperty('makesOffer')
   })
 })
 

@@ -1,18 +1,24 @@
 /**
  * The JSON-LD graph in every page head: who the site is about, what the site
- * is, and which page this one is.
+ * is, which page this one is, and — on the homepage — what is on offer.
  *
  * Modelled as a Person, not an Organization. Craig works independently, and
  * Person is the type search and answer engines resolve a named individual
  * against; an Organization node would assert a company that does not exist.
- * The WebSite node carries the site-level identity, and the three nodes are
- * joined by @id so a consumer landing on any one of them can reach the others.
+ * The WebSite node carries the site-level identity, and the nodes are joined by
+ * @id so a consumer landing on any one of them can reach the others.
+ *
+ * The Service node is the homepage's alone. Person and WebSite describe things
+ * that are true on every page, but the placeholder pages do not sell anything,
+ * and the homepage is where the offer is actually made — the hero states it and
+ * both project CTAs open the booking dialog. See `service` in home-page.ts for
+ * why it is a Service and not a ProfessionalService or a LocalBusiness.
  *
  * Every value is derived from src/content/home-page.ts or from the page's own
  * title and description rather than restated here, so the markup cannot come
  * to disagree with what the page actually says.
  */
-import { email, hero, socials } from '../content/home-page'
+import { booking, email, hero, service, serviceOfferings, socials } from '../content/home-page'
 
 export type PageInfo = {
   /** The page's canonical absolute URL, as og:url gives it. */
@@ -41,6 +47,13 @@ export function structuredData(site: URL, page: PageInfo) {
      nodes on every page rather than three unrelated copies. */
   const personId = `${home}#person`
   const websiteId = `${home}#website`
+  const serviceId = `${home}#service`
+
+  /* Read three times below, and the answer has to be the same all three: the
+     Service node, the Person's reference to it and the WebPage's mainEntity all
+     appear or none do. A reference to a node that was left out still parses and
+     still validates — it just never joins up. */
+  const isHomepage = page.url === home
 
   const profiles = verifiedProfiles()
 
@@ -56,6 +69,12 @@ export function structuredData(site: URL, page: PageInfo) {
     description: hero.standfirst,
     knowsAbout: ['Product design', 'Front-end development', 'Design engineering'],
     ...(profiles.length > 0 && { sameAs: profiles }),
+    /* The Service names its provider, but only in that direction. This is the
+       return leg, so a consumer that resolved the Person first still finds the
+       work on offer. `makesOffer` and not `worksFor`: worksFor takes an
+       Organization, and the whole point of the Person modelling is that there
+       isn't one. Homepage-only, because the Service node is. */
+    ...(isHomepage && { makesOffer: { '@type': 'Offer', itemOffered: { '@id': serviceId } } }),
   }
 
   const website = {
@@ -78,10 +97,65 @@ export function structuredData(site: URL, page: PageInfo) {
     /* Only the homepage is *about* Craig. The placeholder pages are part of
        the site but do not profile him, and saying otherwise would point an
        answer engine at "Nothing published yet" as though it described a person. */
-    ...(page.url === home && { mainEntity: { '@id': personId } }),
+    ...(isHomepage && { mainEntity: { '@id': personId } }),
   }
 
-  return { '@context': 'https://schema.org', '@graph': [person, website, webpage] }
+  /**
+   * What Craig is hired to do, and how to start.
+   *
+   * The offer catalog takes only `name` and `description` off each offering.
+   * `source` is provenance for whoever edits the copy next — it says where on
+   * the page the offering is already visible — and publishing it would state
+   * something about the site rather than about the service.
+   *
+   * Two fields carry the booking link, because they answer two different
+   * questions. `availableChannel` is the descriptive one: where this service is
+   * obtained. `potentialAction` is the actionable one, and the type search and
+   * answer engines look for when they want something to offer a reader. A
+   * ReserveAction rather than the more general ContactAction, because the link
+   * books a specific slot in a calendar rather than opening a conversation —
+   * and `name` is the button's own label, so what an engine surfaces is what a
+   * visitor would have clicked.
+   */
+  const offer = {
+    '@type': 'Service',
+    '@id': serviceId,
+    name: service.name,
+    serviceType: service.serviceType,
+    description: service.summary,
+    url: home,
+    provider: { '@id': personId },
+    areaServed: service.areaServed,
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Services',
+      itemListElement: serviceOfferings.map((offering) => ({
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: offering.name,
+          description: offering.description,
+        },
+      })),
+    },
+    availableChannel: {
+      '@type': 'ServiceChannel',
+      name: `Book a ${booking.minutes}-minute call`,
+      serviceUrl: booking.href,
+    },
+    potentialAction: {
+      '@type': 'ReserveAction',
+      name: hero.cta.label,
+      target: booking.href,
+    },
+  }
+
+  /* Order is for whoever opens view-source: the person, the site, this page,
+     then what the page is selling. */
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [person, website, webpage, ...(isHomepage ? [offer] : [])],
+  }
 }
 
 /**

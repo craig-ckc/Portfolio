@@ -164,6 +164,72 @@ export const hero = {
   objectCaption: 'Work, and everything around it',
 } as const
 
+/**
+ * One thing Craig is hired to do.
+ *
+ * `source` names the visible copy the offering is drawn from. It is not
+ * published — src/lib/structured-data.ts takes only `name` and `description` —
+ * it is there so that rewriting a section tells you which offering to check.
+ * Structured data that has drifted from the page it sits on is worse than none,
+ * because a search or answer engine has no way to tell which one is stale.
+ */
+export type ServiceOffering = {
+  name: string
+  description: string
+  /** Where on the page a visitor already reads this, in plain sight. */
+  source: string
+}
+
+/**
+ * The practice as a service, for the homepage JSON-LD. Nothing renders it yet.
+ *
+ * Typed as schema.org Service rather than ProfessionalService or LocalBusiness,
+ * both of which are Organizations: naming one would assert a company that does
+ * not exist, which is the same reason src/lib/structured-data.ts models Craig
+ * as a Person. schema.org deprecated the general ProfessionalService for local
+ * businesses over exactly this confusion with Service, so Service is also the
+ * type it now points at. Nothing is lost — a LocalBusiness earns its keep on an
+ * address, opening hours and a phone number, none of which the site publishes.
+ *
+ * CONTEXT.md has visible "service/list content" planned for after Playground.
+ * When it lands it should render from this list rather than restate it.
+ */
+export const service = {
+  /* Named for the person, because that is who a client hires. */
+  name: 'Craig Chihururu — design and front-end development',
+  serviceType: 'Design and front-end development',
+  /* What the hero promises, plus how the standfirst says it gets done. */
+  summary:
+    'Design and front-end development for brands building websites worth visiting and apps worth using, taken from whatever exists already through to a shipped interface.',
+  /* NOTE(craig): the one field here with no counterpart in the visible copy.
+     The site names no city, no office and no timezone, and takes work through a
+     calendar link, so remote-and-anywhere is the plain reading — but it is a
+     claim about who you will take on rather than something the page says.
+     Narrow it to a country or a region if that is not right. */
+  areaServed: 'Worldwide',
+} as const
+
+export const serviceOfferings: ServiceOffering[] = [
+  {
+    name: 'Web design',
+    description:
+      'Taking what is already there — a brand, an idea, a set of assets — and turning it into an interface.',
+    source: 'The hero standfirst',
+  },
+  {
+    name: 'Front-end development',
+    description: 'Building that interface in the browser, and staying with the project until it ships.',
+    source: 'The hero standfirst, and the About statement',
+  },
+  {
+    name: 'Design engineering',
+    description:
+      'Design and front-end build as one job rather than two, so what the design intended survives implementation.',
+    source:
+      "The closing invitation, “Design and code shouldn't be two separate jobs”, and the About statement",
+  },
+]
+
 /* The booking dialog.
  *
  * Written to answer the thing a bare calendar leaves hanging: what am I
