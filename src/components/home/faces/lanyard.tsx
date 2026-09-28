@@ -45,49 +45,9 @@ const TURN_SLOP = 4
  * the card itself.
  *
  * --k, the pose defaults, and the two contexts that redrive them (scatter and
- * presented) are set as arbitrary-property utilities on the root span so the
- * calculation and its custom properties sit next to the markup they animate,
- * the way the stylesheet used to keep them next to the selector. BEYOND THE
- * FRAME: none of this is a token — it is the physics of the tilt itself.
+ * presented) live in the `lanyard-root` utility. BEYOND THE FRAME: none of
+ * this is a token — it is the physics of the tilt itself.
  */
-const ROOT_CLASS = [
-  // Fills the card; leans out of it, so nothing here is clipped.
-  'absolute inset-0 [perspective:300cqw]',
-  // The badge draws its own frame, so the card it sits in drops its own —
-  // including the deeper shadow the folder gives a focused or held card —
-  // and stops clipping, since the badge leans past its edge. Set on the card
-  // from here, the same way the dock and the phone do it; !important because
-  // the folder's own card utilities would otherwise tie with these.
-  '[.card:has(&)]:overflow-visible! [.card:has(&)]:bg-transparent! [.card:has(&)]:shadow-none!',
-  // --k: how much bigger than its own layout the folder is showing this
-  // card — read back from the same magnification hero-folder.tsx's own
-  // transform utilities apply, so the badge below can undo it on itself
-  // (see BADGE_CLASS's comment).
-  '[--k:clamp(1,calc(var(--out-scale,1)*var(--slot-focus,2)*var(--folder-zoom,1)),5)]',
-  // Flat and unlit at rest, in both places this face is ever seen.
-  '[--lx:0.5] [--ly:0.5] [--on:0] [--enter:0]',
-  '[--rx:0deg] [--ry:0deg] [--rise:0%] [--grow:1] [--shine:0]',
-  // Scatter, under the pointer: rises and takes one turn toward the side the
-  // pointer came in from — one axis, set on the way in and held.
-  '[.folder.is-open_&]:[--ry:calc(var(--enter)*var(--on)*3.5deg)]',
-  '[.folder.is-open_&]:[--rise:calc(var(--on)*-1.2%)]',
-  '[.folder.is-open_&]:[--grow:calc(1_+_var(--on)*0.015)]',
-  '[.folder.is-open_&]:[--shine:calc(var(--on)*0.6)]',
-  // Presented, under the pointer: both axes follow the hand, five degrees at
-  // the very edge and nothing at the middle. Keyed off `.is-focused` alone,
-  // not `.folder__item.is-focused`: an escaped `__` inside a Tailwind
-  // arbitrary selector is invisible to the CSS parser (it silently drops the
-  // whole rule rather than erroring), and `.is-focused` is only ever the
-  // folder's own item class in the first place, so the longer form added
-  // nothing but risk.
-  '[.folder.is-open_.is-focused_&]:[--lean:5deg]',
-  '[.folder.is-open_.is-focused_&]:[--rx:calc((var(--ly)_-_0.5)*2*var(--lean))]',
-  '[.folder.is-open_.is-focused_&]:[--ry:calc((0.5_-_var(--lx))*2*var(--lean))]',
-  '[.folder.is-open_.is-focused_&]:[--rise:0%]',
-  '[.folder.is-open_.is-focused_&]:[--grow:1]',
-  '[.folder.is-open_.is-focused_&]:[--shine:var(--on)]',
-].join(' ')
-
 /**
  * The badge is laid out at --k times its own box and scaled straight back
  * down. In short: the folder shows a
@@ -103,20 +63,6 @@ const ROOT_CLASS = [
  * than added on hover, because a layer promoted at the moment of the hover is
  * rasterised again at that moment — the very flicker this fixes.
  */
-const BADGE_CLASS = [
-  'absolute top-0 left-0 @container overflow-hidden will-change-transform',
-  // BEYOND THE FRAME: sized and rounded off --k, not a spacing/radius token.
-  'w-[calc(100%*var(--k))] h-[calc(100%*var(--k))] rounded-[calc(3cqw*var(--k))]',
-  // BEYOND THE FRAME: stock white, deliberately not the page's own
-  // --background token, since the badge does not follow the site's theme.
-  'bg-[#fdfdfd] origin-top-left',
-  '[transform:scale3d(calc(1/var(--k)),calc(1/var(--k)),calc(1/var(--k)))_translate(50%,50%)_translateY(var(--rise))_scale(var(--grow))_rotateX(var(--rx))_rotateY(var(--ry))_translate(-50%,-50%)_translate3d(0,0,0.01px)]',
-  // The shadow is fixed rather than following the pointer: box-shadow is a
-  // paint property, and repainting the layer the printing lives on every
-  // frame for a shadow nobody is looking at is the one thing worth refusing.
-  '[box-shadow:0_0_0_calc(1px*var(--k))_rgb(21_21_21/8%),0_calc(3px*var(--k))_calc(8px*var(--k))_rgb(21_21_21/10%)]',
-].join(' ')
-
 /** First and, where there is one, second initial — the .face__mark treatment,
     read off whatever name the badge actually carries. */
 function initials(name: string) {
@@ -167,8 +113,8 @@ function useStillness() {
  * spot it can no longer be turned away from.
  *
  * The card frame is handed back to this file rather than taken from .card —
- * see BADGE_CLASS above and the `.card:has(&)` overrides in ROOT_CLASS for
- * the card element itself. A box clipped to its own edges cannot hold
+ * see the `lanyard-badge` utility and the `.card:has(.lanyard-root)` override
+ * for the card element itself. A box clipped to its own edges cannot hold
  * something that leans out of them.
  *
  * It is flat at rest, in both places it is ever seen, and flat again the
@@ -348,7 +294,7 @@ export function LanyardFace({ item, presented = false }: { item: LanyardItem; pr
 
   return (
     <span
-      className={ROOT_CLASS}
+      className="lanyard-root"
       ref={rootRef}
       onPointerEnter={onPointerEnter}
       onPointerMove={onPointerMove}
@@ -358,7 +304,7 @@ export function LanyardFace({ item, presented = false }: { item: LanyardItem; pr
       onPointerUp={onPointerUp}
       onClick={onClick}
     >
-      <span className={BADGE_CLASS}>
+      <span className="lanyard-badge">
         {/* Every colour in the printing below is a literal hex, not
             --foreground/--background/--neutral-700: styles.css reassigns
             all three under .hp[data-theme='dark'], and a printed badge does
@@ -378,7 +324,7 @@ export function LanyardFace({ item, presented = false }: { item: LanyardItem; pr
 
           {/* The .face__mark treatment: initials on a dark circle. */}
           <span
-            className="grid w-[34cqw] h-[34cqw] mt-[6cqw] place-items-center rounded-full bg-[#151515] text-[#f9f9f9] font-display text-[12cqw] font-bold tracking-[0]"
+            className="grid w-[34cqw] h-[34cqw] mt-[6cqw] place-items-center rounded-full bg-[#151515] text-[#f9f9f9] font-display text-[12cqw] font-bold tracking-none"
             aria-hidden="true"
           >
             {initials(badge.name)}

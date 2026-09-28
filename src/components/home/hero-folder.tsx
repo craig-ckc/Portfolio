@@ -101,32 +101,10 @@ const metrics = folderMetrics(folderShape)
  * touches it — same cascade as the old max-width rules, just written from the
  * narrow end up).
  *
- * Applied identically to every target box and every item: each is the same
- * literal class list, and `nth-[n]:` picks out which of the six a rule lands
- * on, so there is one string to keep in step with folder-shape rather than
- * six near-identical ones.
+ * Applied identically to every target box and every item through the
+ * `folder-slot-layout` utility, whose six child selectors keep the measured
+ * arrangement in one place rather than repeating near-identical class lists.
  */
-const SLOT_UTILITIES = `
-  nth-[1]:[--slot-x:27vw] nth-[1]:[--slot-y:16svh] nth-[1]:[--slot-w:min(24vw,17svh)] nth-[1]:[--slot-r:7deg] nth-[1]:[--slot-focus:2.75]
-  md:nth-[1]:[--slot-x:88vw] md:nth-[1]:[--slot-y:42svh]
-  lg:nth-[1]:[--slot-x:12vw] lg:nth-[1]:[--slot-y:42svh] lg:nth-[1]:[--slot-w:15vw] lg:nth-[1]:[--slot-r:-7deg] lg:nth-[1]:[--slot-focus:1.87]
-  nth-[2]:[--slot-x:73vw] nth-[2]:[--slot-y:16svh] nth-[2]:[--slot-w:min(24vw,17svh)] nth-[2]:[--slot-r:-5deg] nth-[2]:[--slot-focus:2.75]
-  md:nth-[2]:[--slot-x:70vw] md:nth-[2]:[--slot-y:17svh]
-  lg:nth-[2]:[--slot-x:30vw] lg:nth-[2]:[--slot-y:17svh] lg:nth-[2]:[--slot-w:13vw] lg:nth-[2]:[--slot-r:5deg] lg:nth-[2]:[--slot-focus:2.15]
-  nth-[3]:[--slot-x:30vw] nth-[3]:[--slot-y:42svh] nth-[3]:[--slot-w:min(32vw,23svh)] nth-[3]:[--slot-r:3deg] nth-[3]:[--slot-focus:2.06]
-  md:nth-[3]:[--slot-x:40vw] md:nth-[3]:[--slot-y:22svh]
-  lg:nth-[3]:[--slot-x:60vw] lg:nth-[3]:[--slot-y:22svh] lg:nth-[3]:[--slot-w:20vw] lg:nth-[3]:[--slot-r:-3deg] lg:nth-[3]:[--slot-focus:1.4]
-  nth-[4]:[--slot-x:74vw] nth-[4]:[--slot-y:42svh] nth-[4]:[--slot-w:min(24vw,17svh)] nth-[4]:[--slot-r:-8deg] nth-[4]:[--slot-focus:2.75]
-  md:nth-[4]:[--slot-x:80vw] md:nth-[4]:[--slot-y:76svh]
-  lg:nth-[4]:[--slot-x:20vw] lg:nth-[4]:[--slot-y:76svh] lg:nth-[4]:[--slot-w:14vw] lg:nth-[4]:[--slot-r:8deg] lg:nth-[4]:[--slot-focus:2]
-  nth-[5]:[--slot-x:27vw] nth-[5]:[--slot-y:68svh] nth-[5]:[--slot-w:min(24vw,17svh)] nth-[5]:[--slot-r:5deg] nth-[5]:[--slot-focus:2.75]
-  md:nth-[5]:[--slot-x:55vw] md:nth-[5]:[--slot-y:64svh]
-  lg:nth-[5]:[--slot-x:45vw] lg:nth-[5]:[--slot-y:64svh] lg:nth-[5]:[--slot-w:14vw] lg:nth-[5]:[--slot-r:-5deg] lg:nth-[5]:[--slot-focus:2]
-  nth-[6]:[--slot-x:73vw] nth-[6]:[--slot-y:68svh] nth-[6]:[--slot-w:min(24vw,17svh)] nth-[6]:[--slot-r:-6deg] nth-[6]:[--slot-focus:2.75]
-  md:nth-[6]:[--slot-x:21vw] md:nth-[6]:[--slot-y:62svh]
-  lg:nth-[6]:[--slot-x:79vw] lg:nth-[6]:[--slot-y:62svh] lg:nth-[6]:[--slot-w:18vw] lg:nth-[6]:[--slot-r:6deg] lg:nth-[6]:[--slot-focus:1.56]
-`
-
 /**
  * The resting fan (idle, tucked to the right of the tab) and the wider fan it
  * opens into on hover or keyboard focus. The stagger on the way out runs
@@ -138,23 +116,9 @@ const SLOT_UTILITIES = `
  * closed with the pointer. Applied to the item itself as one condition list,
  * matching the house style already used in nav-bar.tsx's own arbitrary
  * ancestor-state selector, opacity-0 when the folder is open, for an
- * arbitrary selector reaching off an ancestor's state.
+ * arbitrary selector reaching off an ancestor's state. The fan geometry itself
+ * lives in the `folder-item-fan` utility beside the slot layout.
  */
-const FAN_UTILITIES = `
-  nth-[1]:[--i:2] nth-[1]:[--x:-36%] nth-[1]:[--y:2%] nth-[1]:[--r:-7deg]
-  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--x:-64%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--y:-18%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--r:-14deg]
-  nth-[2]:[--i:1] nth-[2]:[--x:-21%] nth-[2]:[--y:0%] nth-[2]:[--r:-4deg]
-  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--x:-38%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--y:-21%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--r:-8.5deg]
-  nth-[3]:[--i:0] nth-[3]:[--x:-7%] nth-[3]:[--y:-1%] nth-[3]:[--r:-1.5deg]
-  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--x:-13%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--y:-23%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--r:-3deg]
-  nth-[4]:[--i:0] nth-[4]:[--x:7%] nth-[4]:[--y:-1%] nth-[4]:[--r:1.5deg]
-  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--x:13%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--y:-23%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--r:3deg]
-  nth-[5]:[--i:1] nth-[5]:[--x:21%] nth-[5]:[--y:0%] nth-[5]:[--r:4deg]
-  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--x:38%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--y:-21%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--r:8.5deg]
-  nth-[6]:[--i:2] nth-[6]:[--x:36%] nth-[6]:[--y:2%] nth-[6]:[--r:7deg]
-  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--x:64%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--y:-18%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--r:14deg]
-`
-
 /** Keys that would scroll the page out from under a scatter pinned to it. */
 const SCROLL_KEYS = new Set(['PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown'])
 
@@ -365,7 +329,7 @@ function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
             [background:radial-gradient(120%_90%_at_15%_0%,#ffffff,transparent_60%),linear-gradient(165deg,#f4f3f1,#e7e6e3)]
           `}
         >
-          <span className="grid w-[27cqw] h-[27cqw] place-items-center rounded-full bg-[#151515] text-[#f9f9f9] text-[10.5cqw] font-bold tracking-[0]">
+          <span className="grid w-[27cqw] h-[27cqw] place-items-center rounded-full bg-[#151515] text-[#f9f9f9] text-[10.5cqw] font-bold tracking-none">
             {item.mark}
           </span>
           <span className="text-[#616161] text-[7cqw] font-medium">{item.label}</span>
@@ -441,12 +405,12 @@ function Card({ item, focused }: { item: FolderItem; focused: boolean }) {
         relative block overflow-hidden w-full rounded-[1.5cqw] bg-[#fdfdfd]
         shadow-[0_0_0_1px_rgb(21_21_21/8%),0_3px_8px_rgb(21_21_21/10%)]
         [transition:transform_var(--duration-fast)_var(--ease-out-cubic),box-shadow_var(--duration-fast)_var(--ease-standard)]
-        data-[ratio=portrait]:aspect-[3/4]
-        data-[ratio=landscape]:aspect-[4/3]
+        data-[ratio=portrait]:aspect-3/4
+        data-[ratio=landscape]:aspect-4/3
         data-[ratio=square]:aspect-square
-        data-[ratio=bar]:aspect-[24/5]
+        data-[ratio=bar]:aspect-banner
         [.folder-slot.is-focused_&]:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_10px_30px_rgb(21_21_21/18%)]
-        [.folder-slot.is-held_&]:scale-[1.04] [.folder-slot.is-held_&]:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_14px_30px_rgb(21_21_21/16%)]
+        [.folder-slot.is-held_&]:scale-104 [.folder-slot.is-held_&]:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_14px_30px_rgb(21_21_21/16%)]
       `}
       data-kind={item.kind}
       data-ratio={item.ratio ?? 'portrait'}
@@ -481,7 +445,7 @@ export function HeroFolder({ caption }: { caption: string }) {
   /**
    * Empty boxes, never painted, laid out where the contents are meant to land.
    * They are here so the arrangement — and its breakpoints — can stay beside
-   * SLOT_UTILITIES above with everything else, and this file only has to
+   * folder-slot-layout with everything else, and this file only has to
    * measure it.
    */
   const targetsRef = useRef<HTMLSpanElement>(null)
@@ -1029,9 +993,8 @@ export function HeroFolder({ caption }: { caption: string }) {
                 [transition:transform_var(--duration-base)_var(--ease-out-cubic)]
                 [.folder:hover_&,.folder:has(:focus-visible)_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
                 [.folder:hover_&,.folder:has(:focus-visible)_&]:[transition-delay:calc(var(--i,0)_*_40ms)]
-                focus-visible:outline-offset-[6px]
-                ${FAN_UTILITIES}
-                ${SLOT_UTILITIES}
+                focus-visible:outline-offset-2xs
+                folder-item-fan folder-slot-layout
                 [.folder.is-open.folder_&]:[transform:translate(var(--out-x,0px),var(--out-y,0px))_translate(var(--drag-x,0px),var(--drag-y,0px))_translateY(-50%)_scale(var(--out-scale,1))_rotate(calc(var(--slot-r,0deg)_+_var(--drag-r,0deg)))_translateY(50%)]
                 [.folder.is-open_&]:z-[calc(10+var(--raised,0))] [.folder.is-open_&]:cursor-grab [.folder.is-open_&]:touch-none
                 [.folder.is-open_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
@@ -1041,7 +1004,7 @@ export function HeroFolder({ caption }: { caption: string }) {
                 [.folder.is-open_&.is-focused]:z-[17] [.folder.is-open_&.is-focused]:cursor-zoom-out
                 [.folder.is-open.folder_&.is-focused]:[transform:translate(var(--out-x,0px),var(--out-y,0px))_translate(calc(50vw_-_var(--slot-x)),calc(50svh_-_var(--slot-y)))_translateY(-50%)_scale(calc(var(--out-scale,1)_*_var(--slot-focus,2)_*_var(--folder-zoom,1)))_rotate(0deg)_translateY(50%)]
                 [.folder.is-closing_&]:[transition:transform_var(--duration-slow)_var(--ease-standard)]
-                [.folder.is-open:has(.is-focused)_&:not(.is-focused)]:opacity-[0.28]
+                [.folder.is-open:has(.is-focused)_&:not(.is-focused)]:opacity-folder-muted
               `}
               key={item.id}
               type="button"
@@ -1154,7 +1117,7 @@ export function HeroFolder({ caption }: { caption: string }) {
 
         {/* Never painted and never touched by the pointer. They are here to
             be measured: the arrangement, its sizes and its breakpoints stay in
-            SLOT_UTILITIES above, and the cards are sent to wherever these end
+            folder-slot-layout, and the cards are sent to wherever these end
             up. Each entry is read by two rules: the target box takes the
             position and width, the card itself takes the rotation and the
             zoom. */}
@@ -1162,7 +1125,7 @@ export function HeroFolder({ caption }: { caption: string }) {
           {folderItems.map((item) => (
             <span
               key={item.id}
-              className={`absolute left-(--slot-x) top-(--slot-y) w-(--slot-w) h-px [transform:translate(-50%,-50%)] ${SLOT_UTILITIES}`}
+              className="absolute left-(--slot-x) top-(--slot-y) w-(--slot-w) h-px [transform:translate(-50%,-50%)] folder-slot-layout"
             />
           ))}
         </span>
@@ -1223,7 +1186,7 @@ export function HeroFolder({ caption }: { caption: string }) {
         </p>
 
         <button
-          className="folder__close fixed top-md right-md md:top-xl md:right-xl z-20 grid w-10 h-10 place-items-center p-0 rounded-full text-foreground cursor-pointer scale-[0.92] border border-(--folder-chrome-edge) bg-(--folder-chrome) shadow-(--folder-shadow-rest) backdrop-blur-[12px] backdrop-saturate-[150%] opacity-0 [transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)] hover:brightness-[1.04] [.folder.is-open_&]:opacity-100 [.folder.is-open_&]:scale-100 [.folder.is-open_&]:[transition-delay:var(--veil-fade)]"
+          className="folder__close fixed top-md right-md md:top-xl md:right-xl z-20 grid w-10 h-10 place-items-center p-0 rounded-full text-foreground cursor-pointer scale-92 border border-(--folder-chrome-edge) bg-(--folder-chrome) shadow-(--folder-shadow-rest) backdrop-blur-[12px] backdrop-saturate-[150%] opacity-0 [transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)] hover:brightness-folder-hover [.folder.is-open_&]:opacity-100 [.folder.is-open_&]:scale-100 [.folder.is-open_&]:[transition-delay:var(--veil-fade)]"
           type="button"
           ref={closeRef}
           inert={inFolder}
@@ -1232,7 +1195,7 @@ export function HeroFolder({ caption }: { caption: string }) {
           <svg
             viewBox="0 0 16 16"
             aria-hidden="true"
-            className="w-[15px] h-[15px] fill-none stroke-current [stroke-linecap:round] [stroke-width:1.4]"
+            className="size-icon fill-none stroke-current [stroke-linecap:round] [stroke-width:1.4]"
           >
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
@@ -1244,7 +1207,7 @@ export function HeroFolder({ caption }: { caption: string }) {
             open, which takes it out of both the tab order and the pointer's
             way in one word. */}
         <button
-          className="folder__open absolute inset-0 z-6 p-0 rounded-lg cursor-pointer focus-visible:outline-offset-[6px]"
+          className="folder__open absolute inset-0 z-6 p-0 rounded-lg cursor-pointer focus-visible:outline-offset-2xs"
           type="button"
           ref={openRef}
           inert={stage === 'open'}

@@ -55,98 +55,11 @@ function stageDuration(element: HTMLElement | null, token: string, fallback: num
  * is written at matching specificity so the tie always resolves to whichever
  * is written last, regardless of which context is live.
  */
-const FRAME_BASE = [
-  // top is not 0: the card is 3:4 (133.3cqw tall at this width), and a
-  // 76cqw print with its 3.5/3.5/11cqw padding runs to roughly 94cqw of its
-  // own height, so anchoring it at the card's top edge would sit the pile
-  // high and off-centre. Offsetting it down by half the difference puts the
-  // resting print's centre on the card's.
-  'absolute top-[19.7cqw] left-1/2 w-[76cqw] flex flex-col',
-  'pt-[3.5cqw] px-[3.5cqw] pb-[11cqw] rounded-[1cqw]',
-  // BEYOND THE FRAME: print stock white, deliberately independent of the
-  // page's --background token — a photograph does not follow the site's
-  // theme.
-  'bg-[#fff]',
-  'z-[calc(10_-_var(--depth,0))]',
-  '[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_2cqw_5cqw_rgb(21_21_21/12%)]',
-  '[transform:translate(-50%,0)_translate(var(--x,0cqw),var(--y,0cqw))_translate(var(--print-drag-x,0px),0)_rotate(calc(var(--r,0deg)_+_var(--print-drag-r,0deg)))_translateY(var(--lift,0cqw))_scale(var(--scale,1))]',
-  'transition-[transform,box-shadow] duration-320 ease-out-cubic [transition-delay:0ms]',
-
-  // Resting fan: alternating sides, growing outward, so it reads as dropped
-  // rather than arranged. Open enough that the backs show as photographs
-  // and not as a white edge, since at rest is how the card spends most of
-  // its time.
-  'data-[depth=0]:[--i:0] data-[depth=0]:[--r:1deg] data-[depth=0]:[--x:0cqw] data-[depth=0]:[--y:0cqw]',
-  'data-[depth=1]:[--i:1] data-[depth=1]:[--r:9deg] data-[depth=1]:[--x:13cqw] data-[depth=1]:[--y:-2cqw]',
-  'data-[depth=2]:[--i:2] data-[depth=2]:[--r:-11deg] data-[depth=2]:[--x:-14cqw] data-[depth=2]:[--y:-3cqw]',
-  'data-[depth=3]:[--i:3] data-[depth=3]:[--r:-15deg] data-[depth=3]:[--x:-19cqw] data-[depth=3]:[--y:-4cqw]',
-  'data-[depth=4]:[--i:4] data-[depth=4]:[--r:14deg] data-[depth=4]:[--x:18cqw] data-[depth=4]:[--y:-5cqw]',
-
-  // Hover: the pile opens. Back prints swing further out; the top print
-  // lifts toward the viewer instead of sliding sideways, and its shadow
-  // goes with it. Staggered going out only — the return is one plain ease
-  // together, so a cursor that keeps crossing the edge never reads as a
-  // stutter.
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:[transition-delay:calc(var(--i,0)*35ms)]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=0]:[--lift:-2cqw]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=0]:[--scale:1.05]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=0]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_3cqw_7cqw_rgb(21_21_21/20%)]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=1]:[--r:14deg] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=1]:[--x:22cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=1]:[--y:-5cqw]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=2]:[--r:-17deg] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=2]:[--x:-24cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=2]:[--y:-6cqw]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=3]:[--r:-22deg] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=3]:[--x:-30cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=3]:[--y:-7cqw]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=4]:[--r:20deg] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=4]:[--x:28cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=4]:[--y:-8cqw]',
-
-  // Beat one of the shuffle: the front print mid-air, carried on out to the
-  // side it was dragged toward and up, rather than sitting in any fan slot.
-  // All five transform terms are set, per the convention above, so nothing
-  // is left for the hover lift rule to still be contributing underneath.
-  // --side is ±1, written by this component from the drag direction.
-  '[&.is-leaving]:[--x:calc(var(--side,1)*52cqw)] [&.is-leaving]:[--y:-10cqw] [&.is-leaving]:[--r:calc(var(--side,1)*16deg)] [&.is-leaving]:[--scale:1.02] [&.is-leaving]:[--lift:0cqw]',
-  '[&.is-leaving]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
-  // Ease-in-out rather than the fan's ease-out: a print picked off the top
-  // of a pile gathers speed as it goes, and this leg hands straight over to
-  // the slower ease back in — so the two read as one arc, out and round.
-  '[&.is-leaving]:[transition-timing-function:var(--ease-standard)] [&.is-leaving]:[transition-delay:0ms]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--x:calc(var(--side,1)*52cqw)] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--y:-10cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--r:calc(var(--side,1)*16deg)] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--scale:1.02] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--lift:0cqw]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[transition-timing-function:var(--ease-standard)] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[transition-delay:0ms]',
-
-  // Beat two: the same print, now the deepest and so already behind the
-  // pile (its z-index changed with its depth, and z-index does not
-  // transition). Only timing changes here — the slot's own --x/--y/--r come
-  // from whichever data-depth rule now matches.
-  '[&.is-returning]:duration-560 [&.is-returning]:[transition-delay:0ms]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-returning]:duration-560 [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-returning]:[transition-delay:0ms]',
-
-  // In hand: only the front print on the presented card — in the scatter a
-  // press on the pile picks up the whole card, so there is nothing to
-  // invite. Keyed off `.is-focused` alone, not `.folder__item.is-focused`:
-  // an escaped `__` inside a Tailwind arbitrary selector is invisible to the
-  // CSS parser (the whole rule is silently dropped, not just the escape), and
-  // `.is-focused` is only ever the folder's own item class regardless.
-  '[.is-focused_.card[data-kind=polaroids]_&]:data-[depth=0]:cursor-grab',
-
-  // The transform is written every frame by this component while a print is
-  // in hand; a transition under that would trail the hand. Off the moment
-  // it lands, back the moment the print is let go, so the settle — into
-  // place or into the pile — eases.
-  '[&.is-dragging]:[transition:none] [&.is-dragging]:cursor-grabbing [&.is-dragging]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
-  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-dragging]:[transition:none] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-dragging]:cursor-grabbing [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-dragging]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
-
-  // Reduced motion needs nothing of its own here: transitions are already
-  // cut globally by the reduced-motion rule in styles.css, the resting fan
-  // is open enough to read as a fan without a hover to animate into, and
-  // the component itself skips beat one and rotates `order` on the spot
-  // when the preference is set, so there is no travelling pose for
-  // is-leaving/is-returning to ever produce.
-].join(' ')
-
-/** Which extra class, if any, a print's key currently carries — the two are
-    mutually exclusive, since only one print is ever mid-riffle at a time. */
+/** Which transient state, if any, a print currently carries. */
 function frameClass(index: number, leaving: number | null, returning: number | null) {
-  if (leaving === index) return `${FRAME_BASE} is-leaving`
-  if (returning === index) return `${FRAME_BASE} is-returning`
-  return FRAME_BASE
+  if (leaving === index) return 'polaroid-frame is-leaving'
+  if (returning === index) return 'polaroid-frame is-returning'
+  return 'polaroid-frame'
 }
 
 /** How far a print has to be dragged, as a share of its own width, before
@@ -179,7 +92,7 @@ type Drag = {
  *
  * The DOM order never changes. Each print is rendered in the order the photos
  * are listed and told how deep in the pile it currently sits — `data-depth`,
- * 0 for the front — and FRAME_BASE above keys position, rotation and z-index
+ * 0 for the front — and polaroid-frame keys position, rotation and z-index
  * off that. `order` is only the bookkeeping behind the depth.
  *
  * It used to be simpler: reorder the array, let sibling order do the
@@ -200,7 +113,7 @@ type Drag = {
  * The shuffle itself is two beats rather than a jump, so the print is seen to
  * travel rather than teleport:
  *
- *   beat one   the front print's key goes into `leaving`. FRAME_BASE reads
+ *   beat one   the front print's key goes into `leaving`. polaroid-frame reads
  *              that as `is-leaving` and gives it a transform that carries it
  *              on out to the side it was dragged toward — `--side` says which
  *              — over --duration-base, from wherever the hand let go of it.
