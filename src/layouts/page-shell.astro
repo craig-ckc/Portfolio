@@ -8,6 +8,7 @@ import { BookingDialog } from '../components/booking/booking-dialog'
 import { NavBar } from '../components/layout/nav-bar'
 import { Footer } from '../components/layout/footer'
 import { THEME_STORAGE_KEY } from '../lib/theme'
+import type { ArticleInfo } from '../lib/structured-data'
 
 interface Props {
   title?: string
@@ -21,12 +22,13 @@ interface Props {
    * nothing for them to gain by paying for it.
    */
   smoothScroll?: boolean
+  article?: ArticleInfo
 }
 
-const { title, description, homeHref = '#top', smoothScroll = false } = Astro.props
+const { title, description, homeHref = '#top', smoothScroll = false, article } = Astro.props
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} article={article}>
   <div class="hp" data-theme="light">
     {/* Resolves the appearance before the first paint, which is why it is a
         blocking inline script rather than something the navbar island does:

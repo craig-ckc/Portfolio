@@ -27,6 +27,11 @@ export type PageInfo = {
   description: string
 }
 
+export type ArticleInfo = {
+  published: string
+  topics: string[]
+}
+
 /**
  * Only profiles the content file marks `verified: true`.
  *
@@ -41,7 +46,7 @@ function verifiedProfiles(): string[] {
   return socials.filter((profile) => profile.verified).map((profile) => profile.href)
 }
 
-export function structuredData(site: URL, page: PageInfo) {
+export function structuredData(site: URL, page: PageInfo, article?: ArticleInfo) {
   const home = new URL('/', site).href
   /* Fragment ids on the origin, so the Person and the WebSite are the same two
      nodes on every page rather than three unrelated copies. */
@@ -98,7 +103,26 @@ export function structuredData(site: URL, page: PageInfo) {
        the site but do not profile him, and saying otherwise would point an
        answer engine at "Nothing published yet" as though it described a person. */
     ...(isHomepage && { mainEntity: { '@id': personId } }),
+    ...(article && { mainEntity: { '@id': `${page.url}#article` } }),
   }
+
+  const articleNode = article
+    ? {
+        '@type': 'BlogPosting',
+        '@id': `${page.url}#article`,
+        url: page.url,
+        headline: page.title.replace(/ \| Craig Chihururu$/, ''),
+        description: page.description,
+        datePublished: article.published,
+        dateModified: article.published,
+        inLanguage: 'en',
+        keywords: article.topics,
+        author: { '@id': personId },
+        publisher: { '@id': personId },
+        isPartOf: { '@id': websiteId },
+        mainEntityOfPage: { '@id': `${page.url}#webpage` },
+      }
+    : null
 
   /**
    * What Craig is hired to do, and how to start.
@@ -154,7 +178,7 @@ export function structuredData(site: URL, page: PageInfo) {
      then what the page is selling. */
   return {
     '@context': 'https://schema.org',
-    '@graph': [person, website, webpage, ...(isHomepage ? [offer] : [])],
+    '@graph': [person, website, webpage, ...(articleNode ? [articleNode] : []), ...(isHomepage ? [offer] : [])],
   }
 }
 

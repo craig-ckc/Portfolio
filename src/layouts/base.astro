@@ -14,16 +14,18 @@ import 'lenis/dist/lenis.css'
 import '../styles.css'
 import { canonicalUrl, requireSite } from '../lib/sitemap'
 import { SHARE_IMAGE } from '../lib/share-image'
-import { serializeJsonLd, structuredData } from '../lib/structured-data'
+import { serializeJsonLd, structuredData, type ArticleInfo } from '../lib/structured-data'
 
 interface Props {
   title?: string
   description?: string
+  article?: ArticleInfo
 }
 
 const {
-  title = 'Craig Chihururu — Designer + Developer',
+  title = 'Craig Chihururu | Designer + Developer',
   description = 'Craig Chihururu is a designer and developer helping brands build thoughtful websites and digital products.',
+  article,
 } = Astro.props
 
 /* Absolute URLs, built from the one origin in astro.config.mjs. A crawler or
@@ -40,7 +42,7 @@ const shareImage = new URL(SHARE_IMAGE.src, site).href
 
 /* Structured data, built from the same canonical URL, title and description
    the og: tags use, so the two descriptions of the page agree. */
-const jsonLd = serializeJsonLd(structuredData(site, { url: canonical, title, description }))
+const jsonLd = serializeJsonLd(structuredData(site, { url: canonical, title, description }, article))
 ---
 
 <html lang="en">
@@ -98,7 +100,7 @@ const jsonLd = serializeJsonLd(structuredData(site, { url: canonical, title, des
         og:url is the load-bearing one here. The site answers on three hosts —
         the apex and the .vercel.app both 308 to www — and without it a share
         of the same page from two of them counts as two pages. */}
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:site_name" content="Craig Chihururu" />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={title} />
@@ -110,6 +112,8 @@ const jsonLd = serializeJsonLd(structuredData(site, { url: canonical, title, des
     <meta property="og:image:width" content={String(SHARE_IMAGE.width)} />
     <meta property="og:image:height" content={String(SHARE_IMAGE.height)} />
     <meta property="og:image:alt" content={SHARE_IMAGE.alt} />
+    {article && <meta property="article:published_time" content={article.published} />}
+    {article?.topics.map((topic) => <meta property="article:tag" content={topic} />)}
     {/* X reads the og: tags for everything else, but it will only render the
         wide card if this says so — the default is a small square thumbnail. */}
     <meta name="twitter:card" content="summary_large_image" />

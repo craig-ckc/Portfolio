@@ -8,6 +8,7 @@ const HOME = 'https://www.craigchihururu.com/'
    are the homepage's alone, so most of what follows needs a page to be absent
    from as well as a page to be present on. */
 const INNER = 'https://www.craigchihururu.com/writing'
+const ARTICLE = 'https://www.craigchihururu.com/writing/example'
 
 const graphFor = (url: string, title = 'Title', description = 'Description') =>
   structuredData(SITE, { url, title, description })
@@ -62,6 +63,38 @@ describe('structuredData', () => {
   it('names the homepage as the page about Craig, and no other page', () => {
     expect(node(HOME, 'WebPage')).toHaveProperty('mainEntity')
     expect(node(INNER, 'WebPage')).not.toHaveProperty('mainEntity')
+  })
+})
+
+describe('article structured data', () => {
+  const article = { published: '2026-09-28', topics: ['Product design', 'Front-end development'] }
+  const graph = structuredData(
+    SITE,
+    {
+      url: ARTICLE,
+      title: 'Why I design and build the same product | Craig Chihururu',
+      description: 'What a product gains when design and front-end development stay connected.',
+    },
+    article,
+  )
+  const graphNodes = graph['@graph'] as Node[]
+  const posting = graphNodes.find((entry) => entry['@type'] === 'BlogPosting')
+  const page = graphNodes.find((entry) => entry['@type'] === 'WebPage')
+
+  it('describes the article with its author, date and topics', () => {
+    expect(posting).toMatchObject({
+      '@id': `${ARTICLE}#article`,
+      url: ARTICLE,
+      headline: 'Why I design and build the same product',
+      datePublished: article.published,
+      dateModified: article.published,
+      keywords: article.topics,
+      author: { '@id': `${HOME}#person` },
+    })
+  })
+
+  it('names the article as the page main entity', () => {
+    expect(page?.mainEntity).toEqual({ '@id': `${ARTICLE}#article` })
   })
 })
 

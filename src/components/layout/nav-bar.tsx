@@ -80,7 +80,7 @@ export function NavBar({
 
   return (
     <nav className="nav" aria-label="Primary" ref={navRef}>
-      <a href={homeHref} aria-label="Craig Chihururu — home">
+      <a href={homeHref} aria-label="Craig Chihururu, home">
         <span className="nav__logo" />
       </a>
 
