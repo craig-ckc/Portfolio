@@ -46,7 +46,7 @@ const { media, fill = false, wide = false, loading = 'lazy' } = Astro.props
       'relative overflow-hidden border rounded-lg bg-neutral-600',
       /* Three mutually exclusive shapes, so exactly one of these is ever on the
          element and the base utilities above never have to be overridden. */
-      fill ? 'h-full aspect-auto border-0 rounded-none' : wide ? 'aspect-[16/10]' : 'aspect-square',
+      fill ? 'h-full aspect-auto border-0 rounded-none' : wide ? 'aspect-16/10' : 'aspect-square',
       !fill && 'border-(--project-box-rule)',
     ]}
   >

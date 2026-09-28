@@ -34,15 +34,6 @@ interface Props {
 }
 
 const { href, image, title, description, featured = false } = Astro.props
-
-/* Held on its own compositor layer from the start, not only while it moves.
-   Without this the browser lifts the image onto a GPU layer for the length of
-   the zoom and hands it back to ordinary painting the moment the transition
-   ends — and the hand-back re-snaps it to whole pixels, which is the small
-   jump seen as the zoom settles. With the layer kept, nothing changes hands at
-   the end, so there is nothing to jump. */
-const imageClasses =
-  "h-full w-full object-cover transition-transform duration-760 ease-out-quart group-hover:scale-[1.03] [will-change:transform]"
 ---
 
 <a class="group relative isolate block overflow-hidden rounded-lg" href={href}>
@@ -52,13 +43,16 @@ const imageClasses =
       /* The homepage work tile's height, half the featured card's — a height
          of its own rather than 100%, because the tile has none until its
          image gives it one. */
-      featured ? 'h-[640px]' : 'h-[320px]',
+      featured ? 'h-160' : 'h-80',
     ]}
   >
     {
       image.src && (
+        /* Held on its own compositor layer from the start, not only while it
+           moves. Keeping the layer through the zoom avoids a pixel re-snap
+           when the transition ends. */
         <img
-          class={imageClasses}
+          class="h-full w-full object-cover transition-transform duration-760 ease-out-quart group-hover:scale-103 will-change-transform"
           src={image.src}
           alt={image.alt ?? ''}
           loading={featured ? undefined : 'lazy'}
@@ -74,18 +68,18 @@ const imageClasses =
       measure so its lines stay short. */}
   <div
     class:list={[
-      'absolute right-sm bottom-sm left-sm flex flex-col items-start rounded-md border border-(--writing-glass-edge) p-lg text-white [background-image:linear-gradient(180deg,var(--writing-glass-top),var(--writing-glass-bottom))] [backdrop-filter:blur(26px)_saturate(140%)]',
+      'absolute right-sm bottom-sm left-sm flex flex-col items-start rounded-md border border-(--writing-glass-edge) p-lg text-white writing-glass',
       featured &&
         'sm:top-2xl sm:right-auto sm:bottom-auto sm:left-2xl sm:max-w-caption sm:p-2xl',
     ]}
   >
     {
       featured ? (
-        <h2 class="font-display text-2xl font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight text-balance sm:text-3xl">
+        <h2 class="font-display text-2xl font-semibold tracking-snug leading-tight text-balance sm:text-3xl">
           {title}
         </h2>
       ) : (
-        <h3 class="font-display text-md font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-snug text-balance">
+        <h3 class="font-display text-md font-semibold tracking-snug leading-snug text-balance">
           {title}
         </h3>
       )

@@ -34,7 +34,7 @@ function Siteline() {
           <span className="inline-flex w-lg h-xl shrink-0 items-center justify-center text-neutral-900">
             <WavingHand />
           </span>
-          <span className="inline-block max-w-0 overflow-clip opacity-0 transition-contact-label group-hover:max-w-[8rem] group-hover:pl-3xs group-hover:opacity-100 group-focus-visible:max-w-[8rem] group-focus-visible:pl-3xs group-focus-visible:opacity-100">
+          <span className="inline-block max-w-0 overflow-clip opacity-0 transition-contact-label group-hover:max-w-32 group-hover:pl-3xs group-hover:opacity-100 group-focus-visible:max-w-32 group-focus-visible:pl-3xs group-focus-visible:opacity-100">
             {contact.label}
           </span>
         </a>
@@ -59,11 +59,11 @@ function Siteline() {
 export function Cta() {
   return (
     <section
-      className="mx-auto flex w-full max-w-[calc(var(--container-page)+var(--spacing-page-gutter)*2)] flex-col items-center px-page-gutter pt-[calc(4*var(--spacing-section-py))] pb-section-py"
+      className="mx-auto flex w-full max-w-page-frame flex-col items-center px-page-gutter pt-section-hero pb-section-py"
       id="contact"
       aria-labelledby="cta-title"
     >
-      <span className="w-[44px] h-[44px] shrink-0" aria-hidden="true">
+      <span className="size-11 shrink-0" aria-hidden="true">
         <CtaMark />
       </span>
 
@@ -71,7 +71,7 @@ export function Cta() {
           have no token behind them, same as the equivalent heading in
           project-page.css. */}
       <h2
-        className="pt-2xl whitespace-pre-line font-display text-[clamp(2rem,3.9vw,3.75rem)] font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight text-center text-balance"
+        className="pt-2xl whitespace-pre-line font-display text-display-cta font-bold tracking-snug leading-tight text-center text-balance"
         id="cta-title"
       >
         {cta.title}
@@ -79,7 +79,7 @@ export function Cta() {
 
       {/* BEYOND THE FRAME: the 7px gap between the lead sentence and the link
           has no token behind it. */}
-      <p className="flex flex-wrap items-center justify-center gap-[7px] pt-3xl text-neutral-700 text-body leading-normal">
+      <p className="flex flex-wrap items-center justify-center gap-7px pt-3xl text-neutral-700 text-body leading-normal">
         <span>{cta.invitationLead}</span>
         <a
           className="inline-flex items-center pb-4xs border-b border-neutral-600 text-foreground font-normal transition-[border-color] duration-320 ease-standard hover:border-foreground"

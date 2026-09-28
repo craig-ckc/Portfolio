@@ -18,10 +18,7 @@ const { title, description } = Astro.props
         class="experiment-grid relative flex min-h-svh items-center justify-center overflow-hidden bg-background px-xl py-5xl sm:px-4xl"
         aria-labelledby="experiment-title"
       >
-        <h1
-          class="absolute bottom-0 left-1/2 max-w-[calc(100%-var(--spacing-xl)*2)] -translate-x-1/2 truncate rounded-t-md border border-b-0 border-neutral-600/50 bg-background px-lg py-sm font-display text-body font-semibold tracking-snug"
-          id="experiment-title"
-        >
+        <h1 class="absolute bottom-0 left-1/2 max-w-inline-safe -translate-x-1/2 truncate rounded-t-md border border-b-0 border-neutral-600/50 bg-background px-lg py-sm font-display text-body font-semibold tracking-snug" id="experiment-title" >
           {title}
         </h1>
         <a

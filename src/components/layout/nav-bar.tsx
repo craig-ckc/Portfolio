@@ -90,21 +90,20 @@ export function NavBar({
       ref={navRef}
     >
       <a href={homeHref} aria-label="Craig Chihururu, home">
-        {/* BEYOND THE FRAME: 78.57px/20px and the mask's own values have no
-            token behind them — the mark is drawn at the logo svg's native
-            size. */}
-        <span className="block w-[78.57px] h-lg bg-current [mask:url(/figma/logo.svg)_center/contain_no-repeat] [-webkit-mask:url(/figma/logo.svg)_center/contain_no-repeat]" />
+        {/* The logo width is a named spacing token; the mask keeps the mark at
+            the SVG's native proportions. */}
+        <span className="block w-logo h-lg bg-current [mask:url(/figma/logo.svg)_center/contain_no-repeat] [-webkit-mask:url(/figma/logo.svg)_center/contain_no-repeat]" />
       </a>
 
       <div className="flex gap-3xs">
         <a
-          className="chip h-[26px] px-xs py-3xs text-body leading-tight tracking-snug"
+          className="chip h-nav-control px-xs py-3xs text-body leading-tight tracking-snug"
           href={contact.href}
         >
           Contact
         </a>
         <button
-          className="chip group h-[26px] w-[26px] p-0"
+          className="chip group size-nav-control p-0"
           type="button"
           aria-pressed={theme === 'dark'}
           aria-label={theme === 'dark' ? 'Switch to light appearance' : 'Switch to dark appearance'}
@@ -114,7 +113,7 @@ export function NavBar({
               the glyphs are on a 12 unit grid, so at 12px their 1px strokes
               land on whole pixels; at 16 they fell between them and the dots
               around the sun read as smudges. */}
-          <AppearanceGlyph className="w-[12px] h-[12px] group-hover:rotate-[60deg]" />
+          <AppearanceGlyph className="size-3 group-hover:rotate-sun" />
         </button>
       </div>
     </nav>

@@ -67,7 +67,7 @@ const description = entry.description
     }
     {
       entry.cover ? (
-        <div class="relative overflow-hidden h-[clamp(320px,42svh,520px)]">
+        <div class="relative overflow-hidden h-project-cover">
           {/* BEYOND THE FRAME: no token on the spacing or container scales
               describes a hero's height — it is sized against the viewport, not
               against type or other content. 42svh lands it near the reference's
@@ -81,7 +81,7 @@ const description = entry.description
               cutting to it, so the link sitting on the fade is readable over
               photograph and page alike. */}
           <div
-            class="absolute right-0 bottom-0 left-0 h-[45%] bg-[linear-gradient(to_bottom,transparent,var(--background))] pointer-events-none"
+            class="absolute right-0 bottom-0 left-0 h-[45%] project-cover-fade pointer-events-none"
             aria-hidden="true"
           />
           {entry.live && (
@@ -114,7 +114,7 @@ const description = entry.description
       }
 
       <h1
-        class="font-display text-2xl font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight text-pretty motion-safe:animate-project-fade-up motion-safe:[animation-delay:calc(var(--duration-fast)*0.5)]"
+        class="font-display text-2xl font-bold tracking-snug leading-tight text-pretty motion-safe:animate-project-fade-up motion-safe:[animation-delay:calc(var(--duration-fast)*0.5)]"
       >
         {entry.title}
       </h1>

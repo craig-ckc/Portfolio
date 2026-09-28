@@ -8,7 +8,7 @@ const description = 'Small interface and interaction experiments by Craig Chihur
 ---
 
 <PageShell title="Experiments | Craig Chihururu" description={description} homeHref="/">
-  <section class="mx-auto w-full max-w-[calc(var(--container-content-wide)+var(--spacing-page-gutter)*2)] px-page-gutter pt-hero-top pb-section-py">
+  <section class="mx-auto w-full max-w-content-wide-frame px-page-gutter pt-hero-top pb-section-py">
     <h1 class="sr-only">Experiments</h1>
     <div class="grid grid-cols-1 gap-xl sm:grid-cols-2 md:grid-cols-3">
       {experiments.map((experiment) => <ExperimentCard experiment={experiment} />)}

@@ -28,11 +28,9 @@ const sortedArticles = [...articles].sort((a, b) =>
 const featured =
   sortedArticles.find((article) => article.featured) ?? sortedArticles[0];
 
-/* The two sections' shared width: the work list's measure, plus the page
-   gutter doubled back in since neither reaches the frame's own edge. */
-const pageFrame = "w-full mx-auto px-page-gutter";
-const wideMaxWidth =
-  "max-w-[calc(var(--container-content-wide)+var(--spacing-page-gutter)*2)]";
+/* The two sections share the work list's measure, plus the page gutter
+   doubled back in since neither reaches the frame's own edge. Classes are
+   written inline on each section rather than held in variables. */
 ---
 
 <PageShell title="Writing | Craig Chihururu" description={blurb} homeHref="/">
@@ -40,12 +38,12 @@ const wideMaxWidth =
     featured ? (
       <section
         class:list={[
-          pageFrame,
+          "w-full mx-auto px-page-gutter",
           /* The frosted-glass tint the tiles inside read from — was
              .writing__featured in writing.css, now declared where it cascades
              from instead of on a class of its own. */
           "[--writing-glass-top:rgb(255_255_255/18%)] [--writing-glass-bottom:rgb(255_255_255/8%)] [--writing-glass-edge:rgb(255_255_255/22%)]",
-          wideMaxWidth,
+          "max-w-content-wide-frame",
           "py-hero-top",
         ]}
         aria-labelledby="writing-heading"
@@ -68,11 +66,11 @@ const wideMaxWidth =
         />
       </section>
     ) : (
-      <section class="w-full max-w-[calc(var(--container-page)+var(--spacing-page-gutter)*2)] mx-auto px-page-gutter flex flex-col items-start pt-hero-top pb-section-py">
+      <section class="w-full max-w-page-frame mx-auto px-page-gutter flex flex-col items-start pt-hero-top pb-section-py">
         {/* Clears the fixed navbar the same way the placeholder pages' intro
             does — there is no hero and no cover above this one to do that
             job instead. */}
-        <h1 class="font-display text-[clamp(2.5rem,4.8vw,5.75rem)] font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight">
+        <h1 class="font-display text-display-hero font-bold tracking-snug leading-tight">
           Writing
         </h1>
         <p class="mt-xl max-w-caption text-neutral-700 text-body leading-normal">
@@ -85,7 +83,11 @@ const wideMaxWidth =
   {
     sortedArticles.length > 0 && (
       <section
-        class:list={[pageFrame, wideMaxWidth, "pb-section-y"]}
+        class:list={[
+          "w-full mx-auto px-page-gutter",
+          "max-w-content-wide-frame",
+          "pb-section-y",
+        ]}
         aria-labelledby="all-writing-heading"
       >
         <h2 class="sr-only" id="all-writing-heading">

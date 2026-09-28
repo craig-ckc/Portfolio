@@ -107,6 +107,7 @@
   --tracking-normal: -0.005em;
   --tracking-wide: 0.005em;
   --tracking-wider: 0.08em;
+  --tracking-none: 0;
 
   /* Line height */
   --leading-none: 1;
@@ -145,6 +146,7 @@
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-full: 999px;
+  --radius-inherit: inherit;
 
   /* Container */
   --container-content: 800px;
@@ -303,6 +305,8 @@
  * utility resolves through the emitted variable at runtime and the
  * responsive semantic spacing below stays live. */
 @theme {
+  --color-footer: #0b0b0b;
+
   /* Font family */
   --font-display: 'Satoshi Variable', 'Satoshi', system-ui, sans-serif;
   --font-sans: 'Manrope', system-ui, sans-serif;
@@ -319,6 +323,10 @@
   --text-4xl: 44px;
   --text-5xl: 60px;
   --text-6xl: 92px;
+  --text-display-hero: clamp(2.5rem, 4.8vw, 5.75rem);
+  --text-display-cta: clamp(2rem, 3.9vw, 3.75rem);
+  --text-display-statement: clamp(1.25rem, 1.67vw, 2rem);
+  --text-display-dialog: clamp(1.75rem, 2.2vw, 2.375rem);
   /* Alias, not a copy: body text follows --text-xs, here and in the tokens. */
   --text-body: var(--text-xs);
 
@@ -335,6 +343,7 @@
   --tracking-normal: -0.005em;
   --tracking-wide: 0.005em;
   --tracking-wider: 0.08em;
+  --tracking-none: 0;
 
   /* Line height */
   --leading-none: 1;
@@ -358,6 +367,19 @@
   --spacing-4xl: 64px;
   --spacing-5xl: 96px;
   --spacing-6xl: 128px;
+  --spacing-hairline: 3px;
+  --spacing-7px: 7px;
+  --spacing-nav-control: 26px;
+  --spacing-logo: 78.57px;
+  --spacing-icon: 15px;
+  --spacing-icon-inline: 13px;
+  --spacing-section-hero: calc(4 * var(--spacing-section-py));
+  --spacing-hero-column: min(var(--container-content), 38%);
+  --spacing-booking-width-sm: min(560px, calc(100vw - var(--spacing-md) * 2));
+  --spacing-booking-height-sm: min(860px, calc(100dvh - var(--spacing-md) * 2));
+  --spacing-booking-width-md: min(1280px, calc(100vw - var(--spacing-2xl) * 2));
+  --spacing-booking-height-md: min(700px, calc(100dvh - var(--spacing-2xl) * 2));
+  --spacing-project-cover: clamp(320px, 42svh, 520px);
 
   /* Spacing — semantic. Each reads its base primitive rather than itself, so
      the base follows the scale while the :root media queries in the token
@@ -382,6 +404,18 @@
   --container-hero: 1040px;
   --container-work: 1100px;
   --container-page: 1792px;
+  --container-page-frame: calc(var(--container-page) + var(--spacing-page-gutter) * 2);
+  --container-content-frame: calc(var(--container-content) + var(--spacing-2xl) * 2);
+  --container-content-wide-frame: calc(var(--container-content-wide) + var(--spacing-page-gutter) * 2);
+  --container-hero-frame: calc(var(--container-hero) + var(--spacing-2xl) * 2);
+  --container-inline-safe: calc(100% - var(--spacing-xl) * 2);
+  --container-experiment: 760px;
+  --container-readable: 44ch;
+  --container-copy: 56ch;
+  --aspect-work-image: 542 / 320;
+  --aspect-banner: 24 / 5;
+  --opacity-folder-muted: 0.28;
+  --rotate-sun: 60deg;
 
   /* Motion — easing only; see the durations note above. */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -572,6 +606,244 @@
   transition: var(--effect-transition-contact-label);
 }
 
+@utility rotate-sun {
+  transform: rotate(var(--rotate-sun));
+}
+
+@utility writing-glass {
+  background-image: linear-gradient(180deg, var(--writing-glass-top), var(--writing-glass-bottom));
+  backdrop-filter: blur(26px) saturate(140%);
+}
+
+@utility project-cover-fade {
+  background-image: linear-gradient(to bottom, transparent, var(--background));
+}
+
+@utility brightness-folder-hover {
+  filter: brightness(1.04);
+}
+
+/* The folder's six scatter slots and its idle/hover fan are responsive
+   geometry, not reusable Tailwind scale values. Keeping the rules here gives
+   the markup a single semantic class while preserving the measured layout. */
+@layer utilities {
+  .folder-slot-layout:nth-child(1) {
+    --slot-x: 27vw;
+    --slot-y: 16svh;
+    --slot-w: min(24vw, 17svh);
+    --slot-r: 7deg;
+    --slot-focus: 2.75;
+  }
+
+  .folder-slot-layout:nth-child(2) {
+    --slot-x: 73vw;
+    --slot-y: 16svh;
+    --slot-w: min(24vw, 17svh);
+    --slot-r: -5deg;
+    --slot-focus: 2.75;
+  }
+
+  .folder-slot-layout:nth-child(3) {
+    --slot-x: 30vw;
+    --slot-y: 42svh;
+    --slot-w: min(32vw, 23svh);
+    --slot-r: 3deg;
+    --slot-focus: 2.06;
+  }
+
+  .folder-slot-layout:nth-child(4) {
+    --slot-x: 74vw;
+    --slot-y: 42svh;
+    --slot-w: min(24vw, 17svh);
+    --slot-r: -8deg;
+    --slot-focus: 2.75;
+  }
+
+  .folder-slot-layout:nth-child(5) {
+    --slot-x: 27vw;
+    --slot-y: 68svh;
+    --slot-w: min(24vw, 17svh);
+    --slot-r: 5deg;
+    --slot-focus: 2.75;
+  }
+
+  .folder-slot-layout:nth-child(6) {
+    --slot-x: 73vw;
+    --slot-y: 68svh;
+    --slot-w: min(24vw, 17svh);
+    --slot-r: -6deg;
+    --slot-focus: 2.75;
+  }
+
+  .folder-item-fan:nth-child(1) { --i: 2; --x: -36%; --y: 2%; --r: -7deg; }
+  .folder-item-fan:nth-child(2) { --i: 1; --x: -21%; --y: 0%; --r: -4deg; }
+  .folder-item-fan:nth-child(3) { --i: 0; --x: -7%; --y: -1%; --r: -1.5deg; }
+  .folder-item-fan:nth-child(4) { --i: 0; --x: 7%; --y: -1%; --r: 1.5deg; }
+  .folder-item-fan:nth-child(5) { --i: 1; --x: 21%; --y: 0%; --r: 4deg; }
+  .folder-item-fan:nth-child(6) { --i: 2; --x: 36%; --y: 2%; --r: 7deg; }
+
+  .folder:hover .folder-item-fan:nth-child(1),
+  .folder:has(:focus-visible) .folder-item-fan:nth-child(1) { --x: -64%; --y: -18%; --r: -14deg; }
+  .folder:hover .folder-item-fan:nth-child(2),
+  .folder:has(:focus-visible) .folder-item-fan:nth-child(2) { --x: -38%; --y: -21%; --r: -8.5deg; }
+  .folder:hover .folder-item-fan:nth-child(3),
+  .folder:has(:focus-visible) .folder-item-fan:nth-child(3) { --x: -13%; --y: -23%; --r: -3deg; }
+  .folder:hover .folder-item-fan:nth-child(4),
+  .folder:has(:focus-visible) .folder-item-fan:nth-child(4) { --x: 13%; --y: -23%; --r: 3deg; }
+  .folder:hover .folder-item-fan:nth-child(5),
+  .folder:has(:focus-visible) .folder-item-fan:nth-child(5) { --x: 38%; --y: -21%; --r: 8.5deg; }
+  .folder:hover .folder-item-fan:nth-child(6),
+  .folder:has(:focus-visible) .folder-item-fan:nth-child(6) { --x: 64%; --y: -18%; --r: 14deg; }
+
+  @media (min-width: 900px) {
+    .folder-slot-layout:nth-child(1) { --slot-x: 88vw; --slot-y: 42svh; }
+    .folder-slot-layout:nth-child(2) { --slot-x: 70vw; --slot-y: 17svh; }
+    .folder-slot-layout:nth-child(3) { --slot-x: 40vw; --slot-y: 22svh; }
+    .folder-slot-layout:nth-child(4) { --slot-x: 80vw; --slot-y: 76svh; }
+    .folder-slot-layout:nth-child(5) { --slot-x: 55vw; --slot-y: 64svh; }
+    .folder-slot-layout:nth-child(6) { --slot-x: 21vw; --slot-y: 62svh; }
+  }
+
+  @media (min-width: 1200px) {
+    .folder-slot-layout:nth-child(1) { --slot-x: 12vw; --slot-y: 42svh; --slot-w: 15vw; --slot-r: -7deg; --slot-focus: 1.87; }
+    .folder-slot-layout:nth-child(2) { --slot-x: 30vw; --slot-y: 17svh; --slot-w: 13vw; --slot-r: 5deg; --slot-focus: 2.15; }
+    .folder-slot-layout:nth-child(3) { --slot-x: 60vw; --slot-y: 22svh; --slot-w: 20vw; --slot-r: -3deg; --slot-focus: 1.4; }
+    .folder-slot-layout:nth-child(4) { --slot-x: 20vw; --slot-y: 76svh; --slot-w: 14vw; --slot-r: 8deg; --slot-focus: 2; }
+    .folder-slot-layout:nth-child(5) { --slot-x: 45vw; --slot-y: 64svh; --slot-w: 14vw; --slot-r: -5deg; --slot-focus: 2; }
+    .folder-slot-layout:nth-child(6) { --slot-x: 79vw; --slot-y: 62svh; --slot-w: 18vw; --slot-r: 6deg; --slot-focus: 1.56; }
+  }
+
+  .polaroid-frame {
+    position: absolute;
+    top: 19.7cqw;
+    left: 50%;
+    display: flex;
+    width: 76cqw;
+    flex-direction: column;
+    padding: 3.5cqw 3.5cqw 11cqw;
+    border-radius: 1cqw;
+    background: #fff;
+    z-index: calc(10 - var(--depth, 0));
+    box-shadow: 0 0 0 1px rgb(21 21 21 / 8%), 0 2cqw 5cqw rgb(21 21 21 / 12%);
+    transform: translate(-50%, 0) translate(var(--x, 0cqw), var(--y, 0cqw))
+      translate(var(--print-drag-x, 0px), 0)
+      rotate(calc(var(--r, 0deg) + var(--print-drag-r, 0deg)))
+      translateY(var(--lift, 0cqw)) scale(var(--scale, 1));
+    transition:
+      transform var(--duration-base) var(--ease-out-cubic),
+      box-shadow var(--duration-base) var(--ease-out-cubic);
+    transition-delay: 0ms;
+  }
+
+  .polaroid-frame[data-depth='0'] { --i: 0; --r: 1deg; --x: 0cqw; --y: 0cqw; }
+  .polaroid-frame[data-depth='1'] { --i: 1; --r: 9deg; --x: 13cqw; --y: -2cqw; }
+  .polaroid-frame[data-depth='2'] { --i: 2; --r: -11deg; --x: -14cqw; --y: -3cqw; }
+  .polaroid-frame[data-depth='3'] { --i: 3; --r: -15deg; --x: -19cqw; --y: -4cqw; }
+  .polaroid-frame[data-depth='4'] { --i: 4; --r: 14deg; --x: 18cqw; --y: -5cqw; }
+
+  .folder.is-open .card[data-kind='polaroids']:hover .polaroid-frame {
+    transition-delay: calc(var(--i, 0) * 35ms);
+  }
+
+  .folder.is-open .card[data-kind='polaroids']:hover .polaroid-frame[data-depth='0'] {
+    --lift: -2cqw;
+    --scale: 1.05;
+    box-shadow: 0 0 0 1px rgb(21 21 21 / 8%), 0 3cqw 7cqw rgb(21 21 21 / 20%);
+  }
+
+  .folder.is-open .card[data-kind='polaroids']:hover .polaroid-frame[data-depth='1'] { --r: 14deg; --x: 22cqw; --y: -5cqw; }
+  .folder.is-open .card[data-kind='polaroids']:hover .polaroid-frame[data-depth='2'] { --r: -17deg; --x: -24cqw; --y: -6cqw; }
+  .folder.is-open .card[data-kind='polaroids']:hover .polaroid-frame[data-depth='3'] { --r: -22deg; --x: -30cqw; --y: -7cqw; }
+  .folder.is-open .card[data-kind='polaroids']:hover .polaroid-frame[data-depth='4'] { --r: 20deg; --x: 28cqw; --y: -8cqw; }
+
+  .polaroid-frame.is-leaving,
+  .folder.is-open .card[data-kind='polaroids']:hover .polaroid-frame.is-leaving {
+    --x: calc(var(--side, 1) * 52cqw);
+    --y: -10cqw;
+    --r: calc(var(--side, 1) * 16deg);
+    --scale: 1.02;
+    --lift: 0cqw;
+    box-shadow: 0 0 0 1px rgb(21 21 21 / 8%), 0 4cqw 9cqw rgb(21 21 21 / 26%);
+    transition-timing-function: var(--ease-standard);
+    transition-delay: 0ms;
+  }
+
+  .polaroid-frame.is-returning,
+  .folder.is-open .card[data-kind='polaroids']:hover .polaroid-frame.is-returning {
+    transition-duration: var(--duration-slow);
+    transition-delay: 0ms;
+  }
+
+  .is-focused .card[data-kind='polaroids'] .polaroid-frame[data-depth='0'] { cursor: grab; }
+
+  .polaroid-frame.is-dragging,
+  .folder.is-open .card[data-kind='polaroids']:hover .polaroid-frame.is-dragging {
+    cursor: grabbing;
+    box-shadow: 0 0 0 1px rgb(21 21 21 / 8%), 0 4cqw 9cqw rgb(21 21 21 / 26%);
+    transition: none;
+  }
+}
+
+/* The lanyard face has enough stateful geometry that keeping its class recipe
+   in a CSS utility is clearer and lets Tailwind emit it once. */
+@utility lanyard-root {
+  position: absolute;
+  inset: 0;
+  perspective: 300cqw;
+  --k: clamp(1, calc(var(--out-scale, 1) * var(--slot-focus, 2) * var(--folder-zoom, 1)), 5);
+  --lx: 0.5;
+  --ly: 0.5;
+  --on: 0;
+  --enter: 0;
+  --rx: 0deg;
+  --ry: 0deg;
+  --rise: 0%;
+  --grow: 1;
+  --shine: 0;
+
+  .card:has(&) {
+    overflow: visible;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .folder.is-open & {
+    --ry: calc(var(--enter) * var(--on) * 3.5deg);
+    --rise: calc(var(--on) * -1.2%);
+    --grow: calc(1 + var(--on) * 0.015);
+    --shine: calc(var(--on) * 0.6);
+  }
+
+  .folder.is-open .is-focused & {
+    --lean: 5deg;
+    --rx: calc((var(--ly) - 0.5) * 2 * var(--lean));
+    --ry: calc((0.5 - var(--lx)) * 2 * var(--lean));
+    --rise: 0%;
+    --grow: 1;
+    --shine: var(--on);
+  }
+}
+
+@utility lanyard-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  container-type: inline-size;
+  overflow: hidden;
+  will-change: transform;
+  width: calc(100% * var(--k));
+  height: calc(100% * var(--k));
+  border-radius: calc(3cqw * var(--k));
+  background: #fdfdfd;
+  transform-origin: top left;
+  transform: scale3d(calc(1 / var(--k)), calc(1 / var(--k)), calc(1 / var(--k)))
+    translate(50%, 50%) translateY(var(--rise)) scale(var(--grow)) rotateX(var(--rx))
+    rotateY(var(--ry)) translate(-50%, -50%) translate3d(0, 0, 0.01px);
+  box-shadow:
+    0 0 0 calc(1px * var(--k)) rgb(21 21 21 / 8%),
+    0 calc(3px * var(--k)) calc(8px * var(--k)) rgb(21 21 21 / 10%);
+}
+
 /* Shared between src/components/sections/cta.tsx and
    src/components/writing/article-share.astro — a row of round icon buttons.
    A bundle, not separate utilities, because it needs `& a`/`& svg` nesting
@@ -728,8 +1000,8 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
  * built-in `container` utility, and a bare class of the same name would lose
  * to it in the utilities layer at responsive widths. Sections size
  * themselves with explicit utilities instead —
- * `w-full max-w-[calc(var(--container-page)_+_var(--spacing-page-gutter)_*_2)]
- * mx-auto px-page-gutter` — so what sizes the page is visible at each call
+   * `w-full max-w-page-frame mx-auto px-page-gutter` — so what sizes the page
+   * is visible at each call
  * site rather than hiding in a shared rule.
    ========================================================================== */
 

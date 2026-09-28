@@ -159,13 +159,6 @@ export function BookingDialog() {
     }
   }, [open])
 
-  /* The link beside the calendar and every link in the unavailable state share
-     one look: a hairline underline in --neutral-600 that steps up to the ink
-     colour on hover. Kept as a single string rather than repeated per call
-     site. */
-  const inlineLink =
-    'pb-4xs border-b border-neutral-600 text-foreground font-semibold transition-colors duration-320 ease-standard hover:border-foreground'
-
   return (
     <dialog
       /* The three themed custom properties (edge/rule/shadow) are declared
@@ -178,7 +171,7 @@ export function BookingDialog() {
          without a class of its own. `display` still can't be unconditional
          (the UA's `dialog:not([open]) { display: none }` must win while shut),
          so only `open:flex` sets it, exactly as `.booking[open]` did. */
-      className="[--booking-edge:rgb(21_21_21/10%)] dark:[--booking-edge:rgb(255_255_255/12%)] [--booking-rule:rgb(21_21_21/8%)] dark:[--booking-rule:rgb(255_255_255/10%)] [--booking-shadow:0_2px_8px_rgb(0_0_0/6%),0_28px_64px_rgb(0_0_0/14%)] dark:[--booking-shadow:0_2px_8px_rgb(0_0_0/44%),0_28px_64px_rgb(0_0_0/56%)] w-screen h-dvh rounded-none sm:w-[min(560px,calc(100vw-var(--spacing-md)*2))] sm:h-[min(860px,calc(100dvh-var(--spacing-md)*2))] sm:rounded-lg md:w-[min(1280px,calc(100vw-var(--spacing-2xl)*2))] md:h-[min(700px,calc(100dvh-var(--spacing-2xl)*2))] max-w-none max-h-none overflow-hidden p-0 border border-(--booking-edge) bg-background shadow-(--booking-shadow) text-foreground font-sans tracking-normal opacity-0 transform-[translateY(8px)_scale(0.99)] [transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic),display_var(--duration-base)_allow-discrete,overlay_var(--duration-base)_allow-discrete] open:flex open:opacity-100 open:transform-none open:starting:opacity-0 open:starting:transform-[translateY(8px)_scale(0.99)] backdrop:[background:rgb(249_249_249/72%)] dark:backdrop:[background:rgb(12_12_12/70%)] backdrop:[backdrop-filter:blur(24px)_saturate(125%)] backdrop:opacity-0 backdrop:[transition:opacity_var(--duration-base)_var(--ease-standard),display_var(--duration-base)_allow-discrete,overlay_var(--duration-base)_allow-discrete] open:backdrop:opacity-100 open:backdrop:starting:opacity-0 motion-reduce:backdrop:duration-[1ms]!"
+      className="[--booking-edge:rgb(21_21_21/10%)] dark:[--booking-edge:rgb(255_255_255/12%)] [--booking-rule:rgb(21_21_21/8%)] dark:[--booking-rule:rgb(255_255_255/10%)] [--booking-shadow:0_2px_8px_rgb(0_0_0/6%),0_28px_64px_rgb(0_0_0/14%)] dark:[--booking-shadow:0_2px_8px_rgb(0_0_0/44%),0_28px_64px_rgb(0_0_0/56%)] w-screen h-dvh rounded-none sm:w-booking-width-sm sm:h-booking-height-sm sm:rounded-lg md:w-booking-width-md md:h-booking-height-md max-w-none max-h-none overflow-hidden p-0 border border-(--booking-edge) bg-background shadow-(--booking-shadow) text-foreground font-sans tracking-normal opacity-0 transform-[translateY(8px)_scale(0.99)] [transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic),display_var(--duration-base)_allow-discrete,overlay_var(--duration-base)_allow-discrete] open:flex open:opacity-100 open:transform-none open:starting:opacity-0 open:starting:transform-[translateY(8px)_scale(0.99)] backdrop:[background:rgb(249_249_249/72%)] dark:backdrop:[background:rgb(12_12_12/70%)] backdrop:[backdrop-filter:blur(24px)_saturate(125%)] backdrop:opacity-0 backdrop:[transition:opacity_var(--duration-base)_var(--ease-standard),display_var(--duration-base)_allow-discrete,overlay_var(--duration-base)_allow-discrete] open:backdrop:opacity-100 open:backdrop:starting:opacity-0 motion-reduce:backdrop:duration-[1ms]!"
       ref={dialogRef}
       aria-labelledby="booking-title"
       /* Escape and the close button both end up here, so this is the one place
@@ -199,7 +192,7 @@ export function BookingDialog() {
         data-lenis-prevent
       >
         <button
-          className="absolute top-xs right-xs sm:top-md sm:right-md z-1 grid size-8.5 place-items-center p-0 border border-(--booking-edge) rounded-full bg-background text-foreground cursor-pointer transition-[background-color,transform] duration-180 ease-standard hover:bg-neutral-300 active:scale-[0.94]"
+          className="absolute top-xs right-xs sm:top-md sm:right-md z-1 grid size-8.5 place-items-center p-0 border border-(--booking-edge) rounded-full bg-background text-foreground cursor-pointer transition-[background-color,transform] duration-180 ease-standard hover:bg-neutral-300 active:scale-94"
           type="button"
           onClick={close}
         >
@@ -217,7 +210,7 @@ export function BookingDialog() {
               breakpoints rather than jumping between two fixed scale steps —
               there is no token for a fluid size. */}
           <h2
-            className="pt-sm font-display text-[clamp(1.75rem,2.2vw,2.375rem)] font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight"
+            className="pt-sm font-display text-display-dialog font-bold tracking-snug leading-tight"
             id="booking-title"
           >
             {bookingDialog.title}
@@ -247,7 +240,10 @@ export function BookingDialog() {
               nothing to push against and the margin is dropped. */}
           <p className="w-full mt-0 md:mt-auto pt-md border-t border-(--booking-rule) text-neutral-700 text-2xs leading-relaxed">
             <span>{bookingDialog.fallbackLead}</span>{' '}
-            <a className={inlineLink} href={bookingDialog.fallbackLink.href}>
+            {/* Shares its hairline-underline look with the unavailable-state
+                links below: underline in neutral-600 stepping up to the ink
+                colour on hover. */}
+            <a className="pb-4xs border-b border-neutral-600 text-foreground font-semibold transition-colors duration-320 ease-standard hover:border-foreground" href={bookingDialog.fallbackLink.href}>
               {bookingDialog.fallbackLink.label}
             </a>{' '}
             <span>{bookingDialog.fallbackTrail}</span>
@@ -292,7 +288,7 @@ export function BookingDialog() {
                 {bookingDialog.unavailableLinks.map((link) => (
                   <a
                     key={link.label}
-                    className={inlineLink}
+                    className="pb-4xs border-b border-neutral-600 text-foreground font-semibold transition-colors duration-320 ease-standard hover:border-foreground"
                     href={link.href}
                     {...(link.external ? { target: '_blank', rel: 'noreferrer' } : {})}
                   >

@@ -88,7 +88,7 @@ export function Footer() {
         // BEYOND THE FRAME: #0b0b0b is the footer's own ground colour, with no
         // token behind it — the dither's dark regions are meant to show it
         // through, not a token colour of their own (see footer.css).
-        className="fixed right-0 bottom-0 left-0 flex h-(--footer-h) flex-col items-center justify-end overflow-clip pt-4xl px-page-gutter pb-[40px] bg-[#0b0b0b] text-background isolate"
+        className="fixed right-0 bottom-0 left-0 flex h-(--footer-h) flex-col items-center justify-end overflow-clip pt-4xl px-page-gutter pb-10 bg-footer text-background isolate"
         ref={footerRef}
       >
         {/* Two nested layers because they animate from different sources: the

@@ -87,28 +87,22 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
     setPlaying(positionAt(durations, elapsed))
   }
 
-  /* The card's own overflow: visible (needed because the record and the
-     popover both poke outside the card's square) targets the folder agent's
-     element, so it is asserted from here with a :has() variant instead of
-     editing the `.card` element's own `overflow-hidden` in
-     hero-folder.tsx. */
-  const rootClass = "absolute inset-0 rounded-[inherit] [.card:has(&)]:overflow-visible!"
-
-  if (tracks.length === 0) return <span className={rootClass} />
+  if (tracks.length === 0)
+    return (
+      <span className="absolute inset-0 rounded-inherit [.card:has(&)]:overflow-visible!" />
+    )
 
   const track = tracks[playing.index] ?? tracks[0]
   const duration = durations[playing.index] ?? track.durationMs
   const progress = duration > 0 ? Math.min(playing.positionMs / duration, 1) : 0
 
-  /* The label and cover both cross-fade between the same set of covers by
-     stacking every candidate and showing only the current one — data-current
-     is written above from `playing.index`, never a class, since nothing but
-     this opacity switch depends on it. */
-  const crossfadeImg =
-    "absolute inset-0 size-full object-cover opacity-0 [transition:opacity_var(--duration-slow)_var(--ease-standard)] data-[current=true]:opacity-100"
-
   return (
-    <span className={rootClass}>
+    /* The card's own overflow: visible (needed because the record and the
+       popover both poke outside the card's square) targets the folder agent's
+       element, so it is asserted from here with a :has() variant instead of
+       editing the `.card` element's own `overflow-hidden` in
+       hero-folder.tsx. */
+    <span className="absolute inset-0 rounded-inherit [.card:has(&)]:overflow-visible!">
       {/* Centred behind the cover at rest, so "shut" and "open but not
           hovered" both read as a plain cover with nothing behind it. Two
           things bring it out: the pointer arriving, and the card being
@@ -147,7 +141,12 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
             {tracks.map((candidate, index) => (
               <img
                 key={candidate.art}
-                className={crossfadeImg}
+                /* The label and cover both cross-fade between the same set of
+                   covers by stacking every candidate and showing only the
+                   current one — data-current is written from
+                   `playing.index`, never a class, since nothing but this
+                   opacity switch depends on it. */
+                className="absolute inset-0 size-full object-cover opacity-0 [transition:opacity_var(--duration-slow)_var(--ease-standard)] data-[current=true]:opacity-100"
                 src={candidate.art}
                 alt=""
                 draggable={false}
@@ -160,11 +159,11 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
         </span>
       </span>
 
-      <span className="absolute inset-0 z-2 rounded-[inherit] overflow-hidden">
+      <span className="absolute inset-0 z-2 rounded-inherit overflow-hidden">
         {tracks.map((candidate, index) => (
           <img
             key={candidate.art}
-            className={`${crossfadeImg} rounded-[inherit]`}
+            className="absolute inset-0 size-full object-cover opacity-0 rounded-inherit [transition:opacity_var(--duration-slow)_var(--ease-standard)] data-[current=true]:opacity-100"
             src={candidate.art}
             alt=""
             draggable={false}
@@ -245,11 +244,11 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
         <span className="flex flex-col gap-[1.2cqw] mt-[1.6cqw]">
           <span className="relative h-[2cqw] rounded-full bg-[rgb(249_249_249/18%)] overflow-hidden">
             <span
-              className="absolute inset-y-0 left-0 rounded-[inherit] bg-[#f9f9f9] [transition:width_var(--duration-fast)_linear]"
+              className="absolute inset-y-0 left-0 rounded-inherit bg-[#f9f9f9] [transition:width_var(--duration-fast)_linear]"
               style={{ width: `${progress * 100}%` }}
             />
           </span>
-          <span className="flex justify-between text-[rgb(249_249_249/62%)] font-sans text-[2.8cqw] [font-variant-numeric:tabular-nums]">
+          <span className="flex justify-between text-[rgb(249_249_249/62%)] font-sans text-[2.8cqw] tabular-nums">
             <span>{formatTime(playing.positionMs)}</span>
             <span>{formatTime(duration)}</span>
           </span>

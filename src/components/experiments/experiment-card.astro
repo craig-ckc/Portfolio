@@ -12,12 +12,12 @@ const { experiment } = Astro.props
 
 <a class="group block" href={experimentPath(experiment.slug)}>
   <article>
-    <div class="aspect-[4/3] overflow-hidden rounded-lg bg-neutral-300">
+    <div class="aspect-4/3 overflow-hidden rounded-lg bg-neutral-300">
       <ExperimentPreview />
     </div>
     <div class="mt-md flex items-start justify-between gap-xl">
       <div class="min-w-0">
-        <h2 class="font-display text-md font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight underline decoration-transparent underline-offset-[4px] transition-[text-decoration-color] duration-320 ease-out-cubic group-hover:decoration-current group-focus-visible:decoration-current">
+        <h2 class="font-display text-md font-semibold tracking-snug leading-tight underline decoration-transparent underline-offset-3xs transition-[text-decoration-color] duration-320 ease-out-cubic group-hover:decoration-current group-focus-visible:decoration-current">
           {experiment.title}
         </h2>
       </div>

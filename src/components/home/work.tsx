@@ -2,7 +2,7 @@ import { work, workPath } from '../../content/work'
 
 export function Work() {
   return (
-    <section className="mx-auto w-full max-w-[calc(var(--container-page)+var(--spacing-page-gutter)*2)] px-page-gutter py-section-py" id="work" aria-label="Selected work">
+    <section className="mx-auto w-full max-w-page-frame px-page-gutter py-section-py" id="work" aria-label="Selected work">
       <div className="flex max-w-work flex-col mx-auto gap-section-y">
         {work.map((entry) => (
           <article className="flex flex-col gap-md" key={entry.slug}>
@@ -18,12 +18,12 @@ export function Work() {
               <div className="grid grid-cols-1 gap-md md:grid-cols-2">
                 {entry.tiles.map((tile, index) => (
                   <div
-                    className="relative h-auto aspect-[542/320] overflow-hidden rounded-md bg-neutral-600 md:h-[320px] md:aspect-auto"
+                    className="relative h-auto aspect-work-image overflow-hidden rounded-md bg-neutral-600 md:h-80 md:aspect-auto"
                     key={`${entry.slug}-${index}`}
                   >
                     {tile.src ? (
                       <img
-                        className="block h-full w-full object-cover transition-transform duration-760 ease-out-quart will-change-transform group-hover:scale-[1.03]"
+                        className="block h-full w-full object-cover transition-transform duration-760 ease-out-quart will-change-transform group-hover:scale-103"
                         src={tile.src}
                         alt={tile.alt ?? ''}
                       />
@@ -39,10 +39,10 @@ export function Work() {
               </div>
 
               <div className="flex flex-col gap-3xs">
-                <h2 className="font-display text-base font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight underline decoration-transparent decoration-1 underline-offset-[3px] transition-[text-decoration-color] duration-320 ease-out-cubic group-hover:decoration-current group-focus-visible:decoration-current">
+                <h2 className="font-display text-base font-semibold tracking-snug leading-tight underline decoration-transparent decoration-1 underline-offset-hairline transition-[text-decoration-color] duration-320 ease-out-cubic group-hover:decoration-current group-focus-visible:decoration-current">
                   {entry.title}
                 </h2>
-                <p className="max-w-[56ch] text-pretty text-neutral-700 font-display text-body tracking-snug leading-normal">
+                <p className="max-w-copy text-pretty text-neutral-700 font-display text-body tracking-snug leading-normal">
                   {entry.description}
                 </p>
               </div>
