@@ -1,10 +1,24 @@
 import { readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
+import { work, workPath } from '../content/work'
 import { INDEXABLE_PATHS, canonicalUrl, indexableUrls, requireSite, robotsTxt, sitemapXml } from './sitemap'
 
 const SITE = new URL('https://www.craigchihururu.com')
 
-/** Every .astro route on disk, as the path a visitor would type. */
+/** The project route, as it is spelled on disk. */
+const WORK_ROUTE = '/work/[slug]'
+
+/**
+ * Every .astro route on disk, as the path a visitor would type.
+ *
+ * A dynamic route stands for one path per entry it is built from, so the work
+ * route expands to the same list `getStaticPaths` walks. That makes the
+ * comparison below no guard at all for project pages — both sides read `work`
+ * — and that is the point: a project is published by being added to the work
+ * list, so there is nothing left to forget. What the comparison still catches
+ * is a new static page nobody listed, and a second dynamic route added without
+ * an expansion here, which arrives as a literal '[slug]' and fails to match.
+ */
 function routesInPagesDir(): string[] {
   const dir = new URL('../pages/', import.meta.url)
 
@@ -12,6 +26,7 @@ function routesInPagesDir(): string[] {
     .filter((entry) => entry.endsWith('.astro'))
     .map((entry) => '/' + entry.replace(/\.astro$/, '').replace(/(^|\/)index$/, ''))
     .map((route) => (route === '/' ? route : route.replace(/\/$/, '')))
+    .flatMap((route) => (route === WORK_ROUTE ? work.map((entry) => workPath(entry.slug)) : [route]))
 }
 
 describe('INDEXABLE_PATHS', () => {

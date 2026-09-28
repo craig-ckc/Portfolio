@@ -1371,6 +1371,14 @@
   gap: var(--spacing-md);
 }
 
+/* The whole row is one link to the project's page (see work.tsx), so the
+   anchor carries the row's layout rather than sitting inside it as a bare box. */
+.work__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
 .work__tiles {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1412,6 +1420,21 @@
   font-variation-settings: 'wght' 600;
   letter-spacing: var(--tracking-snug);
   line-height: var(--leading-tight);
+  /* The only thing that says the row is clickable. Drawn as an underline that
+     arrives on hover rather than one that was always there, so the resting
+     state is still the frame's — and as a text-decoration rather than a
+     background sweep, because the heading is a block and a swept underline
+     would run the width of the row instead of the width of the title. */
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--duration-base) var(--ease-out-cubic);
+}
+
+.work__link:hover .work__title,
+.work__link:focus-visible .work__title {
+  text-decoration-color: currentColor;
 }
 
 .work__description {

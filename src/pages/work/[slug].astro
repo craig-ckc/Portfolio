@@ -1,0 +1,140 @@
+---
+/**
+ * One project, at /work/<slug>.
+ *
+ * A template rather than a page per project: what a project page holds is
+ * decided by its record in src/content/work.ts, so publishing a new one is an
+ * entry in that list and nothing else — the route, the sitemap and the
+ * homepage row all follow from it.
+ *
+ * Everything past the intro is conditional on the record carrying it. A
+ * project that has only the line it shows on the homepage still renders a
+ * page: its title. That is
+ * deliberate, so a project can go up the day it ships and be written up after.
+ *
+ * The cover, when there is one, runs full-bleed under the navbar rather than
+ * inside the reading column — it is the one image on the page meant to fill
+ * the width of the screen rather than the width of a paragraph. Everything
+ * after it lives in a single centred column, the way a long-form page reads
+ * rather than the two-column dossier the old layout drew.
+ */
+import PageShell from '../../layouts/page-shell.astro'
+import ProjectFigure from '../../components/work/project-figure.astro'
+import { Cta } from '../../components/sections/cta'
+import { work, type WorkEntry } from '../../content/work'
+import '../../styles/project-page.css'
+
+export function getStaticPaths() {
+  return work.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }))
+}
+
+interface Props {
+  entry: WorkEntry
+}
+
+const { entry } = Astro.props
+
+/* The homepage line, doing its second job. It is already one sentence saying
+   what the project was, which is exactly what a search result and a shared
+   link need — and taking it from here rather than writing a second one is what
+   stops the page and the row disagreeing. */
+const description = entry.description
+---
+
+<PageShell title={`${entry.title} — Craig Chihururu`} description={description} homeHref="/" smoothScroll>
+  <article class="project">
+    {
+      /* The live link, when there is one, sits wherever the top of the page
+         actually is: centred over the fade when there is a cover to fade into,
+         or at the head of the column when there is not. There is no way back
+         drawn here — the navbar is already the way home. */
+    }
+    {
+      entry.cover ? (
+        <div class="project__hero">
+          <div class="project__hero-media">
+            <ProjectFigure media={entry.cover} shape="wide" loading="eager" />
+          </div>
+          <div class="project__hero-fade" aria-hidden="true" />
+          {entry.live && (
+            <div class="project__pills">
+              <a class="project__pill" href={entry.live.href} target="_blank" rel="noreferrer">
+                {entry.live.label}
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path
+                    d="M3.75 8.25 8.25 3.75M4.5 3.75h3.75V7.5"
+                    stroke="currentColor"
+                    stroke-width="1.25"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </a>
+            </div>
+          )}
+        </div>
+      ) : null
+    }
+
+    <div class:list={['project__column', { 'project__column--no-hero': !entry.cover }]}>
+      {
+        !entry.cover && entry.live && (
+          <div class="project__pills project__pills--top">
+            <a class="project__pill" href={entry.live.href} target="_blank" rel="noreferrer">
+              {entry.live.label}
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path
+                  d="M3.75 8.25 8.25 3.75M4.5 3.75h3.75V7.5"
+                  stroke="currentColor"
+                  stroke-width="1.25"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </div>
+        )
+      }
+
+      <div class="project__intro">
+        <h1 class="project__title">{entry.title}</h1>
+        {entry.summary && <p class="project__lede">{entry.summary}</p>}
+      </div>
+
+      {
+        entry.sections?.map((section) => (
+          <section class="project__section">
+            <h2 class="project__heading">{section.heading}</h2>
+
+            <div class="project__prose">
+              {section.body.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+
+            {section.media?.length ? (
+              <div class:list={['project__media', { 'project__media--pair': section.media.length > 1 }]}>
+                {section.media.map((media) => (
+                  <ProjectFigure media={media} />
+                ))}
+              </div>
+            ) : null}
+          </section>
+        ))
+      }
+
+      {
+        entry.quote && (
+          <blockquote class="project__quote">
+            <p class="project__quote-body">{entry.quote.body}</p>
+            <footer class="project__quote-by">
+              {entry.quote.name}, {entry.quote.role}
+            </footer>
+          </blockquote>
+        )
+      }
+    </div>
+  </article>
+
+  <Cta />
+</PageShell>

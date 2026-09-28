@@ -1,0 +1,37 @@
+---
+/**
+ * One image on a project page, drawn in the frame the whole page uses.
+ *
+ * `src` is allowed to be missing. None of the work records carry imagery yet,
+ * and a flat --neutral-600 fill in the right shape is a truer placeholder than
+ * a broken image or a slot that collapses to nothing — it is the same fill the
+ * homepage tiles fall back to, so an unfinished project page and an unfinished
+ * homepage row look unfinished in the same way.
+ */
+import type { WorkMedia } from '../../content/work'
+
+interface Props {
+  media: WorkMedia
+  /** 'wide' is the cover's shape; 'still' is everything in the body. */
+  shape?: 'wide' | 'still'
+  /**
+   * The cover is the one image above the fold and the page's largest asset, so
+   * it is the one image not deferred. Everything else waits until the reader is
+   * on their way to it.
+   */
+  loading?: 'eager' | 'lazy'
+}
+
+const { media, shape = 'still', loading = 'lazy' } = Astro.props
+---
+
+<figure class:list={['project__figure', `project__figure--${shape}`]}>
+  <div class="project__frame">
+    {
+      media.src && (
+        <img src={media.src} alt={media.alt ?? ''} loading={loading} decoding="async" />
+      )
+    }
+  </div>
+  {media.caption && <figcaption class="project__caption">{media.caption}</figcaption>}
+</figure>

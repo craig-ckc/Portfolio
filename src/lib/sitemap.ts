@@ -4,21 +4,37 @@
  * head — so all three name a page identically and one origin is written down
  * once.
  *
- * The list is written out by hand rather than globbed from src/pages, so that
- * what gets submitted to a search engine stays a deliberate choice and not a
- * side effect of a file appearing on disk — a draft or a dynamic route would
- * otherwise walk straight into it. The trade is that a new page has to be
- * added here too, and sitemap.test.ts fails when one isn't, so the list cannot
- * quietly fall behind src/pages.
+ * The list is written out rather than globbed from src/pages, so that what
+ * gets submitted to a search engine stays a deliberate choice and not a side
+ * effect of a file appearing on disk — a draft would otherwise walk straight
+ * into it. The trade is that a new page has to be added here too, and
+ * sitemap.test.ts fails when one isn't, so the list cannot quietly fall behind
+ * src/pages. The project pages are the one route built from data rather than
+ * named here; the note on INDEXABLE_PATHS says why.
  *
  * Paths carry no trailing slash, matching how the site already links to itself
  * from `navLinks` in src/content/home-page.ts. A sitemap that disagrees with a
  * site's own internal links hands the crawler two candidate URLs per page to
  * reconcile, and picks the fight over which is canonical for no gain.
  */
+import { work, workPath } from '../content/work'
 
-/** Every path the site wants indexed, root-relative. */
-export const INDEXABLE_PATHS = ['/', '/writing', '/experiments'] as const
+/**
+ * Every path the site wants indexed, root-relative.
+ *
+ * The static pages are listed by hand, per the note above. The project pages
+ * are not: they are generated from `work` by src/pages/work/[slug].astro, and
+ * writing them out again here would only create a second list that can fall
+ * behind the first. The deliberate choice is still being made, one level up —
+ * it is "every project in the work list", and adding a project to that list is
+ * the act of publishing it.
+ */
+export const INDEXABLE_PATHS: readonly string[] = [
+  '/',
+  '/writing',
+  '/experiments',
+  ...work.map((entry) => workPath(entry.slug)),
+]
 
 /**
  * The origin, as an absolute URL. Astro only fills `Astro.site` in when

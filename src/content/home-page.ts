@@ -1,20 +1,8 @@
-/* Copy for the homepage. Text is taken from the Paper page frame; where the
-   frame repeated one placeholder row four times, the extra rows are filled with
-   this portfolio's real client names so the section reads as a real list. */
+/* Copy for the homepage. Text is taken from the Paper page frame.
 
-export type WorkTile = {
-  /** Optional. Tiles fall back to a flat --neutral-600 fill, as in the frame. */
-  src?: string
-  alt?: string
-}
-
-export type WorkEntry = {
-  slug: string
-  title: string
-  description: string
-  href: string
-  tiles: [WorkTile, WorkTile]
-}
+   The work list is not here. A project says the same thing in the homepage row
+   and on its own page at /work/<slug>, so one record covers both and it lives
+   in src/content/work.ts alongside the rest of what that page renders. */
 
 /**
  * One thing tucked in the hero folder.
@@ -270,33 +258,6 @@ export const folderItems: FolderItem[] = [
       org: 'Independent',
       since: '2019',
     },
-  },
-]
-
-export const work: WorkEntry[] = [
-  {
-    slug: 'designing-minds',
-    title: 'Designing Minds',
-    description:
-      'A brand platform and website for an education consultancy. The identity turns curiosity into a system of marks, and the site ships as static pages that load fast on slow connections.',
-    href: '/work/designing-minds',
-    tiles: [{}, {}],
-  },
-  {
-    slug: 'preflight',
-    title: 'Preflight',
-    description:
-      'A review workflow for creative teams. I designed the sign-off model and built the front end, so the handover between design and development never left the product.',
-    href: '/work/preflight',
-    tiles: [{}, {}],
-  },
-  {
-    slug: 'richard-james',
-    title: 'Richard James',
-    description:
-      'A portfolio for a photographer who shoots on film. Type is kept quiet, the grid gives every frame room, and image loading is tuned so a gallery of large scans still feels immediate.',
-    href: '/work/richard-james',
-    tiles: [{}, {}],
   },
 ]
 
