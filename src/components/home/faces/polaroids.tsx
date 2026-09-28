@@ -61,62 +61,62 @@ const FRAME_BASE = [
   // own height, so anchoring it at the card's top edge would sit the pile
   // high and off-centre. Offsetting it down by half the difference puts the
   // resting print's centre on the card's.
-  'tw:absolute tw:top-[19.7cqw] tw:left-1/2 tw:w-[76cqw] tw:flex tw:flex-col',
-  'tw:pt-[3.5cqw] tw:px-[3.5cqw] tw:pb-[11cqw] tw:rounded-[1cqw]',
+  'absolute top-[19.7cqw] left-1/2 w-[76cqw] flex flex-col',
+  'pt-[3.5cqw] px-[3.5cqw] pb-[11cqw] rounded-[1cqw]',
   // BEYOND THE FRAME: print stock white, deliberately independent of the
   // page's --background token — a photograph does not follow the site's
   // theme.
-  'tw:bg-[#fff]',
-  'tw:z-[calc(10_-_var(--depth,0))]',
-  'tw:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_2cqw_5cqw_rgb(21_21_21/12%)]',
-  'tw:[transform:translate(-50%,0)_translate(var(--x,0cqw),var(--y,0cqw))_translate(var(--print-drag-x,0px),0)_rotate(calc(var(--r,0deg)_+_var(--print-drag-r,0deg)))_translateY(var(--lift,0cqw))_scale(var(--scale,1))]',
-  'tw:transition-[transform,box-shadow] tw:duration-320 tw:ease-out-cubic tw:[transition-delay:0ms]',
+  'bg-[#fff]',
+  'z-[calc(10_-_var(--depth,0))]',
+  '[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_2cqw_5cqw_rgb(21_21_21/12%)]',
+  '[transform:translate(-50%,0)_translate(var(--x,0cqw),var(--y,0cqw))_translate(var(--print-drag-x,0px),0)_rotate(calc(var(--r,0deg)_+_var(--print-drag-r,0deg)))_translateY(var(--lift,0cqw))_scale(var(--scale,1))]',
+  'transition-[transform,box-shadow] duration-320 ease-out-cubic [transition-delay:0ms]',
 
   // Resting fan: alternating sides, growing outward, so it reads as dropped
   // rather than arranged. Open enough that the backs show as photographs
   // and not as a white edge, since at rest is how the card spends most of
   // its time.
-  'tw:data-[depth=0]:[--i:0] tw:data-[depth=0]:[--r:1deg] tw:data-[depth=0]:[--x:0cqw] tw:data-[depth=0]:[--y:0cqw]',
-  'tw:data-[depth=1]:[--i:1] tw:data-[depth=1]:[--r:9deg] tw:data-[depth=1]:[--x:13cqw] tw:data-[depth=1]:[--y:-2cqw]',
-  'tw:data-[depth=2]:[--i:2] tw:data-[depth=2]:[--r:-11deg] tw:data-[depth=2]:[--x:-14cqw] tw:data-[depth=2]:[--y:-3cqw]',
-  'tw:data-[depth=3]:[--i:3] tw:data-[depth=3]:[--r:-15deg] tw:data-[depth=3]:[--x:-19cqw] tw:data-[depth=3]:[--y:-4cqw]',
-  'tw:data-[depth=4]:[--i:4] tw:data-[depth=4]:[--r:14deg] tw:data-[depth=4]:[--x:18cqw] tw:data-[depth=4]:[--y:-5cqw]',
+  'data-[depth=0]:[--i:0] data-[depth=0]:[--r:1deg] data-[depth=0]:[--x:0cqw] data-[depth=0]:[--y:0cqw]',
+  'data-[depth=1]:[--i:1] data-[depth=1]:[--r:9deg] data-[depth=1]:[--x:13cqw] data-[depth=1]:[--y:-2cqw]',
+  'data-[depth=2]:[--i:2] data-[depth=2]:[--r:-11deg] data-[depth=2]:[--x:-14cqw] data-[depth=2]:[--y:-3cqw]',
+  'data-[depth=3]:[--i:3] data-[depth=3]:[--r:-15deg] data-[depth=3]:[--x:-19cqw] data-[depth=3]:[--y:-4cqw]',
+  'data-[depth=4]:[--i:4] data-[depth=4]:[--r:14deg] data-[depth=4]:[--x:18cqw] data-[depth=4]:[--y:-5cqw]',
 
   // Hover: the pile opens. Back prints swing further out; the top print
   // lifts toward the viewer instead of sliding sideways, and its shadow
   // goes with it. Staggered going out only — the return is one plain ease
   // together, so a cursor that keeps crossing the edge never reads as a
   // stutter.
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:[transition-delay:calc(var(--i,0)*35ms)]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=0]:[--lift:-2cqw]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=0]:[--scale:1.05]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=0]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_3cqw_7cqw_rgb(21_21_21/20%)]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=1]:[--r:14deg] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=1]:[--x:22cqw] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=1]:[--y:-5cqw]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=2]:[--r:-17deg] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=2]:[--x:-24cqw] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=2]:[--y:-6cqw]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=3]:[--r:-22deg] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=3]:[--x:-30cqw] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=3]:[--y:-7cqw]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=4]:[--r:20deg] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=4]:[--x:28cqw] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=4]:[--y:-8cqw]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:[transition-delay:calc(var(--i,0)*35ms)]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=0]:[--lift:-2cqw]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=0]:[--scale:1.05]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=0]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_3cqw_7cqw_rgb(21_21_21/20%)]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=1]:[--r:14deg] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=1]:[--x:22cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=1]:[--y:-5cqw]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=2]:[--r:-17deg] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=2]:[--x:-24cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=2]:[--y:-6cqw]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=3]:[--r:-22deg] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=3]:[--x:-30cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=3]:[--y:-7cqw]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=4]:[--r:20deg] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=4]:[--x:28cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&]:data-[depth=4]:[--y:-8cqw]',
 
   // Beat one of the shuffle: the front print mid-air, carried on out to the
   // side it was dragged toward and up, rather than sitting in any fan slot.
   // All five transform terms are set, per the convention above, so nothing
   // is left for the hover lift rule to still be contributing underneath.
   // --side is ±1, written by this component from the drag direction.
-  'tw:[&.is-leaving]:[--x:calc(var(--side,1)*52cqw)] tw:[&.is-leaving]:[--y:-10cqw] tw:[&.is-leaving]:[--r:calc(var(--side,1)*16deg)] tw:[&.is-leaving]:[--scale:1.02] tw:[&.is-leaving]:[--lift:0cqw]',
-  'tw:[&.is-leaving]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
+  '[&.is-leaving]:[--x:calc(var(--side,1)*52cqw)] [&.is-leaving]:[--y:-10cqw] [&.is-leaving]:[--r:calc(var(--side,1)*16deg)] [&.is-leaving]:[--scale:1.02] [&.is-leaving]:[--lift:0cqw]',
+  '[&.is-leaving]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
   // Ease-in-out rather than the fan's ease-out: a print picked off the top
   // of a pile gathers speed as it goes, and this leg hands straight over to
   // the slower ease back in — so the two read as one arc, out and round.
-  'tw:[&.is-leaving]:[transition-timing-function:var(--ease-standard)] tw:[&.is-leaving]:[transition-delay:0ms]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--x:calc(var(--side,1)*52cqw)] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--y:-10cqw] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--r:calc(var(--side,1)*16deg)] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--scale:1.02] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--lift:0cqw]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[transition-timing-function:var(--ease-standard)] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[transition-delay:0ms]',
+  '[&.is-leaving]:[transition-timing-function:var(--ease-standard)] [&.is-leaving]:[transition-delay:0ms]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--x:calc(var(--side,1)*52cqw)] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--y:-10cqw] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--r:calc(var(--side,1)*16deg)] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--scale:1.02] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[--lift:0cqw]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[transition-timing-function:var(--ease-standard)] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-leaving]:[transition-delay:0ms]',
 
   // Beat two: the same print, now the deepest and so already behind the
   // pile (its z-index changed with its depth, and z-index does not
   // transition). Only timing changes here — the slot's own --x/--y/--r come
   // from whichever data-depth rule now matches.
-  'tw:[&.is-returning]:duration-560 tw:[&.is-returning]:[transition-delay:0ms]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-returning]:duration-560 tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-returning]:[transition-delay:0ms]',
+  '[&.is-returning]:duration-560 [&.is-returning]:[transition-delay:0ms]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-returning]:duration-560 [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-returning]:[transition-delay:0ms]',
 
   // In hand: only the front print on the presented card — in the scatter a
   // press on the pile picks up the whole card, so there is nothing to
@@ -124,14 +124,14 @@ const FRAME_BASE = [
   // an escaped `__` inside a Tailwind arbitrary selector is invisible to the
   // CSS parser (the whole rule is silently dropped, not just the escape), and
   // `.is-focused` is only ever the folder's own item class regardless.
-  'tw:[.is-focused_.card[data-kind=polaroids]_&]:data-[depth=0]:cursor-grab',
+  '[.is-focused_.card[data-kind=polaroids]_&]:data-[depth=0]:cursor-grab',
 
   // The transform is written every frame by this component while a print is
   // in hand; a transition under that would trail the hand. Off the moment
   // it lands, back the moment the print is let go, so the settle — into
   // place or into the pile — eases.
-  'tw:[&.is-dragging]:[transition:none] tw:[&.is-dragging]:cursor-grabbing tw:[&.is-dragging]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
-  'tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-dragging]:[transition:none] tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-dragging]:cursor-grabbing tw:[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-dragging]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
+  '[&.is-dragging]:[transition:none] [&.is-dragging]:cursor-grabbing [&.is-dragging]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
+  '[.folder.is-open_.card[data-kind=polaroids]:hover_&.is-dragging]:[transition:none] [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-dragging]:cursor-grabbing [.folder.is-open_.card[data-kind=polaroids]:hover_&.is-dragging]:[box-shadow:0_0_0_1px_rgb(21_21_21/8%),0_4cqw_9cqw_rgb(21_21_21/26%)]',
 
   // Reduced motion needs nothing of its own here: transitions are already
   // cut globally by the reduced-motion rule in styles.css, the resting fan
@@ -357,11 +357,11 @@ export function PolaroidsFace({ item, presented = false }: { item: PolaroidsItem
        focused and held included — set from here as the dock and the phone
        do. */
     <span
-      className="tw:absolute tw:inset-0 tw:[.card:has(&)]:overflow-visible! tw:[.card:has(&)]:bg-transparent! tw:[.card:has(&)]:shadow-none!"
+      className="absolute inset-0 [.card:has(&)]:overflow-visible! [.card:has(&)]:bg-transparent! [.card:has(&)]:shadow-none!"
       ref={rootRef}
       onClick={onClick}
     >
-      <span className="tw:absolute tw:inset-0">
+      <span className="absolute inset-0">
         {item.photos.map((photo, index) => {
           /* 0 is the front of the pile. */
           const depth = order.length - 1 - order.indexOf(index)
@@ -378,7 +378,7 @@ export function PolaroidsFace({ item, presented = false }: { item: PolaroidsItem
               onPointerCancel={inHand ? onPointerUp : undefined}
             >
               <img
-                className="tw:block tw:w-full tw:aspect-square tw:object-cover"
+                className="block w-full aspect-square object-cover"
                 src={photo.src}
                 alt={photo.alt}
                 loading="lazy"
@@ -387,7 +387,7 @@ export function PolaroidsFace({ item, presented = false }: { item: PolaroidsItem
               {photo.caption ? (
                 /* Sits in the thick bottom margin a real instant print has,
                    left-aligned like something written there by hand. */
-                <span className="tw:mt-[2cqw] tw:font-sans tw:text-[3.6cqw] tw:text-[#616161] tw:text-left">
+                <span className="mt-[2cqw] font-sans text-[3.6cqw] text-[#616161] text-left">
                   {photo.caption}
                 </span>
               ) : null}

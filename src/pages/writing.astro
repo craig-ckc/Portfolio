@@ -29,10 +29,10 @@ const featured =
   sortedArticles.find((article) => article.featured) ?? sortedArticles[0];
 
 /* The two sections' shared width: the work list's measure, plus the page
-   gutter doubled back in since neither reaches the container's own edge —
-   wider than .container's default, so it overrides it here rather than there. */
+   gutter doubled back in since neither reaches the frame's own edge. */
+const pageFrame = "w-full mx-auto px-page-gutter";
 const wideMaxWidth =
-  "tw:max-w-[calc(var(--container-content-wide)+var(--spacing-page-gutter)*2)]";
+  "max-w-[calc(var(--container-content-wide)+var(--spacing-page-gutter)*2)]";
 ---
 
 <PageShell title="Writing | Craig Chihururu" description={blurb} homeHref="/">
@@ -40,19 +40,19 @@ const wideMaxWidth =
     featured ? (
       <section
         class:list={[
-          "container",
+          pageFrame,
           /* The frosted-glass tint the tiles inside read from — was
              .writing__featured in writing.css, now declared where it cascades
              from instead of on a class of its own. */
-          "tw:[--writing-glass-top:rgb(255_255_255/18%)] tw:[--writing-glass-bottom:rgb(255_255_255/8%)] tw:[--writing-glass-edge:rgb(255_255_255/22%)]",
+          "[--writing-glass-top:rgb(255_255_255/18%)] [--writing-glass-bottom:rgb(255_255_255/8%)] [--writing-glass-edge:rgb(255_255_255/22%)]",
           wideMaxWidth,
-          "tw:py-hero-top",
+          "py-hero-top",
         ]}
         aria-labelledby="writing-heading"
       >
         {/* The page still has a name for anyone navigating by headings; it is
             only the featured piece that is seen at the top. */}
-        <h1 class="tw:sr-only" id="writing-heading">
+        <h1 class="sr-only" id="writing-heading">
           Writing
         </h1>
 
@@ -68,14 +68,14 @@ const wideMaxWidth =
         />
       </section>
     ) : (
-      <section class="tw:flex tw:flex-col tw:items-start tw:pt-hero-top tw:pb-section-py container">
+      <section class="w-full max-w-[calc(var(--container-page)+var(--spacing-page-gutter)*2)] mx-auto px-page-gutter flex flex-col items-start pt-hero-top pb-section-py">
         {/* Clears the fixed navbar the same way the placeholder pages' intro
             does — there is no hero and no cover above this one to do that
             job instead. */}
-        <h1 class="tw:font-display tw:text-[clamp(2.5rem,4.8vw,5.75rem)] tw:font-bold tw:[font-variation-settings:'wght'_700] tw:tracking-snug tw:leading-tight">
+        <h1 class="font-display text-[clamp(2.5rem,4.8vw,5.75rem)] font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight">
           Writing
         </h1>
-        <p class="tw:mt-xl tw:max-w-caption tw:text-neutral-700 tw:text-body tw:leading-normal">
+        <p class="mt-xl max-w-caption text-neutral-700 text-body leading-normal">
           {blurb}
         </p>
       </section>
@@ -85,15 +85,15 @@ const wideMaxWidth =
   {
     sortedArticles.length > 0 && (
       <section
-        class:list={["container", wideMaxWidth, "tw:pb-section-y"]}
+        class:list={[pageFrame, wideMaxWidth, "pb-section-y"]}
         aria-labelledby="all-writing-heading"
       >
-        <h2 class="tw:sr-only" id="all-writing-heading">
+        <h2 class="sr-only" id="all-writing-heading">
           All writing
         </h2>
         {/* Three across at the work list's width, two on a tablet, one on a
             phone. */}
-        <div class="tw:[--writing-glass-top:rgb(255_255_255/18%)] tw:[--writing-glass-bottom:rgb(255_255_255/8%)] tw:[--writing-glass-edge:rgb(255_255_255/22%)] tw:grid tw:grid-cols-1 tw:gap-xl tw:sm:grid-cols-2 tw:md:grid-cols-3">
+        <div class="[--writing-glass-top:rgb(255_255_255/18%)] [--writing-glass-bottom:rgb(255_255_255/8%)] [--writing-glass-edge:rgb(255_255_255/22%)] grid grid-cols-1 gap-xl sm:grid-cols-2 md:grid-cols-3">
           {sortedArticles.map((article) => (
             <WritingTile
               href={writingPath(article.slug)}

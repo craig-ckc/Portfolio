@@ -21,7 +21,7 @@ const { title, description, homeHref = '#top', article } = Astro.props
 ---
 
 <Base title={title} description={description} article={article}>
-  {/* `hp` is the hook the dark tokens and the `tw:dark:` variant key off
+  {/* `hp` is the hook the dark tokens and the `dark:` variant key off
       (src/styles.css); everything it styles is on it as utilities.
 
       --footer-h is shared by the footer and the slot that reserves its scroll
@@ -35,7 +35,7 @@ const { title, description, homeHref = '#top', article } = Astro.props
       going it has longer, because it is most of what says the scatter is
       being put away and it covers the cards' drop back under the flap. */}
   <div
-    class="hp tw:relative tw:min-w-[320px] tw:[--footer-h:380px] tw:sm:[--footer-h:520px] tw:[--veil-fade:var(--duration-fast)] tw:[--veil-clear:var(--duration-base)] tw:bg-background tw:font-sans tw:font-normal tw:tracking-normal tw:text-foreground tw:[font-synthesis:none] tw:antialiased"
+    class="hp relative min-w-[320px] [--footer-h:380px] sm:[--footer-h:520px] [--veil-fade:var(--duration-fast)] [--veil-clear:var(--duration-base)] bg-background font-sans font-normal tracking-normal text-foreground [font-synthesis:none] antialiased"
     data-theme="light"
   >
     {/* Resolves the appearance before the first paint, which is why it is a
@@ -68,7 +68,7 @@ const { title, description, homeHref = '#top', article } = Astro.props
     <NavBar client:load homeHref={homeHref} />
     {/* Opaque and above the footer — the footer is fixed and revealed as this
         scrolls past it. */}
-    <main class="tw:relative tw:z-[2] tw:bg-background">
+    <main class="relative z-[2] bg-background">
       <slot />
     </main>
     <Footer client:visible />

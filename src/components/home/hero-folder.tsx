@@ -107,24 +107,24 @@ const metrics = folderMetrics(folderShape)
  * six near-identical ones.
  */
 const SLOT_UTILITIES = `
-  tw:nth-[1]:[--slot-x:27vw] tw:nth-[1]:[--slot-y:16svh] tw:nth-[1]:[--slot-w:min(24vw,17svh)] tw:nth-[1]:[--slot-r:7deg] tw:nth-[1]:[--slot-focus:2.75]
-  tw:md:nth-[1]:[--slot-x:88vw] tw:md:nth-[1]:[--slot-y:42svh]
-  tw:lg:nth-[1]:[--slot-x:12vw] tw:lg:nth-[1]:[--slot-y:42svh] tw:lg:nth-[1]:[--slot-w:15vw] tw:lg:nth-[1]:[--slot-r:-7deg] tw:lg:nth-[1]:[--slot-focus:1.87]
-  tw:nth-[2]:[--slot-x:73vw] tw:nth-[2]:[--slot-y:16svh] tw:nth-[2]:[--slot-w:min(24vw,17svh)] tw:nth-[2]:[--slot-r:-5deg] tw:nth-[2]:[--slot-focus:2.75]
-  tw:md:nth-[2]:[--slot-x:70vw] tw:md:nth-[2]:[--slot-y:17svh]
-  tw:lg:nth-[2]:[--slot-x:30vw] tw:lg:nth-[2]:[--slot-y:17svh] tw:lg:nth-[2]:[--slot-w:13vw] tw:lg:nth-[2]:[--slot-r:5deg] tw:lg:nth-[2]:[--slot-focus:2.15]
-  tw:nth-[3]:[--slot-x:30vw] tw:nth-[3]:[--slot-y:42svh] tw:nth-[3]:[--slot-w:min(32vw,23svh)] tw:nth-[3]:[--slot-r:3deg] tw:nth-[3]:[--slot-focus:2.06]
-  tw:md:nth-[3]:[--slot-x:40vw] tw:md:nth-[3]:[--slot-y:22svh]
-  tw:lg:nth-[3]:[--slot-x:60vw] tw:lg:nth-[3]:[--slot-y:22svh] tw:lg:nth-[3]:[--slot-w:20vw] tw:lg:nth-[3]:[--slot-r:-3deg] tw:lg:nth-[3]:[--slot-focus:1.4]
-  tw:nth-[4]:[--slot-x:74vw] tw:nth-[4]:[--slot-y:42svh] tw:nth-[4]:[--slot-w:min(24vw,17svh)] tw:nth-[4]:[--slot-r:-8deg] tw:nth-[4]:[--slot-focus:2.75]
-  tw:md:nth-[4]:[--slot-x:80vw] tw:md:nth-[4]:[--slot-y:76svh]
-  tw:lg:nth-[4]:[--slot-x:20vw] tw:lg:nth-[4]:[--slot-y:76svh] tw:lg:nth-[4]:[--slot-w:14vw] tw:lg:nth-[4]:[--slot-r:8deg] tw:lg:nth-[4]:[--slot-focus:2]
-  tw:nth-[5]:[--slot-x:27vw] tw:nth-[5]:[--slot-y:68svh] tw:nth-[5]:[--slot-w:min(24vw,17svh)] tw:nth-[5]:[--slot-r:5deg] tw:nth-[5]:[--slot-focus:2.75]
-  tw:md:nth-[5]:[--slot-x:55vw] tw:md:nth-[5]:[--slot-y:64svh]
-  tw:lg:nth-[5]:[--slot-x:45vw] tw:lg:nth-[5]:[--slot-y:64svh] tw:lg:nth-[5]:[--slot-w:14vw] tw:lg:nth-[5]:[--slot-r:-5deg] tw:lg:nth-[5]:[--slot-focus:2]
-  tw:nth-[6]:[--slot-x:73vw] tw:nth-[6]:[--slot-y:68svh] tw:nth-[6]:[--slot-w:min(24vw,17svh)] tw:nth-[6]:[--slot-r:-6deg] tw:nth-[6]:[--slot-focus:2.75]
-  tw:md:nth-[6]:[--slot-x:21vw] tw:md:nth-[6]:[--slot-y:62svh]
-  tw:lg:nth-[6]:[--slot-x:79vw] tw:lg:nth-[6]:[--slot-y:62svh] tw:lg:nth-[6]:[--slot-w:18vw] tw:lg:nth-[6]:[--slot-r:6deg] tw:lg:nth-[6]:[--slot-focus:1.56]
+  nth-[1]:[--slot-x:27vw] nth-[1]:[--slot-y:16svh] nth-[1]:[--slot-w:min(24vw,17svh)] nth-[1]:[--slot-r:7deg] nth-[1]:[--slot-focus:2.75]
+  md:nth-[1]:[--slot-x:88vw] md:nth-[1]:[--slot-y:42svh]
+  lg:nth-[1]:[--slot-x:12vw] lg:nth-[1]:[--slot-y:42svh] lg:nth-[1]:[--slot-w:15vw] lg:nth-[1]:[--slot-r:-7deg] lg:nth-[1]:[--slot-focus:1.87]
+  nth-[2]:[--slot-x:73vw] nth-[2]:[--slot-y:16svh] nth-[2]:[--slot-w:min(24vw,17svh)] nth-[2]:[--slot-r:-5deg] nth-[2]:[--slot-focus:2.75]
+  md:nth-[2]:[--slot-x:70vw] md:nth-[2]:[--slot-y:17svh]
+  lg:nth-[2]:[--slot-x:30vw] lg:nth-[2]:[--slot-y:17svh] lg:nth-[2]:[--slot-w:13vw] lg:nth-[2]:[--slot-r:5deg] lg:nth-[2]:[--slot-focus:2.15]
+  nth-[3]:[--slot-x:30vw] nth-[3]:[--slot-y:42svh] nth-[3]:[--slot-w:min(32vw,23svh)] nth-[3]:[--slot-r:3deg] nth-[3]:[--slot-focus:2.06]
+  md:nth-[3]:[--slot-x:40vw] md:nth-[3]:[--slot-y:22svh]
+  lg:nth-[3]:[--slot-x:60vw] lg:nth-[3]:[--slot-y:22svh] lg:nth-[3]:[--slot-w:20vw] lg:nth-[3]:[--slot-r:-3deg] lg:nth-[3]:[--slot-focus:1.4]
+  nth-[4]:[--slot-x:74vw] nth-[4]:[--slot-y:42svh] nth-[4]:[--slot-w:min(24vw,17svh)] nth-[4]:[--slot-r:-8deg] nth-[4]:[--slot-focus:2.75]
+  md:nth-[4]:[--slot-x:80vw] md:nth-[4]:[--slot-y:76svh]
+  lg:nth-[4]:[--slot-x:20vw] lg:nth-[4]:[--slot-y:76svh] lg:nth-[4]:[--slot-w:14vw] lg:nth-[4]:[--slot-r:8deg] lg:nth-[4]:[--slot-focus:2]
+  nth-[5]:[--slot-x:27vw] nth-[5]:[--slot-y:68svh] nth-[5]:[--slot-w:min(24vw,17svh)] nth-[5]:[--slot-r:5deg] nth-[5]:[--slot-focus:2.75]
+  md:nth-[5]:[--slot-x:55vw] md:nth-[5]:[--slot-y:64svh]
+  lg:nth-[5]:[--slot-x:45vw] lg:nth-[5]:[--slot-y:64svh] lg:nth-[5]:[--slot-w:14vw] lg:nth-[5]:[--slot-r:-5deg] lg:nth-[5]:[--slot-focus:2]
+  nth-[6]:[--slot-x:73vw] nth-[6]:[--slot-y:68svh] nth-[6]:[--slot-w:min(24vw,17svh)] nth-[6]:[--slot-r:-6deg] nth-[6]:[--slot-focus:2.75]
+  md:nth-[6]:[--slot-x:21vw] md:nth-[6]:[--slot-y:62svh]
+  lg:nth-[6]:[--slot-x:79vw] lg:nth-[6]:[--slot-y:62svh] lg:nth-[6]:[--slot-w:18vw] lg:nth-[6]:[--slot-r:6deg] lg:nth-[6]:[--slot-focus:1.56]
 `
 
 /**
@@ -141,18 +141,18 @@ const SLOT_UTILITIES = `
  * arbitrary selector reaching off an ancestor's state.
  */
 const FAN_UTILITIES = `
-  tw:nth-[1]:[--i:2] tw:nth-[1]:[--x:-36%] tw:nth-[1]:[--y:2%] tw:nth-[1]:[--r:-7deg]
-  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--x:-64%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--y:-18%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--r:-14deg]
-  tw:nth-[2]:[--i:1] tw:nth-[2]:[--x:-21%] tw:nth-[2]:[--y:0%] tw:nth-[2]:[--r:-4deg]
-  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--x:-38%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--y:-21%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--r:-8.5deg]
-  tw:nth-[3]:[--i:0] tw:nth-[3]:[--x:-7%] tw:nth-[3]:[--y:-1%] tw:nth-[3]:[--r:-1.5deg]
-  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--x:-13%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--y:-23%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--r:-3deg]
-  tw:nth-[4]:[--i:0] tw:nth-[4]:[--x:7%] tw:nth-[4]:[--y:-1%] tw:nth-[4]:[--r:1.5deg]
-  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--x:13%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--y:-23%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--r:3deg]
-  tw:nth-[5]:[--i:1] tw:nth-[5]:[--x:21%] tw:nth-[5]:[--y:0%] tw:nth-[5]:[--r:4deg]
-  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--x:38%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--y:-21%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--r:8.5deg]
-  tw:nth-[6]:[--i:2] tw:nth-[6]:[--x:36%] tw:nth-[6]:[--y:2%] tw:nth-[6]:[--r:7deg]
-  tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--x:64%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--y:-18%] tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--r:14deg]
+  nth-[1]:[--i:2] nth-[1]:[--x:-36%] nth-[1]:[--y:2%] nth-[1]:[--r:-7deg]
+  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--x:-64%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--y:-18%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[1]:[--r:-14deg]
+  nth-[2]:[--i:1] nth-[2]:[--x:-21%] nth-[2]:[--y:0%] nth-[2]:[--r:-4deg]
+  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--x:-38%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--y:-21%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[2]:[--r:-8.5deg]
+  nth-[3]:[--i:0] nth-[3]:[--x:-7%] nth-[3]:[--y:-1%] nth-[3]:[--r:-1.5deg]
+  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--x:-13%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--y:-23%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[3]:[--r:-3deg]
+  nth-[4]:[--i:0] nth-[4]:[--x:7%] nth-[4]:[--y:-1%] nth-[4]:[--r:1.5deg]
+  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--x:13%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--y:-23%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[4]:[--r:3deg]
+  nth-[5]:[--i:1] nth-[5]:[--x:21%] nth-[5]:[--y:0%] nth-[5]:[--r:4deg]
+  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--x:38%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--y:-21%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[5]:[--r:8.5deg]
+  nth-[6]:[--i:2] nth-[6]:[--x:36%] nth-[6]:[--y:2%] nth-[6]:[--r:7deg]
+  [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--x:64%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--y:-18%] [.folder:hover_&,.folder:has(:focus-visible)_&]:nth-[6]:[--r:14deg]
 `
 
 /** Keys that would scroll the page out from under a scatter pinned to it. */
@@ -345,7 +345,7 @@ function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
     case 'photo':
       return (
         <img
-          className="tw:block tw:h-full tw:w-full tw:object-cover"
+          className="block h-full w-full object-cover"
           src={item.src}
           alt={item.alt ?? ''}
           loading="lazy"
@@ -360,15 +360,15 @@ function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
            two-stop wash with no token equivalent. */
         <span
           className={`
-            tw:absolute tw:inset-0 tw:flex tw:flex-col tw:items-start tw:justify-between tw:p-[9cqw] tw:gap-[4cqw]
-            tw:font-display tw:tracking-snug tw:leading-snug tw:text-left
-            tw:[background:radial-gradient(120%_90%_at_15%_0%,#ffffff,transparent_60%),linear-gradient(165deg,#f4f3f1,#e7e6e3)]
+            absolute inset-0 flex flex-col items-start justify-between p-[9cqw] gap-[4cqw]
+            font-display tracking-snug leading-snug text-left
+            [background:radial-gradient(120%_90%_at_15%_0%,#ffffff,transparent_60%),linear-gradient(165deg,#f4f3f1,#e7e6e3)]
           `}
         >
-          <span className="tw:grid tw:w-[27cqw] tw:h-[27cqw] tw:place-items-center tw:rounded-full tw:bg-[#151515] tw:text-[#f9f9f9] tw:text-[10.5cqw] tw:font-bold tw:tracking-[0]">
+          <span className="grid w-[27cqw] h-[27cqw] place-items-center rounded-full bg-[#151515] text-[#f9f9f9] text-[10.5cqw] font-bold tracking-[0]">
             {item.mark}
           </span>
-          <span className="tw:text-[#616161] tw:text-[7cqw] tw:font-medium">{item.label}</span>
+          <span className="text-[#616161] text-[7cqw] font-medium">{item.label}</span>
         </span>
       )
 
@@ -378,13 +378,13 @@ function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
            off-white wash behind a handwritten-feeling note. */
         <span
           className={`
-            tw:absolute tw:inset-0 tw:flex tw:flex-col tw:justify-between tw:p-[9cqw] tw:gap-[4cqw]
-            tw:font-display tw:tracking-snug tw:leading-snug tw:text-left
-            tw:[background:linear-gradient(170deg,#fffdf6,#f6f2e6)]
+            absolute inset-0 flex flex-col justify-between p-[9cqw] gap-[4cqw]
+            font-display tracking-snug leading-snug text-left
+            [background:linear-gradient(170deg,#fffdf6,#f6f2e6)]
           `}
         >
-          <span className="tw:text-[#2c2c2c] tw:text-[9cqw] tw:font-medium tw:text-pretty">{item.body}</span>
-          <span aria-hidden="true" className="tw:h-px tw:shrink-0 tw:rounded-full tw:bg-[rgb(21_21_21/14%)]" />
+          <span className="text-[#2c2c2c] text-[9cqw] font-medium text-pretty">{item.body}</span>
+          <span aria-hidden="true" className="h-px shrink-0 rounded-full bg-[rgb(21_21_21/14%)]" />
         </span>
       )
 
@@ -392,16 +392,16 @@ function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
       return (
         <span
           className={`
-            tw:absolute tw:inset-0 tw:flex tw:flex-col tw:justify-between tw:p-[6cqw] tw:gap-[5cqw]
-            tw:font-display tw:tracking-snug tw:leading-snug tw:text-left
+            absolute inset-0 flex flex-col justify-between p-[6cqw] gap-[5cqw]
+            font-display tracking-snug leading-snug text-left
           `}
         >
-          <span aria-hidden="true" className="tw:flex tw:flex-1 tw:flex-col tw:overflow-hidden tw:rounded-[1.25cqw]">
+          <span aria-hidden="true" className="flex flex-1 flex-col overflow-hidden rounded-[1.25cqw]">
             {item.colors.map((color) => (
-              <span key={color} className="tw:flex-1" style={{ background: color }} />
+              <span key={color} className="flex-1" style={{ background: color }} />
             ))}
           </span>
-          <span className="tw:pl-[2cqw] tw:text-[#616161] tw:text-[7cqw] tw:font-medium">{item.label}</span>
+          <span className="pl-[2cqw] text-[#616161] text-[7cqw] font-medium">{item.label}</span>
         </span>
       )
 
@@ -431,22 +431,22 @@ function FolderFace({ item, focused }: { item: FolderItem; focused: boolean }) {
 function Card({ item, focused }: { item: FolderItem; focused: boolean }) {
   return (
     /* `card` stays a bare marker: each face component keys its own hover,
-       held and focused styling off `.card[data-kind=…]` in its `tw:`
+       held and focused styling off `.card[data-kind=…]` in its ``
        utilities, and the screenshot harness drives it too. The face sizes
        itself in cqw off the card's own width — the container is the item
        (below), since an element cannot be its own. */
     <span
       className={`
         card
-        tw:relative tw:block tw:overflow-hidden tw:w-full tw:rounded-[1.5cqw] tw:bg-[#fdfdfd]
-        tw:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_3px_8px_rgb(21_21_21/10%)]
-        tw:[transition:transform_var(--duration-fast)_var(--ease-out-cubic),box-shadow_var(--duration-fast)_var(--ease-standard)]
-        tw:data-[ratio=portrait]:aspect-[3/4]
-        tw:data-[ratio=landscape]:aspect-[4/3]
-        tw:data-[ratio=square]:aspect-square
-        tw:data-[ratio=bar]:aspect-[24/5]
-        tw:[.folder-slot.is-focused_&]:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_10px_30px_rgb(21_21_21/18%)]
-        tw:[.folder-slot.is-held_&]:scale-[1.04] tw:[.folder-slot.is-held_&]:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_14px_30px_rgb(21_21_21/16%)]
+        relative block overflow-hidden w-full rounded-[1.5cqw] bg-[#fdfdfd]
+        shadow-[0_0_0_1px_rgb(21_21_21/8%),0_3px_8px_rgb(21_21_21/10%)]
+        [transition:transform_var(--duration-fast)_var(--ease-out-cubic),box-shadow_var(--duration-fast)_var(--ease-standard)]
+        data-[ratio=portrait]:aspect-[3/4]
+        data-[ratio=landscape]:aspect-[4/3]
+        data-[ratio=square]:aspect-square
+        data-[ratio=bar]:aspect-[24/5]
+        [.folder-slot.is-focused_&]:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_10px_30px_rgb(21_21_21/18%)]
+        [.folder-slot.is-held_&]:scale-[1.04] [.folder-slot.is-held_&]:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_14px_30px_rgb(21_21_21/16%)]
       `}
       data-kind={item.kind}
       data-ratio={item.ratio ?? 'portrait'}
@@ -897,32 +897,32 @@ export function HeroFolder({ caption }: { caption: string }) {
        stay bare markers throughout: JS classList and the faces' own
        stylesheets key off them, and the screenshot harness drives them too.
        Everything else that used to be a BEM hook has become plain elements
-       styled with tw: utilities directly, since nothing outside this file
+       styled with  utilities directly, since nothing outside this file
        ever selected them. */
     <div
       className={`
         folder
-        tw:block tw:w-(--folder-size) tw:max-w-content
-        tw:[--folder-tilt:32deg] tw:[--folder-perspective:1200px] tw:[--folder-card:40%]
-        tw:[--folder-size:min(88%,380px,47svh)] tw:lg:[--folder-size:min(75%,47svh)]
-        tw:[@media(max-height:760px)]:[--folder-zoom:0.78]
-        tw:[--folder-shadow-rest:0_1px_2px_rgb(21_21_21/6%),0_8px_20px_rgb(21_21_21/8%)]
-        tw:dark:[--folder-shadow-rest:0_1px_2px_rgb(0_0_0/30%),0_8px_20px_rgb(0_0_0/34%)]
-        tw:[--folder-drop:drop-shadow(0_1px_2px_rgb(21_21_21/6%))_drop-shadow(0_8px_20px_rgb(21_21_21/8%))]
-        tw:dark:[--folder-drop:drop-shadow(0_1px_2px_rgb(0_0_0/30%))_drop-shadow(0_8px_20px_rgb(0_0_0/36%))]
-        tw:[--folder-face-drop:drop-shadow(0_-1px_1px_rgb(21_21_21/5%))_drop-shadow(0_6px_16px_rgb(21_21_21/10%))]
-        tw:dark:[--folder-face-drop:drop-shadow(0_-1px_1px_rgb(0_0_0/24%))_drop-shadow(0_6px_16px_rgb(0_0_0/34%))]
-        tw:[--folder-face-drop-raised:drop-shadow(0_-1px_1px_rgb(21_21_21/5%))_drop-shadow(0_2px_6px_rgb(142_143_143/18%))_drop-shadow(0_16px_30px_rgb(21_21_21/14%))]
-        tw:dark:[--folder-face-drop-raised:drop-shadow(0_-1px_1px_rgb(0_0_0/24%))_drop-shadow(0_2px_6px_rgb(0_0_0/30%))_drop-shadow(0_16px_30px_rgb(0_0_0/44%))]
-        tw:[--folder-paper:#ebe9e4] tw:dark:[--folder-paper:#2b2b2b]
-        tw:[--folder-paper-edge:rgb(255_255_255/82%)] tw:dark:[--folder-paper-edge:rgb(255_255_255/13%)]
-        tw:[--folder-face-top:rgb(255_255_255/80%)] tw:dark:[--folder-face-top:rgb(45_45_45/82%)]
-        tw:[--folder-face-bottom:rgb(246_246_245/68%)] tw:dark:[--folder-face-bottom:rgb(29_29_29/72%)]
-        tw:[--folder-flap-edge:rgb(255_255_255/76%)] tw:dark:[--folder-flap-edge:rgb(255_255_255/8%)]
-        tw:[--folder-veil:rgb(249_249_249/82%)] tw:dark:[--folder-veil:rgb(15_15_15/78%)]
-        tw:[--folder-chrome:rgb(255_255_255/82%)] tw:dark:[--folder-chrome:rgb(38_38_38/82%)]
-        tw:[--folder-chrome-edge:rgb(21_21_21/10%)] tw:dark:[--folder-chrome-edge:rgb(255_255_255/10%)]
-        tw:[&.is-open]:relative tw:[&.is-closing]:relative tw:[&.is-open]:z-10 tw:[&.is-closing]:z-10
+        block w-(--folder-size) max-w-content
+        [--folder-tilt:32deg] [--folder-perspective:1200px] [--folder-card:40%]
+        [--folder-size:min(88%,380px,47svh)] lg:[--folder-size:min(75%,47svh)]
+        [@media(max-height:760px)]:[--folder-zoom:0.78]
+        [--folder-shadow-rest:0_1px_2px_rgb(21_21_21/6%),0_8px_20px_rgb(21_21_21/8%)]
+        dark:[--folder-shadow-rest:0_1px_2px_rgb(0_0_0/30%),0_8px_20px_rgb(0_0_0/34%)]
+        [--folder-drop:drop-shadow(0_1px_2px_rgb(21_21_21/6%))_drop-shadow(0_8px_20px_rgb(21_21_21/8%))]
+        dark:[--folder-drop:drop-shadow(0_1px_2px_rgb(0_0_0/30%))_drop-shadow(0_8px_20px_rgb(0_0_0/36%))]
+        [--folder-face-drop:drop-shadow(0_-1px_1px_rgb(21_21_21/5%))_drop-shadow(0_6px_16px_rgb(21_21_21/10%))]
+        dark:[--folder-face-drop:drop-shadow(0_-1px_1px_rgb(0_0_0/24%))_drop-shadow(0_6px_16px_rgb(0_0_0/34%))]
+        [--folder-face-drop-raised:drop-shadow(0_-1px_1px_rgb(21_21_21/5%))_drop-shadow(0_2px_6px_rgb(142_143_143/18%))_drop-shadow(0_16px_30px_rgb(21_21_21/14%))]
+        dark:[--folder-face-drop-raised:drop-shadow(0_-1px_1px_rgb(0_0_0/24%))_drop-shadow(0_2px_6px_rgb(0_0_0/30%))_drop-shadow(0_16px_30px_rgb(0_0_0/44%))]
+        [--folder-paper:#ebe9e4] dark:[--folder-paper:#2b2b2b]
+        [--folder-paper-edge:rgb(255_255_255/82%)] dark:[--folder-paper-edge:rgb(255_255_255/13%)]
+        [--folder-face-top:rgb(255_255_255/80%)] dark:[--folder-face-top:rgb(45_45_45/82%)]
+        [--folder-face-bottom:rgb(246_246_245/68%)] dark:[--folder-face-bottom:rgb(29_29_29/72%)]
+        [--folder-flap-edge:rgb(255_255_255/76%)] dark:[--folder-flap-edge:rgb(255_255_255/8%)]
+        [--folder-veil:rgb(249_249_249/82%)] dark:[--folder-veil:rgb(15_15_15/78%)]
+        [--folder-chrome:rgb(255_255_255/82%)] dark:[--folder-chrome:rgb(38_38_38/82%)]
+        [--folder-chrome-edge:rgb(21_21_21/10%)] dark:[--folder-chrome-edge:rgb(255_255_255/10%)]
+        [&.is-open]:relative [&.is-closing]:relative [&.is-open]:z-10 [&.is-closing]:z-10
         ${stage === 'open' ? ' is-open' : ''}${stage === 'closing' ? ' is-closing' : ''}
       `}
       ref={rootRef}
@@ -937,7 +937,7 @@ export function HeroFolder({ caption }: { caption: string }) {
           inline from folderMetrics(), so folder-shape.ts stays the single
           source. */}
       <span
-        className="tw:relative tw:block tw:w-full tw:isolate"
+        className="relative block w-full isolate"
         style={
           {
             aspectRatio: metrics.aspectRatio,
@@ -949,7 +949,7 @@ export function HeroFolder({ caption }: { caption: string }) {
             frosted layer, once as the gradient that fills the drawn face. Both
             come off the same path in src/lib/folder-shape.ts. Definitions
             only, never drawn, kept out of the layout. */}
-        <svg className="tw:absolute tw:w-0 tw:h-0 tw:overflow-hidden" aria-hidden="true" focusable="false">
+        <svg className="absolute w-0 h-0 overflow-hidden" aria-hidden="true" focusable="false">
           <defs>
             <clipPath id={clipId} clipPathUnits="objectBoundingBox">
               <path d={metrics.frontClip} />
@@ -966,17 +966,17 @@ export function HeroFolder({ caption }: { caption: string }) {
             not a box-shadow on a rectangle: the tab has to cast a shadow too.
             No transform, no transition: this layer is nailed down. */}
         <svg
-          className="tw:absolute tw:inset-0 tw:z-0 tw:w-full tw:h-full tw:[overflow:visible] tw:[filter:var(--folder-drop)]"
+          className="absolute inset-0 z-0 w-full h-full [overflow:visible] [filter:var(--folder-drop)]"
           viewBox={metrics.viewBox}
           aria-hidden="true"
         >
-          <path d={metrics.back} className="tw:fill-(--folder-paper) tw:stroke-(--folder-paper-edge) tw:stroke-1" />
+          <path d={metrics.back} className="fill-(--folder-paper) stroke-(--folder-paper-edge) stroke-1" />
         </svg>
 
         {/* No z-index of its own, deliberately: the cards have to be able to
             move between layers 1 and 4, and a positioned parent with a
             z-index would trap them in one of its own. */}
-        <span className="tw:absolute tw:inset-0" ref={stackRef} inert={inFolder}>
+        <span className="absolute inset-0" ref={stackRef} inert={inFolder}>
           {folderItems.map((item) => (
             /* Every card hangs from the body's top edge, so they all peek by
                the same amount however tall they are, and the taller ones
@@ -1023,25 +1023,25 @@ export function HeroFolder({ caption }: { caption: string }) {
             <button
               className={`
                 folder__item folder-slot${focused === item.id ? ' is-focused' : ''}
-                tw:absolute tw:top-(--folder-contents-top) tw:left-[calc(50%_-_var(--folder-card)/2)] tw:z-1 tw:w-(--folder-card)
-                tw:p-0 tw:@container tw:cursor-pointer tw:origin-bottom
-                tw:[transform:translate(var(--x,0%),var(--y,0%))_rotate(var(--r,0deg))]
-                tw:[transition:transform_var(--duration-base)_var(--ease-out-cubic)]
-                tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
-                tw:[.folder:hover_&,.folder:has(:focus-visible)_&]:[transition-delay:calc(var(--i,0)_*_40ms)]
-                tw:focus-visible:outline-offset-[6px]
+                absolute top-(--folder-contents-top) left-[calc(50%_-_var(--folder-card)/2)] z-1 w-(--folder-card)
+                p-0 @container cursor-pointer origin-bottom
+                [transform:translate(var(--x,0%),var(--y,0%))_rotate(var(--r,0deg))]
+                [transition:transform_var(--duration-base)_var(--ease-out-cubic)]
+                [.folder:hover_&,.folder:has(:focus-visible)_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
+                [.folder:hover_&,.folder:has(:focus-visible)_&]:[transition-delay:calc(var(--i,0)_*_40ms)]
+                focus-visible:outline-offset-[6px]
                 ${FAN_UTILITIES}
                 ${SLOT_UTILITIES}
-                tw:[.folder.is-open.folder_&]:[transform:translate(var(--out-x,0px),var(--out-y,0px))_translate(var(--drag-x,0px),var(--drag-y,0px))_translateY(-50%)_scale(var(--out-scale,1))_rotate(calc(var(--slot-r,0deg)_+_var(--drag-r,0deg)))_translateY(50%)]
-                tw:[.folder.is-open_&]:z-[calc(10+var(--raised,0))] tw:[.folder.is-open_&]:cursor-grab tw:[.folder.is-open_&]:touch-none
-                tw:[.folder.is-open_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
-                tw:[.folder.is-open_&]:[transition-delay:calc(var(--i,0)_*_40ms)]
-                tw:[.folder.is-open_&.is-held]:[transition:none] tw:[.folder.is-open_&.is-coasting]:[transition:none]
-                tw:[.folder.is-open_&.is-held]:cursor-grabbing
-                tw:[.folder.is-open_&.is-focused]:z-[17] tw:[.folder.is-open_&.is-focused]:cursor-zoom-out
-                tw:[.folder.is-open.folder_&.is-focused]:[transform:translate(var(--out-x,0px),var(--out-y,0px))_translate(calc(50vw_-_var(--slot-x)),calc(50svh_-_var(--slot-y)))_translateY(-50%)_scale(calc(var(--out-scale,1)_*_var(--slot-focus,2)_*_var(--folder-zoom,1)))_rotate(0deg)_translateY(50%)]
-                tw:[.folder.is-closing_&]:[transition:transform_var(--duration-slow)_var(--ease-standard)]
-                tw:[.folder.is-open:has(.is-focused)_&:not(.is-focused)]:opacity-[0.28]
+                [.folder.is-open.folder_&]:[transform:translate(var(--out-x,0px),var(--out-y,0px))_translate(var(--drag-x,0px),var(--drag-y,0px))_translateY(-50%)_scale(var(--out-scale,1))_rotate(calc(var(--slot-r,0deg)_+_var(--drag-r,0deg)))_translateY(50%)]
+                [.folder.is-open_&]:z-[calc(10+var(--raised,0))] [.folder.is-open_&]:cursor-grab [.folder.is-open_&]:touch-none
+                [.folder.is-open_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
+                [.folder.is-open_&]:[transition-delay:calc(var(--i,0)_*_40ms)]
+                [.folder.is-open_&.is-held]:[transition:none] [.folder.is-open_&.is-coasting]:[transition:none]
+                [.folder.is-open_&.is-held]:cursor-grabbing
+                [.folder.is-open_&.is-focused]:z-[17] [.folder.is-open_&.is-focused]:cursor-zoom-out
+                [.folder.is-open.folder_&.is-focused]:[transform:translate(var(--out-x,0px),var(--out-y,0px))_translate(calc(50vw_-_var(--slot-x)),calc(50svh_-_var(--slot-y)))_translateY(-50%)_scale(calc(var(--out-scale,1)_*_var(--slot-focus,2)_*_var(--folder-zoom,1)))_rotate(0deg)_translateY(50%)]
+                [.folder.is-closing_&]:[transition:transform_var(--duration-slow)_var(--ease-standard)]
+                [.folder.is-open:has(.is-focused)_&:not(.is-focused)]:opacity-[0.28]
               `}
               key={item.id}
               type="button"
@@ -1059,7 +1059,7 @@ export function HeroFolder({ caption }: { caption: string }) {
               }}
             >
               <Card item={item} focused={focused === item.id} />
-              <span className="tw:sr-only">
+              <span className="sr-only">
                 {item.label}
                 {item.note ? `, ${item.note}` : ''}
               </span>
@@ -1087,12 +1087,12 @@ export function HeroFolder({ caption }: { caption: string }) {
         <span
           aria-hidden="true"
           className={`
-            tw:absolute tw:inset-0 tw:z-2 tw:pointer-events-none tw:origin-bottom tw:[will-change:transform]
-            tw:[transform:perspective(var(--folder-perspective))_rotateX(0deg)]
-            tw:[transition:transform_var(--duration-base)_var(--ease-out-cubic)]
-            tw:[.folder:hover_&,.folder:has(:focus-visible)_&,.folder.is-open_&]:[transform:perspective(var(--folder-perspective))_rotateX(calc(var(--folder-tilt)_*_-1))]
-            tw:[.folder:hover_&,.folder:has(:focus-visible)_&,.folder.is-open_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
-            tw:[.folder.is-closing.folder_&]:[transition:transform_var(--duration-slow)_var(--ease-standard)]
+            absolute inset-0 z-2 pointer-events-none origin-bottom [will-change:transform]
+            [transform:perspective(var(--folder-perspective))_rotateX(0deg)]
+            [transition:transform_var(--duration-base)_var(--ease-out-cubic)]
+            [.folder:hover_&,.folder:has(:focus-visible)_&,.folder.is-open_&]:[transform:perspective(var(--folder-perspective))_rotateX(calc(var(--folder-tilt)_*_-1))]
+            [.folder:hover_&,.folder:has(:focus-visible)_&,.folder.is-open_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
+            [.folder.is-closing.folder_&]:[transition:transform_var(--duration-slow)_var(--ease-standard)]
           `}
         >
           {/* The frost, cut to the front's edge. It has to be a real box:
@@ -1106,7 +1106,7 @@ export function HeroFolder({ caption }: { caption: string }) {
               objects: at 16px the cards were still recognisable through it and
               the panel looked smudged rather than frosted. */}
           <span
-            className="tw:absolute tw:inset-0 tw:backdrop-blur-[26px] tw:backdrop-saturate-[140%]"
+            className="absolute inset-0 backdrop-blur-[26px] backdrop-saturate-[140%]"
             style={{ clipPath: `url(#${clipId})` }}
           />
 
@@ -1114,13 +1114,13 @@ export function HeroFolder({ caption }: { caption: string }) {
               edge, and the cast shadow. */}
           <svg
             className={`
-              tw:absolute tw:inset-0 tw:w-full tw:h-full tw:[overflow:visible]
-              tw:[filter:var(--folder-face-drop)] tw:transition-[filter] tw:duration-320 tw:ease-standard
-              tw:[.folder:hover_&,.folder:has(:focus-visible)_&,.folder.is-open_&]:[filter:var(--folder-face-drop-raised)]
+              absolute inset-0 w-full h-full [overflow:visible]
+              [filter:var(--folder-face-drop)] transition-[filter] duration-320 ease-standard
+              [.folder:hover_&,.folder:has(:focus-visible)_&,.folder.is-open_&]:[filter:var(--folder-face-drop-raised)]
             `}
             viewBox={metrics.viewBox}
           >
-            <path d={metrics.front} fill={`url(#${fillId})`} className="tw:stroke-(--folder-flap-edge) tw:stroke-1" />
+            <path d={metrics.front} fill={`url(#${fillId})`} className="stroke-(--folder-flap-edge) stroke-1" />
           </svg>
 
           {/* Placed on the stage, not on the drawn front, since the layer they
@@ -1132,20 +1132,20 @@ export function HeroFolder({ caption }: { caption: string }) {
               stuck on rather than printed. */}
           <span
             className={`
-              tw:absolute tw:top-[41%] tw:left-[12%] tw:w-[22%] tw:[--r:-7deg]
-              tw:[filter:drop-shadow(0_4px_8px_rgb(21_21_21/18%))] tw:[transform:rotate(var(--r))]
-              tw:transition-transform tw:duration-320 tw:ease-out-cubic
-              tw:[.folder:hover_&,.folder.is-open_&]:[transform:rotate(-11deg)_scale(1.04)]
+              absolute top-[41%] left-[12%] w-[22%] [--r:-7deg]
+              [filter:drop-shadow(0_4px_8px_rgb(21_21_21/18%))] [transform:rotate(var(--r))]
+              transition-transform duration-320 ease-out-cubic
+              [.folder:hover_&,.folder.is-open_&]:[transform:rotate(-11deg)_scale(1.04)]
             `}
           >
             <StampSticker />
           </span>
           <span
             className={`
-              tw:absolute tw:top-[53%] tw:left-[62%] tw:w-[20%] tw:[--r:6deg]
-              tw:[filter:drop-shadow(0_4px_8px_rgb(21_21_21/18%))] tw:[transform:rotate(var(--r))]
-              tw:transition-transform tw:duration-320 tw:ease-out-cubic
-              tw:[.folder:hover_&,.folder.is-open_&]:[transform:rotate(10deg)_scale(1.04)]
+              absolute top-[53%] left-[62%] w-[20%] [--r:6deg]
+              [filter:drop-shadow(0_4px_8px_rgb(21_21_21/18%))] [transform:rotate(var(--r))]
+              transition-transform duration-320 ease-out-cubic
+              [.folder:hover_&,.folder.is-open_&]:[transform:rotate(10deg)_scale(1.04)]
             `}
           >
             <ToriiSticker />
@@ -1158,11 +1158,11 @@ export function HeroFolder({ caption }: { caption: string }) {
             up. Each entry is read by two rules: the target box takes the
             position and width, the card itself takes the rotation and the
             zoom. */}
-        <span className="tw:fixed tw:inset-0 tw:z-[-1] tw:invisible tw:pointer-events-none" ref={targetsRef} aria-hidden="true">
+        <span className="fixed inset-0 z-[-1] invisible pointer-events-none" ref={targetsRef} aria-hidden="true">
           {folderItems.map((item) => (
             <span
               key={item.id}
-              className={`tw:absolute tw:left-(--slot-x) tw:top-(--slot-y) tw:w-(--slot-w) tw:h-px tw:[transform:translate(-50%,-50%)] ${SLOT_UTILITIES}`}
+              className={`absolute left-(--slot-x) top-(--slot-y) w-(--slot-w) h-px [transform:translate(-50%,-50%)] ${SLOT_UTILITIES}`}
             />
           ))}
         </span>
@@ -1181,10 +1181,10 @@ export function HeroFolder({ caption }: { caption: string }) {
           aria-label={focused ? 'Put this back' : `Close ${caption}`}
           onClick={dismiss}
           className={`
-            tw:fixed tw:inset-0 tw:z-3 tw:w-full tw:h-full tw:p-0 tw:bg-(--folder-veil)
-            tw:backdrop-blur-[28px] tw:backdrop-saturate-[125%] tw:cursor-zoom-out tw:opacity-0
-            tw:[transition:opacity_var(--veil-clear)_var(--ease-standard)]
-            tw:[.folder.is-open_&]:opacity-100 tw:[.folder.is-open_&]:[transition-duration:var(--veil-fade)]
+            fixed inset-0 z-3 w-full h-full p-0 bg-(--folder-veil)
+            backdrop-blur-[28px] backdrop-saturate-[125%] cursor-zoom-out opacity-0
+            [transition:opacity_var(--veil-clear)_var(--ease-standard)]
+            [.folder.is-open_&]:opacity-100 [.folder.is-open_&]:[transition-duration:var(--veil-fade)]
           `}
         />
 
@@ -1199,31 +1199,31 @@ export function HeroFolder({ caption }: { caption: string }) {
         <p
           aria-live="polite"
           className={`
-            tw:fixed tw:z-20 tw:m-0 tw:bottom-md tw:md:bottom-2xl tw:left-1/2 tw:flex tw:max-w-[min(90vw,30rem)] tw:items-baseline tw:gap-xs
-            tw:py-xs tw:px-md tw:rounded-full tw:text-body tw:leading-normal tw:pointer-events-none
-            tw:[transform:translate(-50%,var(--spacing-xs))]
-            tw:border tw:border-(--folder-chrome-edge) tw:bg-(--folder-chrome) tw:shadow-(--folder-shadow-rest)
-            tw:backdrop-blur-[12px] tw:backdrop-saturate-[150%] tw:opacity-0
-            tw:[transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)]
-            tw:[.folder.is-open:has(.is-focused)_&]:opacity-100 tw:[.folder.is-open:has(.is-focused)_&]:[transform:translate(-50%,0)]
+            fixed z-20 m-0 bottom-md md:bottom-2xl left-1/2 flex max-w-[min(90vw,30rem)] items-baseline gap-xs
+            py-xs px-md rounded-full text-body leading-normal pointer-events-none
+            [transform:translate(-50%,var(--spacing-xs))]
+            border border-(--folder-chrome-edge) bg-(--folder-chrome) shadow-(--folder-shadow-rest)
+            backdrop-blur-[12px] backdrop-saturate-[150%] opacity-0
+            [transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)]
+            [.folder.is-open:has(.is-focused)_&]:opacity-100 [.folder.is-open:has(.is-focused)_&]:[transform:translate(-50%,0)]
           `}
         >
           {folderItems.map((item) => (
             <span
               key={item.id}
               hidden={focused !== item.id}
-              className="tw:flex tw:min-w-0 tw:items-baseline tw:gap-xs tw:[&[hidden]]:hidden"
+              className="flex min-w-0 items-baseline gap-xs [&[hidden]]:hidden"
             >
-              <strong className="tw:overflow-hidden tw:text-foreground tw:font-semibold tw:tracking-snug tw:text-ellipsis tw:whitespace-nowrap">
+              <strong className="overflow-hidden text-foreground font-semibold tracking-snug text-ellipsis whitespace-nowrap">
                 {item.label}
               </strong>
-              {item.note ? <span className="tw:shrink-0 tw:text-neutral-700">{item.note}</span> : null}
+              {item.note ? <span className="shrink-0 text-neutral-700">{item.note}</span> : null}
             </span>
           ))}
         </p>
 
         <button
-          className="folder__close tw:fixed tw:top-md tw:right-md tw:md:top-xl tw:md:right-xl tw:z-20 tw:grid tw:w-10 tw:h-10 tw:place-items-center tw:p-0 tw:rounded-full tw:text-foreground tw:cursor-pointer tw:scale-[0.92] tw:border tw:border-(--folder-chrome-edge) tw:bg-(--folder-chrome) tw:shadow-(--folder-shadow-rest) tw:backdrop-blur-[12px] tw:backdrop-saturate-[150%] tw:opacity-0 tw:[transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)] tw:hover:brightness-[1.04] tw:[.folder.is-open_&]:opacity-100 tw:[.folder.is-open_&]:scale-100 tw:[.folder.is-open_&]:[transition-delay:var(--veil-fade)]"
+          className="folder__close fixed top-md right-md md:top-xl md:right-xl z-20 grid w-10 h-10 place-items-center p-0 rounded-full text-foreground cursor-pointer scale-[0.92] border border-(--folder-chrome-edge) bg-(--folder-chrome) shadow-(--folder-shadow-rest) backdrop-blur-[12px] backdrop-saturate-[150%] opacity-0 [transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic)] hover:brightness-[1.04] [.folder.is-open_&]:opacity-100 [.folder.is-open_&]:scale-100 [.folder.is-open_&]:[transition-delay:var(--veil-fade)]"
           type="button"
           ref={closeRef}
           inert={inFolder}
@@ -1232,11 +1232,11 @@ export function HeroFolder({ caption }: { caption: string }) {
           <svg
             viewBox="0 0 16 16"
             aria-hidden="true"
-            className="tw:w-[15px] tw:h-[15px] tw:fill-none tw:stroke-current tw:[stroke-linecap:round] tw:[stroke-width:1.4]"
+            className="w-[15px] h-[15px] fill-none stroke-current [stroke-linecap:round] [stroke-width:1.4]"
           >
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
-          <span className="tw:sr-only">Close {caption}</span>
+          <span className="sr-only">Close {caption}</span>
         </button>
 
         {/* The folder as one hit target while it is shut, over the whole
@@ -1244,14 +1244,14 @@ export function HeroFolder({ caption }: { caption: string }) {
             open, which takes it out of both the tab order and the pointer's
             way in one word. */}
         <button
-          className="folder__open tw:absolute tw:inset-0 tw:z-6 tw:p-0 tw:rounded-lg tw:cursor-pointer tw:focus-visible:outline-offset-[6px]"
+          className="folder__open absolute inset-0 z-6 p-0 rounded-lg cursor-pointer focus-visible:outline-offset-[6px]"
           type="button"
           ref={openRef}
           inert={stage === 'open'}
           aria-expanded={active}
           onClick={() => setStage('open')}
         >
-          <span className="tw:sr-only">Open {caption}</span>
+          <span className="sr-only">Open {caption}</span>
         </button>
       </span>
     </div>

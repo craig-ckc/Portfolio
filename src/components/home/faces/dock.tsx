@@ -39,7 +39,7 @@ function measure(bar: HTMLElement, slots: HTMLElement[]): Reading | null {
   const centres = slots.map((_, index) => middle + (index - (slots.length - 1) / 2) * pitch)
 
   /* The bar's own padding-bottom is exactly the clearance a tile has to keep
-     at the bar's edge (1.2cqw, set by `tw:pb-[1.2cqw]` below) — reading it
+     at the bar's edge (1.2cqw, set by `pb-[1.2cqw]` below) — reading it
      in local px and scaling it up is simpler than restating the cqw figure
      here, and it can never drift out of step with that utility. */
   const rowWidth = (slots.length - 1) * pitch + tile
@@ -114,7 +114,7 @@ export function DockFace({ item }: { item: DockItem }) {
   return (
     <span
       /* The card is already the bar's exact shape (aspect-ratio 24 / 5, set by
-         `tw:data-[ratio=bar]:aspect-[24/5]` on the card element in
+         `data-[ratio=bar]:aspect-[24/5]` on the card element in
          hero-folder.tsx), so filling it with inset-0 is the whole layout: no
          width to measure, no padding that grows. --dock-tile/--dock-gap are
          the row's own geometry, read by the tiles below and by measure()
@@ -132,7 +132,7 @@ export function DockFace({ item }: { item: DockItem }) {
          together in one rule, dropping the standard property, so the bar
          would render with no blur. Kept as two separate utility rules so the
          minifier has nothing to merge. */
-      className="tw:group tw:absolute tw:inset-0 tw:flex tw:items-end tw:justify-center tw:gap-(--dock-gap) tw:pt-[1.6cqw] tw:px-0 tw:pb-[1.2cqw] tw:rounded-[4.6cqw] tw:border tw:border-[rgb(255_255_255/60%)] tw:bg-[rgb(255_255_255/62%)] tw:shadow-[0_0_0_1px_rgb(21_21_21/8%),0_1px_1px_rgb(21_21_21/6%),0_1cqw_2.6cqw_rgb(21_21_21/16%)] tw:font-sans tw:[--dock-tile:calc(100cqw*5/24-4.6cqw)] tw:[--dock-gap:2.4cqw] tw:[-webkit-backdrop-filter:blur(1.6cqw)] tw:[.card:has(&)]:overflow-visible! tw:[.card:has(&)]:bg-transparent! tw:[.card:has(&)]:shadow-none! tw:[.folder_.folder\_\_item:has(&)]:[--y:-6%]! tw:[.folder:hover_.folder\_\_item:has(&)]:[--y:-125%]! tw:[.folder:has(:focus-visible)_.folder\_\_item:has(&)]:[--y:-125%]!"
+      className="group absolute inset-0 flex items-end justify-center gap-(--dock-gap) pt-[1.6cqw] px-0 pb-[1.2cqw] rounded-[4.6cqw] border border-[rgb(255_255_255/60%)] bg-[rgb(255_255_255/62%)] shadow-[0_0_0_1px_rgb(21_21_21/8%),0_1px_1px_rgb(21_21_21/6%),0_1cqw_2.6cqw_rgb(21_21_21/16%)] font-sans [--dock-tile:calc(100cqw*5/24-4.6cqw)] [--dock-gap:2.4cqw] [-webkit-backdrop-filter:blur(1.6cqw)] [.card:has(&)]:overflow-visible! [.card:has(&)]:bg-transparent! [.card:has(&)]:shadow-none! [.folder_.folder\_\_item:has(&)]:[--y:-6%]! [.folder:hover_.folder\_\_item:has(&)]:[--y:-125%]! [.folder:has(:focus-visible)_.folder\_\_item:has(&)]:[--y:-125%]!"
       ref={barRef}
       style={{ '--dock-count': item.apps.length } as CSSProperties}
       onPointerMove={onPointerMove}
@@ -145,7 +145,7 @@ export function DockFace({ item }: { item: DockItem }) {
              :hover is live the follow keeps up with the pointer at 120ms;
              the moment it leaves this reverts to the slower, eased return
              every other hover state on the site uses. */
-          className="tw:relative tw:flex tw:flex-none tw:flex-col tw:items-center tw:gap-[0.6cqw] tw:w-(--dock-tile) tw:[transform:translateX(var(--shift,0px))] tw:[transition:transform_var(--duration-base)_var(--ease-out-cubic)] tw:group-hover:[transition:transform_120ms_var(--ease-out-cubic)] tw:motion-reduce:transition-none"
+          className="relative flex flex-none flex-col items-center gap-[0.6cqw] w-(--dock-tile) [transform:translateX(var(--shift,0px))] [transition:transform_var(--duration-base)_var(--ease-out-cubic)] group-hover:[transition:transform_120ms_var(--ease-out-cubic)] motion-reduce:transition-none"
           key={app.id}
           ref={(element) => {
             slotRefs.current[index] = element
@@ -158,13 +158,13 @@ export function DockFace({ item }: { item: DockItem }) {
                presented card and only for the nearest slot (data-active,
                written above) — in the scatter the dock is too small for a
                name to read as anything but a smudge. */
-            className="tw:absolute tw:left-1/2 tw:bottom-[calc(100%+1.4cqw)] tw:w-max tw:max-w-[64cqw] tw:rounded-[1.8cqw] tw:bg-[rgb(30_30_30/88%)] tw:px-[2.4cqw] tw:py-[1.5cqw] tw:text-center tw:text-[#f9f9f9] tw:opacity-0 tw:pointer-events-none tw:[transform:translate(-50%,calc((1-var(--mag,1))*var(--dock-tile)+0.8cqw))] tw:[transition:opacity_var(--duration-fast)_var(--ease-out-cubic),transform_var(--duration-fast)_var(--ease-out-cubic)] tw:motion-reduce:transition-none tw:after:content-[''] tw:after:absolute tw:after:top-full tw:after:left-1/2 tw:after:size-[1.6cqw] tw:after:bg-[inherit] tw:after:[transform:translate(-50%,-55%)_rotate(45deg)] tw:after:rounded-[0_0_0.3cqw_0] tw:[.folder\_\_item.is-focused_.card[data-kind='dock']_[data-active]_&]:opacity-100 tw:[.folder\_\_item.is-focused_.card[data-kind='dock']_[data-active]_&]:[transform:translate(-50%,calc((1-var(--mag,1))*var(--dock-tile)))]"
+            className="absolute left-1/2 bottom-[calc(100%+1.4cqw)] w-max max-w-[64cqw] rounded-[1.8cqw] bg-[rgb(30_30_30/88%)] px-[2.4cqw] py-[1.5cqw] text-center text-[#f9f9f9] opacity-0 pointer-events-none [transform:translate(-50%,calc((1-var(--mag,1))*var(--dock-tile)+0.8cqw))] [transition:opacity_var(--duration-fast)_var(--ease-out-cubic),transform_var(--duration-fast)_var(--ease-out-cubic)] motion-reduce:transition-none after:content-[''] after:absolute after:top-full after:left-1/2 after:size-[1.6cqw] after:bg-[inherit] after:[transform:translate(-50%,-55%)_rotate(45deg)] after:rounded-[0_0_0.3cqw_0] [.folder\_\_item.is-focused_.card[data-kind='dock']_[data-active]_&]:opacity-100 [.folder\_\_item.is-focused_.card[data-kind='dock']_[data-active]_&]:[transform:translate(-50%,calc((1-var(--mag,1))*var(--dock-tile)))]"
             aria-hidden="true"
           >
-            <span className="tw:block tw:font-display tw:text-[4.6cqw] tw:font-semibold tw:tracking-snug tw:leading-tight">
+            <span className="block font-display text-[4.6cqw] font-semibold tracking-snug leading-tight">
               {app.name}
             </span>
-            <span className="tw:block tw:mt-[0.5cqw] tw:text-pretty tw:text-[3.2cqw] tw:leading-normal tw:text-[rgb(249_249_249/70%)]">
+            <span className="block mt-[0.5cqw] text-pretty text-[3.2cqw] leading-normal text-[rgb(249_249_249/70%)]">
               {app.note}
             </span>
           </span>
@@ -173,7 +173,7 @@ export function DockFace({ item }: { item: DockItem }) {
                neighbour — the neighbour clearance is --shift's job. The
                images already carry their own squircle, shadow and inset —
                no frame to add here. */
-            className="tw:block tw:w-(--dock-tile) tw:h-(--dock-tile) tw:origin-bottom tw:[transform:scale(var(--mag,1))] tw:[transition:transform_var(--duration-base)_var(--ease-out-cubic)] tw:group-hover:[transition:transform_120ms_var(--ease-out-cubic)] tw:motion-reduce:transition-none"
+            className="block w-(--dock-tile) h-(--dock-tile) origin-bottom [transform:scale(var(--mag,1))] [transition:transform_var(--duration-base)_var(--ease-out-cubic)] group-hover:[transition:transform_120ms_var(--ease-out-cubic)] motion-reduce:transition-none"
             src={app.icon}
             alt=""
             draggable={false}

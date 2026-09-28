@@ -215,7 +215,7 @@ export function DitheredVideoBackground({
       data-dither-state={state}
       style={{ backgroundImage: `url(${poster})` }}
     >
-      <canvas className="tw:absolute tw:inset-0 tw:block tw:w-full tw:h-full" ref={canvasRef} aria-hidden="true" />
+      <canvas className="absolute inset-0 block w-full h-full" ref={canvasRef} aria-hidden="true" />
       {/* Kept in the document as the decoded WebGL texture source, never as a
           visible layer — the canvas above is the only moving image the
           footer displays. */}
@@ -223,7 +223,7 @@ export function DitheredVideoBackground({
         ref={videoRef}
         aria-hidden="true"
         autoPlay
-        className="tw:absolute tw:w-px tw:h-px tw:opacity-0 tw:pointer-events-none"
+        className="absolute w-px h-px opacity-0 pointer-events-none"
         loop
         muted
         playsInline

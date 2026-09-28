@@ -5,10 +5,9 @@ import { describe, expect, it } from 'vitest'
  * Guards for the Tailwind v4 foundation in src/styles.css, the site's only
  * stylesheet.
  *
- * The contract under test: the token block (between the `@tokens:start` and
- * `@tokens:end` markers) is the single runtime source of truth, and the
- * `@theme inline` block only *references* it — so a token renamed on one side
- * fails here instead of silently generating utilities that resolve to nothing.
+ * The contract under test: utilities use Tailwind's standard unprefixed
+ * syntax, runtime colour aliases point at differently named tokens, and the
+ * static theme never creates a self-referencing custom property.
  * These are file-shape assertions, deliberately narrow: they pin the wiring
  * (imports, variant, plugin) without rendering any CSS.
  */
@@ -30,14 +29,14 @@ function inlineThemeBody(): string {
 
 describe('tailwind foundation wiring', () => {
   it('imports theme and utilities without the preflight reset', () => {
-    expect(stylesCss).toContain(`@import 'tailwindcss/theme.css' layer(theme) prefix(tw)`)
-    expect(stylesCss).toContain(`@import 'tailwindcss/utilities.css' layer(utilities) prefix(tw)`)
+    expect(stylesCss).toContain(`@import 'tailwindcss/theme.css' layer(theme)`)
+    expect(stylesCss).toContain(`@import 'tailwindcss/utilities.css' layer(utilities)`)
     expect(stylesCss).not.toMatch(/@import\s+['"]tailwindcss\/(preflight|index)/)
   })
 
-  it('prefixes utilities and generated variables away from existing class and token names', () => {
-    expect(stylesCss).toContain('prefix(tw)')
-    expect(stylesCss).not.toMatch(/@import\s+['"]tailwindcss\/(?:theme|utilities)\.css['"]\s*;/)
+  it('uses standard unprefixed Tailwind syntax', () => {
+    expect(stylesCss).not.toContain('prefix(tw)')
+    expect(stylesCss).not.toMatch(/\btw:/)
   })
 
   it('scopes the dark variant to the .hp wrapper', () => {
@@ -90,6 +89,10 @@ describe('@theme inline token references', () => {
     for (const token of referenced) {
       expect(defined, `token ${token} has no definition`).toContain(token)
     }
+  })
+
+  it('never maps a theme variable back to itself', () => {
+    expect(stylesCss).not.toMatch(/(--[\w-]+)\s*:\s*var\(\1\)\s*;/)
   })
 
   it('keeps breakpoint overrides in step with the token widths', () => {

@@ -42,17 +42,17 @@ const { href, image, title, description, featured = false } = Astro.props
    jump seen as the zoom settles. With the layer kept, nothing changes hands at
    the end, so there is nothing to jump. */
 const imageClasses =
-  "tw:h-full tw:w-full tw:object-cover tw:transition-transform tw:duration-760 tw:ease-out-quart tw:group-hover:scale-[1.03] tw:[will-change:transform]"
+  "h-full w-full object-cover transition-transform duration-760 ease-out-quart group-hover:scale-[1.03] [will-change:transform]"
 ---
 
-<a class="tw:group tw:relative tw:isolate tw:block tw:overflow-hidden tw:rounded-lg" href={href}>
+<a class="group relative isolate block overflow-hidden rounded-lg" href={href}>
   <div
     class:list={[
-      'tw:w-full tw:bg-neutral-600',
+      'w-full bg-neutral-600',
       /* The homepage work tile's height, half the featured card's — a height
          of its own rather than 100%, because the tile has none until its
          image gives it one. */
-      featured ? 'tw:h-[640px]' : 'tw:h-[320px]',
+      featured ? 'h-[640px]' : 'h-[320px]',
     ]}
   >
     {
@@ -74,18 +74,18 @@ const imageClasses =
       measure so its lines stay short. */}
   <div
     class:list={[
-      'tw:absolute tw:right-sm tw:bottom-sm tw:left-sm tw:flex tw:flex-col tw:items-start tw:rounded-md tw:border tw:border-(--writing-glass-edge) tw:p-lg tw:text-white tw:[background-image:linear-gradient(180deg,var(--writing-glass-top),var(--writing-glass-bottom))] tw:[backdrop-filter:blur(26px)_saturate(140%)]',
+      'absolute right-sm bottom-sm left-sm flex flex-col items-start rounded-md border border-(--writing-glass-edge) p-lg text-white [background-image:linear-gradient(180deg,var(--writing-glass-top),var(--writing-glass-bottom))] [backdrop-filter:blur(26px)_saturate(140%)]',
       featured &&
-        'tw:sm:top-2xl tw:sm:right-auto tw:sm:bottom-auto tw:sm:left-2xl tw:sm:max-w-caption tw:sm:p-2xl',
+        'sm:top-2xl sm:right-auto sm:bottom-auto sm:left-2xl sm:max-w-caption sm:p-2xl',
     ]}
   >
     {
       featured ? (
-        <h2 class="tw:font-display tw:text-2xl tw:font-semibold tw:[font-variation-settings:'wght'_600] tw:tracking-snug tw:leading-tight tw:text-balance tw:sm:text-3xl">
+        <h2 class="font-display text-2xl font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight text-balance sm:text-3xl">
           {title}
         </h2>
       ) : (
-        <h3 class="tw:font-display tw:text-md tw:font-semibold tw:[font-variation-settings:'wght'_600] tw:tracking-snug tw:leading-snug tw:text-balance">
+        <h3 class="font-display text-md font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-snug text-balance">
           {title}
         </h3>
       )
@@ -93,12 +93,12 @@ const imageClasses =
 
     {
       featured && description && (
-        <p class="tw:mt-md tw:text-white/78 tw:font-display tw:text-base tw:tracking-snug tw:leading-relaxed tw:text-pretty">
+        <p class="mt-md text-white/78 font-display text-base tracking-snug leading-relaxed text-pretty">
           {description}
         </p>
       )
     }
 
-    {featured && <span class="chip chip-cta tw:mt-xl">Read article</span>}
+    {featured && <span class="chip chip-cta mt-xl">Read article</span>}
   </div>
 </a>

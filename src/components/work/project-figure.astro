@@ -40,20 +40,20 @@ interface Props {
 const { media, fill = false, wide = false, loading = 'lazy' } = Astro.props
 ---
 
-<figure class:list={['tw:flex tw:min-w-0 tw:flex-col tw:m-0 tw:gap-xs', fill && 'tw:h-full']}>
+<figure class:list={['flex min-w-0 flex-col m-0 gap-xs', fill && 'h-full']}>
   <div
     class:list={[
-      'tw:relative tw:overflow-hidden tw:border tw:rounded-lg tw:bg-neutral-600',
+      'relative overflow-hidden border rounded-lg bg-neutral-600',
       /* Three mutually exclusive shapes, so exactly one of these is ever on the
          element and the base utilities above never have to be overridden. */
-      fill ? 'tw:h-full tw:aspect-auto tw:border-0 tw:rounded-none' : wide ? 'tw:aspect-[16/10]' : 'tw:aspect-square',
-      !fill && 'tw:border-(--project-box-rule)',
+      fill ? 'h-full aspect-auto border-0 rounded-none' : wide ? 'aspect-[16/10]' : 'aspect-square',
+      !fill && 'border-(--project-box-rule)',
     ]}
   >
     {
       media.src && (
         <img
-          class="tw:h-full tw:w-full tw:object-cover"
+          class="h-full w-full object-cover"
           src={media.src}
           alt={media.alt ?? ''}
           loading={loading}
@@ -62,5 +62,5 @@ const { media, fill = false, wide = false, loading = 'lazy' } = Astro.props
       )
     }
   </div>
-  {media.caption && <figcaption class="tw:mt-xs tw:text-neutral-700 tw:text-2xs tw:leading-normal">{media.caption}</figcaption>}
+  {media.caption && <figcaption class="mt-xs text-neutral-700 text-2xs leading-normal">{media.caption}</figcaption>}
 </figure>

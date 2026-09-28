@@ -6,9 +6,9 @@ import { statement } from '../../content/home-page'
  */
 export function Statement() {
   return (
-    <section className="container tw:flex tw:flex-col tw:items-center tw:py-section-y" id="about">
+    <section className="mx-auto flex w-full max-w-[calc(var(--container-page)+var(--spacing-page-gutter)*2)] flex-col items-center px-page-gutter py-section-y" id="about">
       {/* BEYOND THE FRAME: 1.67vw lands on the frame's 32px at 1920. */}
-      <p className="tw:w-full tw:max-w-work tw:font-display tw:text-[clamp(1.25rem,1.67vw,2rem)] tw:font-normal tw:tracking-snug tw:leading-normal tw:text-pretty">
+      <p className="w-full max-w-work font-display text-[clamp(1.25rem,1.67vw,2rem)] font-normal tracking-snug leading-normal text-pretty">
         {statement.body}
       </p>
     </section>

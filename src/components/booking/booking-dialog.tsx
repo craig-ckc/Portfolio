@@ -164,12 +164,12 @@ export function BookingDialog() {
      colour on hover. Kept as a single string rather than repeated per call
      site. */
   const inlineLink =
-    'tw:pb-4xs tw:border-b tw:border-neutral-600 tw:text-foreground tw:font-semibold tw:transition-colors tw:duration-320 tw:ease-standard tw:hover:border-foreground'
+    'pb-4xs border-b border-neutral-600 text-foreground font-semibold transition-colors duration-320 ease-standard hover:border-foreground'
 
   return (
     <dialog
       /* The three themed custom properties (edge/rule/shadow) are declared
-         right here, with a `tw:dark:` pair each, where they are read.
+         right here, with a `dark:` pair each, where they are read.
 
          The open/close choreography — the entrance transition, its
          `@starting-style` counterpart, the `display`/`overlay` allow-discrete
@@ -177,8 +177,8 @@ export function BookingDialog() {
          `backdrop` variants, which reach every leg a native <dialog> needs
          without a class of its own. `display` still can't be unconditional
          (the UA's `dialog:not([open]) { display: none }` must win while shut),
-         so only `tw:open:flex` sets it, exactly as `.booking[open]` did. */
-      className="tw:[--booking-edge:rgb(21_21_21/10%)] tw:dark:[--booking-edge:rgb(255_255_255/12%)] tw:[--booking-rule:rgb(21_21_21/8%)] tw:dark:[--booking-rule:rgb(255_255_255/10%)] tw:[--booking-shadow:0_2px_8px_rgb(0_0_0/6%),0_28px_64px_rgb(0_0_0/14%)] tw:dark:[--booking-shadow:0_2px_8px_rgb(0_0_0/44%),0_28px_64px_rgb(0_0_0/56%)] tw:w-screen tw:h-dvh tw:rounded-none tw:sm:w-[min(560px,calc(100vw-var(--spacing-md)*2))] tw:sm:h-[min(860px,calc(100dvh-var(--spacing-md)*2))] tw:sm:rounded-lg tw:md:w-[min(1280px,calc(100vw-var(--spacing-2xl)*2))] tw:md:h-[min(700px,calc(100dvh-var(--spacing-2xl)*2))] tw:max-w-none tw:max-h-none tw:overflow-hidden tw:p-0 tw:border tw:border-(--booking-edge) tw:bg-background tw:shadow-(--booking-shadow) tw:text-foreground tw:font-sans tw:tracking-normal tw:opacity-0 tw:[transform:translateY(8px)_scale(0.99)] tw:[transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic),display_var(--duration-base)_allow-discrete,overlay_var(--duration-base)_allow-discrete] tw:open:flex tw:open:opacity-100 tw:open:[transform:none] tw:open:starting:opacity-0 tw:open:starting:[transform:translateY(8px)_scale(0.99)] tw:backdrop:[background:rgb(249_249_249/72%)] tw:dark:backdrop:[background:rgb(12_12_12/70%)] tw:backdrop:[backdrop-filter:blur(24px)_saturate(125%)] tw:backdrop:opacity-0 tw:backdrop:[transition:opacity_var(--duration-base)_var(--ease-standard),display_var(--duration-base)_allow-discrete,overlay_var(--duration-base)_allow-discrete] tw:open:backdrop:opacity-100 tw:open:backdrop:starting:opacity-0 tw:motion-reduce:backdrop:[transition-duration:1ms]!"
+         so only `open:flex` sets it, exactly as `.booking[open]` did. */
+      className="[--booking-edge:rgb(21_21_21/10%)] dark:[--booking-edge:rgb(255_255_255/12%)] [--booking-rule:rgb(21_21_21/8%)] dark:[--booking-rule:rgb(255_255_255/10%)] [--booking-shadow:0_2px_8px_rgb(0_0_0/6%),0_28px_64px_rgb(0_0_0/14%)] dark:[--booking-shadow:0_2px_8px_rgb(0_0_0/44%),0_28px_64px_rgb(0_0_0/56%)] w-screen h-dvh rounded-none sm:w-[min(560px,calc(100vw-var(--spacing-md)*2))] sm:h-[min(860px,calc(100dvh-var(--spacing-md)*2))] sm:rounded-lg md:w-[min(1280px,calc(100vw-var(--spacing-2xl)*2))] md:h-[min(700px,calc(100dvh-var(--spacing-2xl)*2))] max-w-none max-h-none overflow-hidden p-0 border border-(--booking-edge) bg-background shadow-(--booking-shadow) text-foreground font-sans tracking-normal opacity-0 transform-[translateY(8px)_scale(0.99)] [transition:opacity_var(--duration-base)_var(--ease-standard),transform_var(--duration-base)_var(--ease-out-cubic),display_var(--duration-base)_allow-discrete,overlay_var(--duration-base)_allow-discrete] open:flex open:opacity-100 open:transform-none open:starting:opacity-0 open:starting:transform-[translateY(8px)_scale(0.99)] backdrop:[background:rgb(249_249_249/72%)] dark:backdrop:[background:rgb(12_12_12/70%)] backdrop:[backdrop-filter:blur(24px)_saturate(125%)] backdrop:opacity-0 backdrop:[transition:opacity_var(--duration-base)_var(--ease-standard),display_var(--duration-base)_allow-discrete,overlay_var(--duration-base)_allow-discrete] open:backdrop:opacity-100 open:backdrop:starting:opacity-0 motion-reduce:backdrop:duration-[1ms]!"
       ref={dialogRef}
       aria-labelledby="booking-title"
       /* Escape and the close button both end up here, so this is the one place
@@ -191,61 +191,61 @@ export function BookingDialog() {
       }}
     >
       {/* Mobile-first: one column at the top of the file, the desktop grid and
-          padding riding in on `tw:md:`, matching the `@media (max-width: 899.98px)`
+          padding riding in on `md:`, matching the `@media (max-width: 899.98px)`
           rule it replaces. */}
       <div
-        className="tw:relative tw:grid tw:flex-1 tw:min-h-0 tw:grid-cols-1 tw:md:grid-cols-[minmax(0,340px)_minmax(0,1fr)] tw:gap-2xl tw:pt-xl tw:px-md tw:pb-2xl tw:sm:p-2xl tw:md:p-3xl tw:overflow-auto tw:overscroll-contain"
+        className="relative grid flex-1 min-h-0 grid-cols-1 md:grid-cols-[minmax(0,340px)_minmax(0,1fr)] gap-2xl pt-xl px-md pb-2xl sm:p-2xl md:p-3xl overflow-auto overscroll-contain"
         ref={panelRef}
         data-lenis-prevent
       >
         <button
-          className="tw:absolute tw:top-xs tw:right-xs tw:sm:top-md tw:sm:right-md tw:z-1 tw:grid tw:size-[34px] tw:place-items-center tw:p-0 tw:border tw:border-(--booking-edge) tw:rounded-full tw:bg-background tw:text-foreground tw:cursor-pointer tw:transition-[background-color,transform] tw:duration-180 tw:ease-standard tw:hover:bg-neutral-300 tw:active:scale-[0.94]"
+          className="absolute top-xs right-xs sm:top-md sm:right-md z-1 grid size-8.5 place-items-center p-0 border border-(--booking-edge) rounded-full bg-background text-foreground cursor-pointer transition-[background-color,transform] duration-180 ease-standard hover:bg-neutral-300 active:scale-[0.94]"
           type="button"
           onClick={close}
         >
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth={1.4} aria-hidden="true">
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
-          <span className="tw:sr-only">{bookingDialog.close}</span>
+          <span className="sr-only">{bookingDialog.close}</span>
         </button>
 
-        <div className="tw:flex tw:min-w-0 tw:flex-col tw:items-start">
-          <p className="tw:text-neutral-700 tw:text-2xs tw:font-semibold tw:tracking-wider tw:leading-normal tw:uppercase">
+        <div className="flex min-w-0 flex-col items-start">
+          <p className="text-neutral-700 text-2xs font-semibold tracking-wider leading-normal uppercase">
             {bookingDialog.eyebrow}
           </p>
           {/* BEYOND THE FRAME: the clamp() sizes the title between the two
               breakpoints rather than jumping between two fixed scale steps —
               there is no token for a fluid size. */}
           <h2
-            className="tw:pt-sm tw:font-display tw:text-[clamp(1.75rem,2.2vw,2.375rem)] tw:font-bold tw:[font-variation-settings:'wght'_700] tw:tracking-snug tw:leading-tight"
+            className="pt-sm font-display text-[clamp(1.75rem,2.2vw,2.375rem)] font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight"
             id="booking-title"
           >
             {bookingDialog.title}
           </h2>
-          <p className="tw:pt-md tw:text-neutral-700 tw:text-body tw:leading-loose">{bookingDialog.lead}</p>
+          <p className="pt-md text-neutral-700 text-body leading-loose">{bookingDialog.lead}</p>
 
-          <p className="tw:pt-2xl tw:text-2xs tw:font-semibold tw:tracking-wider tw:leading-normal tw:uppercase">
+          <p className="pt-2xl text-2xs font-semibold tracking-wider leading-normal uppercase">
             {bookingDialog.coversLead}
           </p>
-          <ul className="tw:flex tw:flex-col tw:m-0 tw:p-0 tw:pt-sm tw:gap-xs tw:list-none tw:text-body tw:leading-relaxed">
+          <ul className="flex flex-col m-0 p-0 pt-sm gap-xs list-none text-body leading-relaxed">
             {/* A rule per line rather than a bullet: the list is three short
                 sentences, and bullets at this size read as a form being filled
                 in. */}
             {bookingDialog.covers.map((line) => (
-              <li key={line} className="tw:pt-xs tw:border-t tw:border-(--booking-rule)">
+              <li key={line} className="pt-xs border-t border-(--booking-rule)">
                 {line}
               </li>
             ))}
           </ul>
 
-          <p className="tw:pt-lg tw:text-neutral-700 tw:text-2xs tw:leading-relaxed">{bookingDialog.prep}</p>
+          <p className="pt-lg text-neutral-700 text-2xs leading-relaxed">{bookingDialog.prep}</p>
 
           {/* The way in for anybody who would rather not open a calendar.
-              Pushed to the bottom of the column on the wide layout (`tw:md:mt-auto`)
+              Pushed to the bottom of the column on the wide layout (`md:mt-auto`)
               so it sits level with the foot of the scheduler beside it; on the
               stacked layout the panel itself is the scroller, so there is
               nothing to push against and the margin is dropped. */}
-          <p className="tw:w-full tw:mt-0 tw:md:mt-auto tw:pt-md tw:border-t tw:border-(--booking-rule) tw:text-neutral-700 tw:text-2xs tw:leading-relaxed">
+          <p className="w-full mt-0 md:mt-auto pt-md border-t border-(--booking-rule) text-neutral-700 text-2xs leading-relaxed">
             <span>{bookingDialog.fallbackLead}</span>{' '}
             <a className={inlineLink} href={bookingDialog.fallbackLink.href}>
               {bookingDialog.fallbackLink.label}
@@ -258,14 +258,14 @@ export function BookingDialog() {
             card, and a second frame around it reads as two panels that happen
             to be nested rather than as one calendar. This is a slot for it,
             not a container. */}
-        <div className="tw:relative tw:min-w-0 tw:overflow-hidden tw:min-h-[380px] tw:md:min-h-[420px]" data-status={status}>
+        <div className="relative min-w-0 overflow-hidden min-h-95 md:min-h-105" data-status={status}>
           {/* Cal draws into this by id — see CAL_MOUNT_ID. It stays in the tree
               whatever the status, because the element has to be there before
               Cal is told to use it and has to stay there afterwards. Cal sizes
               its own iframe and expects the element it was handed to give it
-              room, which is what the `tw:h-full`/`tw:h-auto` pair is. */}
+              room, which is what the `h-full`/`h-auto` pair is. */}
           <div
-            className="tw:w-full tw:h-auto tw:min-h-[380px] tw:md:h-full tw:md:min-h-0 tw:overflow-auto tw:overscroll-contain tw:[&_iframe]:border-0"
+            className="w-full h-auto min-h-95 md:h-full md:min-h-0 overflow-auto overscroll-contain [&_iframe]:border-0"
             id={CAL_MOUNT_ID}
             ref={mountRef}
           />
@@ -275,7 +275,7 @@ export function BookingDialog() {
               up. */}
           {status === 'loading' ? (
             <p
-              className="tw:absolute tw:inset-0 tw:grid tw:content-center tw:justify-items-center tw:p-2xl tw:gap-md tw:bg-background tw:text-neutral-700 tw:text-body tw:leading-relaxed tw:text-center tw:text-balance"
+              className="absolute inset-0 grid content-center justify-items-center p-2xl gap-md bg-background text-neutral-700 text-body leading-relaxed text-center text-balance"
               aria-live="polite"
             >
               {bookingDialog.loading}
@@ -284,11 +284,11 @@ export function BookingDialog() {
 
           {status === 'failed' ? (
             <div
-              className="tw:absolute tw:inset-0 tw:grid tw:content-center tw:justify-items-center tw:p-2xl tw:gap-md tw:bg-background tw:text-neutral-700 tw:text-body tw:leading-relaxed tw:text-center tw:text-balance"
+              className="absolute inset-0 grid content-center justify-items-center p-2xl gap-md bg-background text-neutral-700 text-body leading-relaxed text-center text-balance"
               role="alert"
             >
               <p>{bookingDialog.unavailable}</p>
-              <p className="tw:flex tw:flex-wrap tw:justify-center tw:gap-lg">
+              <p className="flex flex-wrap justify-center gap-lg">
                 {bookingDialog.unavailableLinks.map((link) => (
                   <a
                     key={link.label}

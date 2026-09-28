@@ -30,14 +30,14 @@ const { media, eager = false, cover = false, paired = false } = Astro.props
 
 <div
   class:list={[
-    'tw:overflow-hidden tw:rounded-md tw:bg-neutral-600',
-    cover ? 'tw:aspect-[16/9]' : paired ? 'tw:aspect-[16/10] tw:sm:aspect-square' : 'tw:aspect-[16/10]',
+    'overflow-hidden rounded-md bg-neutral-600',
+    cover ? 'aspect-[16/9]' : paired ? 'aspect-[16/10] sm:aspect-square' : 'aspect-[16/10]',
   ]}
 >
   {
     media.src && (
       <img
-        class="tw:block tw:h-full tw:w-full tw:object-cover"
+        class="block h-full w-full object-cover"
         src={media.src}
         alt={media.alt ?? ''}
         loading={eager ? 'eager' : 'lazy'}

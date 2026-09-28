@@ -22,7 +22,7 @@
  * decided here; the link, the sections and the images are components in
  * src/components/work/. The frame and the pill's themed custom properties are
  * arbitrary-property utilities on the article root below; the load-in is
- * `tw:animate-project-fade-up`, staged in src/styles/tw/pages.css.
+ * `animate-project-fade-up`, staged in src/styles/tw/pages.css.
  */
 import PageShell from '../../layouts/page-shell.astro'
 import ProjectFigure from '../../components/work/project-figure.astro'
@@ -51,13 +51,13 @@ const description = entry.description
 <PageShell title={`${entry.title} | Craig Chihururu`} description={description} homeHref="/">
   {
     /* Same four themed custom properties `.project` declared in
-       project-page.css, now arbitrary-property utilities with a `tw:dark:`
+       project-page.css, now arbitrary-property utilities with a `dark:`
        pair each instead of a class and a `.hp[data-theme='dark'] .project`
        override. (--project-pill-bg is still gone: it was only ever
-       var(--background), which is `tw:bg-background` at each call site.) */
+       var(--background), which is `bg-background` at each call site.) */
   }
   <article
-    class="tw:[--project-rule:rgb(21_21_21/10%)] tw:dark:[--project-rule:rgb(255_255_255/12%)] tw:[--project-box-rule:rgb(21_21_21/6%)] tw:dark:[--project-box-rule:rgb(255_255_255/8%)] tw:[--project-pill-border:rgb(21_21_21/10%)] tw:dark:[--project-pill-border:rgb(255_255_255/14%)] tw:[--project-pill-shadow:0_1px_2px_rgb(0_0_0/4%),0_4px_12px_rgb(0_0_0/4%)] tw:dark:[--project-pill-shadow:0_1px_2px_rgb(0_0_0/24%),0_4px_16px_rgb(0_0_0/32%)]"
+    class="[--project-rule:rgb(21_21_21/10%)] dark:[--project-rule:rgb(255_255_255/12%)] [--project-box-rule:rgb(21_21_21/6%)] dark:[--project-box-rule:rgb(255_255_255/8%)] [--project-pill-border:rgb(21_21_21/10%)] dark:[--project-pill-border:rgb(255_255_255/14%)] [--project-pill-shadow:0_1px_2px_rgb(0_0_0/4%),0_4px_12px_rgb(0_0_0/4%)] dark:[--project-pill-shadow:0_1px_2px_rgb(0_0_0/24%),0_4px_16px_rgb(0_0_0/32%)]"
   >
     {
       /* The live link, when there is one, sits wherever the top of the page
@@ -67,25 +67,25 @@ const description = entry.description
     }
     {
       entry.cover ? (
-        <div class="tw:relative tw:overflow-hidden tw:h-[clamp(320px,42svh,520px)]">
+        <div class="relative overflow-hidden h-[clamp(320px,42svh,520px)]">
           {/* BEYOND THE FRAME: no token on the spacing or container scales
               describes a hero's height — it is sized against the viewport, not
               against type or other content. 42svh lands it near the reference's
               proportion (roughly 42% of a 964px viewport) at any window height;
               the clamp keeps it from going stark on a short laptop screen or
               huge on an ultrawide monitor. */}
-          <div class="tw:h-full">
+          <div class="h-full">
             <ProjectFigure media={entry.cover} fill loading="eager" />
           </div>
           {/* Fades the foot of the cover into the page background rather than
               cutting to it, so the link sitting on the fade is readable over
               photograph and page alike. */}
           <div
-            class="tw:absolute tw:right-0 tw:bottom-0 tw:left-0 tw:h-[45%] tw:bg-[linear-gradient(to_bottom,transparent,var(--background))] tw:pointer-events-none"
+            class="absolute right-0 bottom-0 left-0 h-[45%] bg-[linear-gradient(to_bottom,transparent,var(--background))] pointer-events-none"
             aria-hidden="true"
           />
           {entry.live && (
-            <div class="tw:absolute tw:right-md tw:bottom-xl tw:left-md tw:flex tw:justify-center tw:sm:right-page-gutter tw:sm:left-page-gutter">
+            <div class="absolute right-md bottom-xl left-md flex justify-center sm:right-page-gutter sm:left-page-gutter">
               <ProjectLiveLink live={entry.live} />
             </div>
           )}
@@ -101,26 +101,26 @@ const description = entry.description
         breath before that begins. */}
     <div
       class:list={[
-        'tw:mx-auto tw:max-w-content tw:px-md tw:sm:px-2xl tw:pb-section-y',
-        entry.cover ? 'tw:pt-4xl' : 'tw:pt-hero-top',
+        'mx-auto max-w-content px-md sm:px-2xl pb-section-y',
+        entry.cover ? 'pt-4xl' : 'pt-hero-top',
       ]}
     >
       {
         !entry.cover && entry.live && (
-          <div class="tw:flex tw:pt-xl">
+          <div class="flex pt-xl">
             <ProjectLiveLink live={entry.live} />
           </div>
         )
       }
 
       <h1
-        class="tw:font-display tw:text-2xl tw:font-bold tw:[font-variation-settings:'wght'_700] tw:tracking-snug tw:leading-tight tw:text-pretty tw:motion-safe:animate-project-fade-up tw:motion-safe:[animation-delay:calc(var(--duration-fast)*0.5)]"
+        class="font-display text-2xl font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight text-pretty motion-safe:animate-project-fade-up motion-safe:[animation-delay:calc(var(--duration-fast)*0.5)]"
       >
         {entry.title}
       </h1>
       {entry.summary && (
         <p
-          class="tw:mt-xl tw:text-neutral-700 tw:text-body tw:leading-loose tw:text-pretty tw:motion-safe:animate-project-fade-up tw:motion-safe:[animation-delay:var(--duration-fast)]"
+          class="mt-xl text-neutral-700 text-body leading-loose text-pretty motion-safe:animate-project-fade-up motion-safe:[animation-delay:var(--duration-fast)]"
         >
           {entry.summary}
         </p>
@@ -130,9 +130,9 @@ const description = entry.description
 
       {
         entry.quote && (
-          <blockquote class="tw:mx-0 tw:mb-0 tw:mt-section-y tw:pl-lg tw:border-l-2 tw:[border-left-color:var(--project-rule)]">
-            <p class="tw:text-md tw:font-normal tw:leading-loose tw:text-pretty">{entry.quote.body}</p>
-            <footer class="tw:mt-md tw:text-neutral-700 tw:text-2xs tw:leading-normal">
+          <blockquote class="mx-0 mb-0 mt-section-y pl-lg border-l-2 [border-left-color:var(--project-rule)]">
+            <p class="text-md font-normal leading-loose text-pretty">{entry.quote.body}</p>
+            <footer class="mt-md text-neutral-700 text-2xs leading-normal">
               {entry.quote.name}, {entry.quote.role}
             </footer>
           </blockquote>

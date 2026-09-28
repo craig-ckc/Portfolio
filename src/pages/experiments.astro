@@ -12,16 +12,16 @@ const blurb = "Prototypes, half-built tools, and whatever I'm poking at this mon
   {/* Sized by its own padding, not the viewport — it used to fill the screen
       because it was the only thing on the page; now the CTA sits underneath
       it. */}
-  <section class="container tw:flex tw:flex-col tw:items-start tw:pt-hero-top tw:pb-section-py">
+  <section class="mx-auto flex w-full max-w-[calc(var(--container-page)+var(--spacing-page-gutter)*2)] flex-col items-start px-page-gutter pt-hero-top pb-section-py">
     {/* BEYOND THE FRAME: the clamp() and the font-variation-settings axis have
         no token behind them, same as the equivalent heading in
         project-page.css. */}
-    <h1 class="tw:font-display tw:text-[clamp(2.5rem,4.8vw,5.75rem)] tw:font-bold tw:[font-variation-settings:'wght'_700] tw:tracking-snug tw:leading-tight">
+    <h1 class="font-display text-[clamp(2.5rem,4.8vw,5.75rem)] font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight">
       {title}
     </h1>
-    <p class="tw:mt-xl tw:max-w-caption tw:text-neutral-700 tw:text-body tw:leading-normal">{blurb}</p>
+    <p class="mt-xl max-w-caption text-neutral-700 text-body leading-normal">{blurb}</p>
     <a
-      class="tw:mt-2xl tw:pb-4xs tw:border-b tw:border-neutral-600 tw:text-foreground tw:text-body tw:leading-normal tw:transition-[border-color] tw:duration-320 tw:ease-standard tw:hover:border-foreground"
+      class="mt-2xl pb-4xs border-b border-neutral-600 text-foreground text-body leading-normal transition-[border-color] duration-320 ease-standard hover:border-foreground"
       href="/"
     >
       Back to the homepage

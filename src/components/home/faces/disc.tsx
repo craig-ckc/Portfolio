@@ -21,7 +21,7 @@ const REST: Position = { index: 0, positionMs: 0 }
  * a moment where they disagree about what is playing.
  *
  * `presented` is the folder telling this card it is the one being looked at.
- * Two levels of life, and the `tw:` utilities below key both: hovered in the
+ * Two levels of life, and the utilities below key both: hovered in the
  * scatter, the record slides out and spins — motion only, nothing to read at
  * that size.
  * Presented, the popover comes up as well, with the track, the time and the
@@ -90,9 +90,9 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
   /* The card's own overflow: visible (needed because the record and the
      popover both poke outside the card's square) targets the folder agent's
      element, so it is asserted from here with a :has() variant instead of
-     editing the `.card` element's own `tw:overflow-hidden` in
+     editing the `.card` element's own `overflow-hidden` in
      hero-folder.tsx. */
-  const rootClass = "tw:absolute tw:inset-0 tw:rounded-[inherit] tw:[.card:has(&)]:overflow-visible!"
+  const rootClass = "absolute inset-0 rounded-[inherit] [.card:has(&)]:overflow-visible!"
 
   if (tracks.length === 0) return <span className={rootClass} />
 
@@ -105,7 +105,7 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
      is written above from `playing.index`, never a class, since nothing but
      this opacity switch depends on it. */
   const crossfadeImg =
-    "tw:absolute tw:inset-0 tw:size-full tw:object-cover tw:opacity-0 tw:[transition:opacity_var(--duration-slow)_var(--ease-standard)] tw:data-[current=true]:opacity-100"
+    "absolute inset-0 size-full object-cover opacity-0 [transition:opacity_var(--duration-slow)_var(--ease-standard)] data-[current=true]:opacity-100"
 
   return (
     <span className={rootClass}>
@@ -128,9 +128,9 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
           Below 900px the presented card is two thirds of the screen wide,
           and a record slid the full 56% would run past its right edge; it
           comes out only a third of the way there instead — the mobile value
-          is the base, the desktop one a tw:md: override. */}
+          is the base, the desktop one an md: override. */}
       <span
-        className="tw:absolute tw:top-1/2 tw:left-1/2 tw:z-[1] tw:size-[92cqw] tw:overflow-clip tw:rounded-full tw:[transform:translate(-50%,-50%)_translateX(0%)] tw:[transition:transform_var(--duration-base)_var(--ease-out-cubic)] tw:[.folder.is-open_.card:hover_&]:[transform:translate(-50%,-50%)_translateX(30%)] tw:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:[transform:translate(-50%,-50%)_translateX(30%)] tw:md:[.folder.is-open_.card:hover_&]:[transform:translate(-50%,-50%)_translateX(56%)] tw:md:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:[transform:translate(-50%,-50%)_translateX(56%)]"
+        className="absolute top-1/2 left-1/2 z-1 size-[92cqw] overflow-clip rounded-full transform-[translate(-50%,-50%)_translateX(0%)] [transition:transform_var(--duration-base)_var(--ease-out-cubic)] [.folder.is-open_.card:hover_&]:[translate(-50%,-50%)_translateX(30%)] [.folder.is-open_.folder\_\_item.is-focused_.card_&]:[translate(-50%,-50%)_translateX(30%)] md:[.folder.is-open_.card:hover_&]:[translate(-50%,-50%)_translateX(56%)] md:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:[translate(-50%,-50%)_translateX(56%)]"
         aria-hidden="true"
       >
         <span
@@ -138,12 +138,12 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
              as one arbitrary animation shorthand per state (rather than a
              separate animation-play-state longhand) so there is no ordering
              question between two rules touching the same sub-property. */
-          className="tw:absolute tw:inset-0 tw:rounded-full tw:bg-[#0e0e0e] tw:[background-image:conic-gradient(from_205deg_at_46%_42%,rgb(255_255_255/7%),transparent_16%,transparent_52%,rgb(255_255_255/5%)_64%,transparent_80%),repeating-radial-gradient(circle_at_50%_50%,rgb(255_255_255/3%)_0,rgb(255_255_255/3%)_1px,transparent_1px,transparent_1.5cqw)] tw:shadow-[inset_0_0_0_1px_rgb(255_255_255/10%)] tw:[animation:disc-spin_1.8s_linear_infinite_paused] tw:[.folder.is-open_.card:hover_&]:[animation:disc-spin_1.8s_linear_infinite_running] tw:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:[animation:disc-spin_1.8s_linear_infinite_running] tw:motion-reduce:[animation:none]"
+          className="absolute inset-0 rounded-full bg-[#0e0e0e] [background-image:conic-gradient(from_205deg_at_46%_42%,rgb(255_255_255/7%),transparent_16%,transparent_52%,rgb(255_255_255/5%)_64%,transparent_80%),repeating-radial-gradient(circle_at_50%_50%,rgb(255_255_255/3%)_0,rgb(255_255_255/3%)_1px,transparent_1px,transparent_1.5cqw)] shadow-[inset_0_0_0_1px_rgb(255_255_255/10%)] [animation:disc-spin_1.8s_linear_infinite_paused] [.folder.is-open_.card:hover_&]:[animation:disc-spin_1.8s_linear_infinite_running] [.folder.is-open_.folder\_\_item.is-focused_.card_&]:[animation:disc-spin_1.8s_linear_infinite_running] motion-reduce:[animation:none]"
         >
           {/* The label: the current cover, cropped round, so it visibly
               turns with the platter even though the spindle beneath it does
               not need to move at all. */}
-          <span className="tw:absolute tw:top-1/2 tw:left-1/2 tw:size-[34cqw] tw:[transform:translate(-50%,-50%)] tw:rounded-full tw:overflow-hidden tw:shadow-[inset_0_0_0_1px_rgb(255_255_255/12%)]">
+          <span className="absolute top-1/2 left-1/2 size-[34cqw] [translate(-50%,-50%)] rounded-full overflow-hidden shadow-[inset_0_0_0_1px_rgb(255_255_255/12%)]">
             {tracks.map((candidate, index) => (
               <img
                 key={candidate.art}
@@ -156,15 +156,15 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
               />
             ))}
           </span>
-          <span className="tw:absolute tw:top-1/2 tw:left-1/2 tw:size-[4cqw] tw:[transform:translate(-50%,-50%)] tw:rounded-full tw:bg-[#f9f9f9]" />
+          <span className="absolute top-1/2 left-1/2 size-[4cqw] [translate(-50%,-50%)] rounded-full bg-[#f9f9f9]" />
         </span>
       </span>
 
-      <span className="tw:absolute tw:inset-0 tw:z-[2] tw:rounded-[inherit] tw:overflow-hidden">
+      <span className="absolute inset-0 z-2 rounded-[inherit] overflow-hidden">
         {tracks.map((candidate, index) => (
           <img
             key={candidate.art}
-            className={`${crossfadeImg} tw:rounded-[inherit]`}
+            className={`${crossfadeImg} rounded-[inherit]`}
             src={candidate.art}
             alt=""
             draggable={false}
@@ -181,15 +181,15 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
           pointer-events: none so it never steals the drag; the skip
           controls opt back in individually below. */}
       <span
-        className="tw:absolute tw:bottom-[calc(100%+3cqw)] tw:left-1/2 tw:z-[3] tw:flex tw:flex-col tw:min-w-[66cqw] tw:max-w-[120cqw] tw:pt-[2.2cqw] tw:pr-[2.6cqw] tw:pb-[2cqw] tw:pl-[3.2cqw] tw:rounded-[2.4cqw] tw:bg-[rgb(21_21_21/92%)] tw:[backdrop-filter:blur(8px)] tw:text-[#f9f9f9] tw:font-display tw:leading-tight tw:whitespace-nowrap tw:opacity-0 tw:pointer-events-none tw:[transform:translateX(-50%)_translateY(1.5cqw)] tw:[transition:opacity_var(--duration-fast)_var(--ease-out-cubic),transform_var(--duration-fast)_var(--ease-out-cubic)] tw:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:opacity-100 tw:[.folder.is-open_.folder\_\_item.is-focused_.card_&]:[transform:translateX(-50%)_translateY(0)]"
+        className="absolute bottom-[calc(100%+3cqw)] left-1/2 z-3 flex flex-col min-w-[66cqw] max-w-[120cqw] pt-[2.2cqw] pr-[2.6cqw] pb-[2cqw] pl-[3.2cqw] rounded-[2.4cqw] bg-[rgb(21_21_21/92%)] [backdrop-filter:blur(8px)] text-[#f9f9f9] font-display leading-tight whitespace-nowrap opacity-0 pointer-events-none [translateX(-50%)_translateY(1.5cqw)] [transition:opacity_var(--duration-fast)_var(--ease-out-cubic),transform_var(--duration-fast)_var(--ease-out-cubic)] [.folder.is-open_.folder\_\_item.is-focused_.card_&]:opacity-100 [.folder.is-open_.folder\_\_item.is-focused_.card_&]:[translateX(-50%)_translateY(0)]"
         aria-hidden="true"
       >
-        <span className="tw:flex tw:items-center tw:gap-[3cqw]">
-          <span className="tw:flex tw:flex-1 tw:flex-col tw:gap-[0.3cqw] tw:min-w-0 tw:text-left">
-            <span className="tw:overflow-hidden tw:text-[4.2cqw] tw:font-semibold tw:tracking-snug tw:text-ellipsis">
+        <span className="flex items-center gap-[3cqw]">
+          <span className="flex flex-1 flex-col gap-[0.3cqw] min-w-0 text-left">
+            <span className="overflow-hidden text-[4.2cqw] font-semibold tracking-snug text-ellipsis">
               {track.title}
             </span>
-            <span className="tw:overflow-hidden tw:text-[rgb(249_249_249/72%)] tw:text-[3.4cqw] tw:font-medium tw:text-ellipsis">
+            <span className="overflow-hidden text-[rgb(249_249_249/72%)] text-[3.4cqw] font-medium text-ellipsis">
               {track.artist}
             </span>
           </span>
@@ -198,9 +198,9 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
               they live in is aria-hidden, so there is no accessible name to
               give them — they are pointer-only, which is also why neither
               gets a tabIndex. */}
-          <span className="tw:flex tw:flex-shrink-0 tw:gap-[1cqw]">
+          <span className="flex shrink-0 gap-[1cqw]">
             <span
-              className="tw:grid tw:size-[6.4cqw] tw:place-items-center tw:rounded-full tw:bg-[rgb(255_255_255/10%)] tw:cursor-pointer tw:pointer-events-auto tw:[transition:background_var(--duration-fast)] tw:hover:bg-[rgb(255_255_255/18%)] tw:[&_svg]:size-[2.6cqw]"
+              className="grid size-[6.4cqw] place-items-center rounded-full bg-[rgb(255_255_255/10%)] cursor-pointer pointer-events-auto [transition:background_var(--duration-fast)] hover:bg-[rgb(255_255_255/18%)] [&_svg]:size-[2.6cqw]"
               role="button"
               aria-label="Previous track"
               data-dir="prev"
@@ -225,7 +225,7 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
               </svg>
             </span>
             <span
-              className="tw:grid tw:size-[6.4cqw] tw:place-items-center tw:rounded-full tw:bg-[rgb(255_255_255/10%)] tw:cursor-pointer tw:pointer-events-auto tw:[transition:background_var(--duration-fast)] tw:hover:bg-[rgb(255_255_255/18%)] tw:[&_svg]:size-[2.6cqw]"
+              className="grid size-[6.4cqw] place-items-center rounded-full bg-[rgb(255_255_255/10%)] cursor-pointer pointer-events-auto [transition:background_var(--duration-fast)] hover:bg-[rgb(255_255_255/18%)] [&_svg]:size-[2.6cqw]"
               role="button"
               aria-label="Next track"
               data-dir="next"
@@ -242,19 +242,19 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
             </span>
           </span>
         </span>
-        <span className="tw:flex tw:flex-col tw:gap-[1.2cqw] tw:mt-[1.6cqw]">
-          <span className="tw:relative tw:h-[2cqw] tw:rounded-full tw:bg-[rgb(249_249_249/18%)] tw:overflow-hidden">
+        <span className="flex flex-col gap-[1.2cqw] mt-[1.6cqw]">
+          <span className="relative h-[2cqw] rounded-full bg-[rgb(249_249_249/18%)] overflow-hidden">
             <span
-              className="tw:absolute tw:inset-y-0 tw:left-0 tw:rounded-[inherit] tw:bg-[#f9f9f9] tw:[transition:width_var(--duration-fast)_linear]"
+              className="absolute inset-y-0 left-0 rounded-[inherit] bg-[#f9f9f9] [transition:width_var(--duration-fast)_linear]"
               style={{ width: `${progress * 100}%` }}
             />
           </span>
-          <span className="tw:flex tw:justify-between tw:text-[rgb(249_249_249/62%)] tw:font-sans tw:text-[2.8cqw] tw:[font-variant-numeric:tabular-nums]">
+          <span className="flex justify-between text-[rgb(249_249_249/62%)] font-sans text-[2.8cqw] [font-variant-numeric:tabular-nums]">
             <span>{formatTime(playing.positionMs)}</span>
             <span>{formatTime(duration)}</span>
           </span>
         </span>
-        <span className="tw:absolute tw:bottom-[-1.6cqw] tw:left-1/2 tw:w-[2.8cqw] tw:h-[1.6cqw] tw:[transform:translateX(-50%)] tw:bg-[rgb(21_21_21/92%)] tw:[clip-path:polygon(50%_100%,0_0,100%_0)]" />
+        <span className="absolute bottom-[-1.6cqw] left-1/2 w-[2.8cqw] h-[1.6cqw] [translateX(-50%)] bg-[rgb(21_21_21/92%)] [clip-path:polygon(50%_100%,0_0,100%_0)]" />
       </span>
     </span>
   )

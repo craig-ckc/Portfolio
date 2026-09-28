@@ -85,7 +85,7 @@ export function NavBar({
       // the page's data-scatter attribute — that attribute stays on for the
       // whole return, so the navbar would come back only once the cards were
       // home, a beat later than the fault this is fixing.
-      className="tw:absolute tw:top-0 tw:inset-x-0 tw:z-50 tw:flex tw:items-center tw:justify-between tw:p-md tw:transition-opacity tw:duration-(--veil-clear) tw:ease-standard tw:[.hp:has(.folder.is-open)_&]:opacity-0 tw:[.hp:has(.folder.is-open)_&]:duration-(--veil-fade)"
+      className="absolute top-0 inset-x-0 z-50 flex items-center justify-between p-md transition-opacity duration-(--veil-clear) ease-standard [.hp:has(.folder.is-open)_&]:opacity-0 [.hp:has(.folder.is-open)_&]:duration-(--veil-fade)"
       aria-label="Primary"
       ref={navRef}
     >
@@ -93,18 +93,18 @@ export function NavBar({
         {/* BEYOND THE FRAME: 78.57px/20px and the mask's own values have no
             token behind them — the mark is drawn at the logo svg's native
             size. */}
-        <span className="tw:block tw:w-[78.57px] tw:h-lg tw:bg-current tw:[mask:url(/figma/logo.svg)_center/contain_no-repeat] tw:[-webkit-mask:url(/figma/logo.svg)_center/contain_no-repeat]" />
+        <span className="block w-[78.57px] h-lg bg-current [mask:url(/figma/logo.svg)_center/contain_no-repeat] [-webkit-mask:url(/figma/logo.svg)_center/contain_no-repeat]" />
       </a>
 
-      <div className="tw:flex tw:gap-3xs">
+      <div className="flex gap-3xs">
         <a
-          className="chip tw:h-[26px] tw:px-xs tw:py-3xs tw:text-body tw:leading-tight tw:tracking-snug"
+          className="chip h-[26px] px-xs py-3xs text-body leading-tight tracking-snug"
           href={contact.href}
         >
           Contact
         </a>
         <button
-          className="chip tw:group tw:h-[26px] tw:w-[26px] tw:p-0"
+          className="chip group h-[26px] w-[26px] p-0"
           type="button"
           aria-pressed={theme === 'dark'}
           aria-label={theme === 'dark' ? 'Switch to light appearance' : 'Switch to dark appearance'}
@@ -114,7 +114,7 @@ export function NavBar({
               the glyphs are on a 12 unit grid, so at 12px their 1px strokes
               land on whole pixels; at 16 they fell between them and the dots
               around the sun read as smudges. */}
-          <AppearanceGlyph className="tw:w-[12px] tw:h-[12px] tw:group-hover:rotate-[60deg]" />
+          <AppearanceGlyph className="w-[12px] h-[12px] group-hover:rotate-[60deg]" />
         </button>
       </div>
     </nav>

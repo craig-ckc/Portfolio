@@ -1,20 +1,20 @@
 /*
  * The site's one stylesheet.
  *
- * Everything that styles a page is a `tw:` utility in that page's markup. What
- * is written here is only what a class cannot be: the design tokens and their
+ * Everything that styles a page is a utility in that page's markup. What is
+ * written here is only what a class cannot be: the design tokens and their
  * dark-appearance values, the Tailwind theme that exposes them, animations
  * (keyframes), two custom utilities that need nested selectors, the element
- * resets, and three small shared components that utilities adjust on top.
+ * resets, and two small shared components that utilities adjust on top.
  *
  * How it is wired:
  *
  * - The Vite plugin (@tailwindcss/vite, in astro.config.mjs) compiles this
  *   file and generates utilities on demand for classes found in src/.
- * - Tailwind is prefixed as `tw:`, and the prefix comes before every variant:
- *   `tw:sm:px-2xl`, never `sm:tw:px-2xl` (which generates nothing). Durations
- *   are numeric (`tw:duration-320`); the group class is `tw:group`, so use
- *   `tw:group-hover:`; and inside an arbitrary selector `_` means a space.
+ * - Utilities use natural Tailwind v4 syntax with no prefix: `sm:px-2xl`,
+ *   `group-hover:`, `motion-safe:`. Durations are numeric (`duration-320`);
+ *   the group class is `group`; and inside an arbitrary selector `_` means
+ *   a space.
  * - Preflight is deliberately not imported (only theme.css and
  *   utilities.css); the resets the design needs are in the base layer below.
  * - Everything here that is not a token sits in a cascade layer, so a utility
@@ -29,8 +29,8 @@
 
 /* Theme and utilities without the preflight reset — see the note above. */
 @layer theme, base, components, utilities;
-@import 'tailwindcss/theme.css' layer(theme) prefix(tw);
-@import 'tailwindcss/utilities.css' layer(utilities) prefix(tw);
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
 
 /* `dark:` follows the site's own appearance switch: the `data-theme`
    attribute on the `.hp` wrapper in src/layouts/page-shell.astro, toggled by
@@ -233,11 +233,12 @@
    ========================================================================== */
 
 /*
- * The token scale, exposed to Tailwind under the same names. Every value is
- * a `var()` reference into the tokens above rather than a copy, and the
+ * The token scale, exposed to Tailwind under the same names. Colours are
+ * `var()` references into the tokens above rather than copies, and their
  * block is `inline` so Tailwind substitutes the reference straight into each
- * utility. The import prefix namespaces generated variables as `--tw-*`, so
- * these declarations never create self-referential runtime tokens.
+ * utility. The references point at differently named tokens (`--color-*`
+ * reads `--background` and friends), so no declaration can resolve to its
+ * own output.
  *
  * That indirection is the whole point: the token block stays the single
  * runtime source of truth. The responsive semantic spacing (the media queries
@@ -253,8 +254,14 @@
  * - Durations (--duration-*) have no per-name namespace in Tailwind v4, so
  *   they are not mapped. The bare-value `duration-180` / `duration-320` /
  *   `duration-560` / `duration-760` utilities already resolve to the same
- *   milliseconds; reach for a token with `tw:duration-(--duration-fast)` where the
+ *   milliseconds; reach for a token with `duration-(--duration-fast)` where the
  *   reference itself matters.
+ *
+ * Everything else — type, spacing, radius, container, easing — lives in the
+ * plain `@theme` block next: literal values matching the token block, so no
+ * declaration is a self-referencing `--x: var(--x)`. Utilities resolve
+ * through the emitted variable at runtime, which is what keeps the
+ * responsive semantic spacing live.
  */
 @theme inline {
   /* Colour */
@@ -267,91 +274,107 @@
   --color-neutral-800: var(--neutral-800);
   --color-neutral-900: var(--neutral-900);
   --color-neutral-950: var(--neutral-950);
+}
 
+/* Static scales. Literal values matching the token block (and two aliases
+ * that read a *different* token), so no declaration here is a
+ * self-referencing `--x: var(--x)`. Plain `@theme`, not `inline`, so each
+ * utility resolves through the emitted variable at runtime and the
+ * responsive semantic spacing below stays live. */
+@theme {
   /* Font family */
-  --font-display: var(--font-display);
-  --font-sans: var(--font-sans);
+  --font-display: 'Satoshi Variable', 'Satoshi', system-ui, sans-serif;
+  --font-sans: 'Manrope', system-ui, sans-serif;
 
   /* Font size */
-  --text-2xs: var(--text-2xs);
-  --text-xs: var(--text-xs);
-  --text-sm: var(--text-sm);
-  --text-base: var(--text-base);
-  --text-md: var(--text-md);
-  --text-lg: var(--text-lg);
-  --text-2xl: var(--text-2xl);
-  --text-3xl: var(--text-3xl);
-  --text-4xl: var(--text-4xl);
-  --text-5xl: var(--text-5xl);
-  --text-6xl: var(--text-6xl);
-  --text-body: var(--text-body);
+  --text-2xs: 13px;
+  --text-xs: 14px;
+  --text-sm: 15px;
+  --text-base: 16px;
+  --text-md: 17px;
+  --text-lg: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-4xl: 44px;
+  --text-5xl: 60px;
+  --text-6xl: 92px;
+  /* Alias, not a copy: body text follows --text-xs, here and in the tokens. */
+  --text-body: var(--text-xs);
 
   /* Font weight */
-  --font-weight-normal: var(--font-weight-normal);
-  --font-weight-medium: var(--font-weight-medium);
-  --font-weight-semibold: var(--font-weight-semibold);
-  --font-weight-bold: var(--font-weight-bold);
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
   /* Letter spacing */
-  --tracking-tighter: var(--tracking-tighter);
-  --tracking-tight: var(--tracking-tight);
-  --tracking-snug: var(--tracking-snug);
-  --tracking-normal: var(--tracking-normal);
-  --tracking-wide: var(--tracking-wide);
-  --tracking-wider: var(--tracking-wider);
+  --tracking-tighter: -0.03em;
+  --tracking-tight: -0.026em;
+  --tracking-snug: -0.02em;
+  --tracking-normal: -0.005em;
+  --tracking-wide: 0.005em;
+  --tracking-wider: 0.08em;
 
   /* Line height */
-  --leading-none: var(--leading-none);
-  --leading-tight: var(--leading-tight);
-  --leading-snug: var(--leading-snug);
-  --leading-normal: var(--leading-normal);
-  --leading-relaxed: var(--leading-relaxed);
-  --leading-loose: var(--leading-loose);
+  --leading-none: 1;
+  --leading-tight: 1.1;
+  --leading-snug: 1.12;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
+  --leading-loose: 1.65;
 
   /* Spacing — primitives */
-  --spacing-4xs: var(--spacing-4xs);
-  --spacing-3xs: var(--spacing-3xs);
-  --spacing-2xs: var(--spacing-2xs);
-  --spacing-xs: var(--spacing-xs);
-  --spacing-sm: var(--spacing-sm);
-  --spacing-md: var(--spacing-md);
-  --spacing-lg: var(--spacing-lg);
-  --spacing-xl: var(--spacing-xl);
-  --spacing-2xl: var(--spacing-2xl);
-  --spacing-3xl: var(--spacing-3xl);
-  --spacing-4xl: var(--spacing-4xl);
-  --spacing-5xl: var(--spacing-5xl);
-  --spacing-6xl: var(--spacing-6xl);
+  --spacing-4xs: 2px;
+  --spacing-3xs: 4px;
+  --spacing-2xs: 6px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+  --spacing-4xl: 64px;
+  --spacing-5xl: 96px;
+  --spacing-6xl: 128px;
 
-  /* Spacing — semantic. Responsive at runtime via the :root media queries in
-     the token block; utilities read the live value through the var(). */
-  --spacing-page-gutter: var(--spacing-page-gutter);
-  --spacing-section-y: var(--spacing-section-y);
-  --spacing-section-py: var(--spacing-section-py);
-  --spacing-hero-top: var(--spacing-hero-top);
+  /* Spacing — semantic. Each reads its base primitive rather than itself, so
+     the base follows the scale while the :root media queries in the token
+     block retune the emitted variable itself at runtime; utilities read the
+     live value through it. */
+  --spacing-page-gutter: var(--spacing-4xl);
+  --spacing-section-y: var(--spacing-5xl);
+  --spacing-section-py: var(--spacing-4xl);
+  --spacing-hero-top: var(--spacing-6xl);
 
   /* Radius */
-  --radius-xs: var(--radius-xs);
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-full: var(--radius-full);
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
 
   /* Container — `max-w-content`, `max-w-page`, and friends. */
-  --container-content: var(--container-content);
-  --container-content-wide: var(--container-content-wide);
-  --container-caption: var(--container-caption);
-  --container-hero: var(--container-hero);
-  --container-work: var(--container-work);
-  --container-page: var(--container-page);
+  --container-content: 800px;
+  --container-content-wide: 1280px;
+  --container-caption: 520px;
+  --container-hero: 1040px;
+  --container-work: 1100px;
+  --container-page: 1792px;
 
   /* Motion — easing only; see the durations note above. */
-  --ease-out-expo: var(--ease-out-expo);
-  --ease-out-quart: var(--ease-out-quart);
-  --ease-out-cubic: var(--ease-out-cubic);
-  --ease-out-quint: var(--ease-out-quint);
-  --ease-standard: var(--ease-standard);
-  --ease-spring-out: var(--ease-spring-out);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring-out: linear(
+    0, 0.059 4.2%, 0.197 8.3%, 0.367 12.5%, 0.538 16.7%,
+    0.691 20.8%, 0.817 25.0%, 0.912 29.2%, 0.979 33.3%, 1.021 37.5%,
+    1.044 41.7%, 1.054 45.8%, 1.053 50.0%, 1.047 54.2%, 1.038 58.3%,
+    1.029 62.5%, 1.02 66.7%, 1.013 70.8%, 1.007 75.0%, 1.003 79.2%,
+    1.0 83.3%, 0.998 87.5%, 0.997 91.7%, 0.997 95.8%, 1
+  );
 }
 
 /*
@@ -369,8 +392,8 @@
 }
 
 /* ==========================================================================
-   Animations — each is a `tw:animate-*` utility; the markup decides when it
-   runs (usually behind `tw:motion-safe:`).
+   Animations — each is an `animate-*` utility; the markup decides when it
+   runs (usually behind `motion-safe:`).
    ========================================================================== */
 
 /* Waving hand beside "Say hello" (see icons.tsx WavingHand) — loops on its
@@ -443,8 +466,8 @@
 }
 
 /* --------------------------------------------------------------------------
-   Project page load-in. The `tw:animate-project-fade-up` utility below
-   supplies the keyframe; `tw:motion-safe:` withholds it for reduced motion,
+   Project page load-in. The `animate-project-fade-up` utility below
+   supplies the keyframe; `motion-safe:` withholds it for reduced motion,
    applied at each call site alongside the animation-delay for that step
    (src/pages/work/[slug].astro, src/components/work/project-section.astro).
    -------------------------------------------------------------------------- */
@@ -465,8 +488,8 @@
 }
 
 /* --------------------------------------------------------------------------
-   Article page load-in. Same shape as the project page's: a
-   `tw:animate-article-rise` utility, `tw:motion-safe:` withholding it for
+   Article page load-in. Same shape as the project page's: an
+   `animate-article-rise` utility, `motion-safe:` withholding it for
    reduced motion, and the per-step delay written at each call site in
    src/pages/writing/[slug].astro.
    -------------------------------------------------------------------------- */
@@ -484,7 +507,7 @@
 /* The disc platter's spin. Registered here so the keyframe exists as a plain
    global @keyframes for disc.tsx's own animation shorthand (which toggles
    play-state between paused/running per card state, so it addresses the
-   keyframe by name directly rather than through the tw:animate-disc-spin
+   keyframe by name directly rather than through the animate-disc-spin
    utility this variable would generate). */
 @theme {
   --animate-disc-spin: disc-spin 1.8s linear infinite;
@@ -498,7 +521,7 @@
 
 /* ==========================================================================
    Custom utilities — bundles that need nested selectors a variant cannot
-   reach. Used as `tw:social` and `tw:footer-dither`.
+   reach. Used as `social` and `footer-dither`.
    ========================================================================== */
 
 /* Shared between src/components/sections/cta.tsx and
@@ -650,19 +673,19 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
 
 /* ==========================================================================
    Components — in the layer below the utilities, so a utility on the same
-   element adjusts one: a section narrows `.container`, a button adds a margin
-   to `.chip`. Three, because each is shared by many elements across pages.
+   element adjusts one: a button adds a margin to `.chip`. Two, because each
+   is shared by many elements across pages.
+ *
+ * There is deliberately no `.container` helper here: Tailwind ships a
+ * built-in `container` utility, and a bare class of the same name would lose
+ * to it in the utilities layer at responsive widths. Sections size
+ * themselves with explicit utilities instead —
+ * `w-full max-w-[calc(var(--container-page)_+_var(--spacing-page-gutter)_*_2)]
+ * mx-auto px-page-gutter` — so what sizes the page is visible at each call
+ * site rather than hiding in a shared rule.
    ========================================================================== */
 
 @layer components {
-  /* The page gutter every section sits inside. */
-  .container {
-    width: 100%;
-    max-width: calc(var(--container-page) + var(--spacing-page-gutter) * 2);
-    margin-inline: auto;
-    padding-inline: var(--spacing-page-gutter);
-  }
-
   /* The dark pill / chip surface used by the nav and the page buttons. */
   .chip {
     display: inline-flex;

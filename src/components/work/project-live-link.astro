@@ -10,7 +10,7 @@
  * values with no token behind them, so they are the themed custom properties
  * declared by project-page.css.
  *
- * The hover states use the plain `tw:hover:` variant (re-declared as `:hover`
+ * The hover states use the plain `hover:` variant (re-declared as `:hover`
  * in src/styles.css, not gated behind `@media (hover: hover)`), so it agrees
  * with the page's own hovers — none of which are guarded either — instead of
  * quietly dropping on a touch screen the way Tailwind's default `hover:` would.
@@ -26,14 +26,14 @@ const { live } = Astro.props
 ---
 
 <a
-  class="tw:group tw:inline-flex tw:items-center tw:gap-2xs tw:border tw:border-(--project-pill-border) tw:rounded-full tw:bg-background tw:shadow-(--project-pill-shadow) tw:px-lg tw:py-sm tw:text-2xs tw:leading-normal tw:transition-[box-shadow,translate] tw:duration-320 tw:ease-standard tw:hover:-translate-y-px tw:hover:shadow-[0_2px_4px_rgb(0_0_0/6%),0_8px_20px_rgb(0_0_0/8%)]"
+  class="group inline-flex items-center gap-2xs border border-(--project-pill-border) rounded-full bg-background shadow-(--project-pill-shadow) px-lg py-sm text-2xs leading-normal transition-[box-shadow,translate] duration-320 ease-standard hover:-translate-y-px hover:shadow-[0_2px_4px_rgb(0_0_0/6%),0_8px_20px_rgb(0_0_0/8%)]"
   href={live.href}
   target="_blank"
   rel="noreferrer"
 >
   {live.label}
   <svg
-    class="tw:transition-transform tw:duration-320 tw:ease-out-cubic tw:group-hover:translate-x-px tw:group-hover:-translate-y-px"
+    class="transition-transform duration-320 ease-out-cubic group-hover:translate-x-px group-hover:-translate-y-px"
     width="12"
     height="12"
     viewBox="0 0 12 12"

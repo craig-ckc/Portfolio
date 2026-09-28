@@ -52,27 +52,27 @@ const TURN_SLOP = 4
  */
 const ROOT_CLASS = [
   // Fills the card; leans out of it, so nothing here is clipped.
-  'tw:absolute tw:inset-0 tw:[perspective:300cqw]',
+  'absolute inset-0 [perspective:300cqw]',
   // The badge draws its own frame, so the card it sits in drops its own —
   // including the deeper shadow the folder gives a focused or held card —
   // and stops clipping, since the badge leans past its edge. Set on the card
   // from here, the same way the dock and the phone do it; !important because
   // the folder's own card utilities would otherwise tie with these.
-  'tw:[.card:has(&)]:overflow-visible! tw:[.card:has(&)]:bg-transparent! tw:[.card:has(&)]:shadow-none!',
+  '[.card:has(&)]:overflow-visible! [.card:has(&)]:bg-transparent! [.card:has(&)]:shadow-none!',
   // --k: how much bigger than its own layout the folder is showing this
   // card — read back from the same magnification hero-folder.tsx's own
   // transform utilities apply, so the badge below can undo it on itself
   // (see BADGE_CLASS's comment).
-  'tw:[--k:clamp(1,calc(var(--out-scale,1)*var(--slot-focus,2)*var(--folder-zoom,1)),5)]',
+  '[--k:clamp(1,calc(var(--out-scale,1)*var(--slot-focus,2)*var(--folder-zoom,1)),5)]',
   // Flat and unlit at rest, in both places this face is ever seen.
-  'tw:[--lx:0.5] tw:[--ly:0.5] tw:[--on:0] tw:[--enter:0]',
-  'tw:[--rx:0deg] tw:[--ry:0deg] tw:[--rise:0%] tw:[--grow:1] tw:[--shine:0]',
+  '[--lx:0.5] [--ly:0.5] [--on:0] [--enter:0]',
+  '[--rx:0deg] [--ry:0deg] [--rise:0%] [--grow:1] [--shine:0]',
   // Scatter, under the pointer: rises and takes one turn toward the side the
   // pointer came in from — one axis, set on the way in and held.
-  'tw:[.folder.is-open_&]:[--ry:calc(var(--enter)*var(--on)*3.5deg)]',
-  'tw:[.folder.is-open_&]:[--rise:calc(var(--on)*-1.2%)]',
-  'tw:[.folder.is-open_&]:[--grow:calc(1_+_var(--on)*0.015)]',
-  'tw:[.folder.is-open_&]:[--shine:calc(var(--on)*0.6)]',
+  '[.folder.is-open_&]:[--ry:calc(var(--enter)*var(--on)*3.5deg)]',
+  '[.folder.is-open_&]:[--rise:calc(var(--on)*-1.2%)]',
+  '[.folder.is-open_&]:[--grow:calc(1_+_var(--on)*0.015)]',
+  '[.folder.is-open_&]:[--shine:calc(var(--on)*0.6)]',
   // Presented, under the pointer: both axes follow the hand, five degrees at
   // the very edge and nothing at the middle. Keyed off `.is-focused` alone,
   // not `.folder__item.is-focused`: an escaped `__` inside a Tailwind
@@ -80,12 +80,12 @@ const ROOT_CLASS = [
   // whole rule rather than erroring), and `.is-focused` is only ever the
   // folder's own item class in the first place, so the longer form added
   // nothing but risk.
-  'tw:[.folder.is-open_.is-focused_&]:[--lean:5deg]',
-  'tw:[.folder.is-open_.is-focused_&]:[--rx:calc((var(--ly)_-_0.5)*2*var(--lean))]',
-  'tw:[.folder.is-open_.is-focused_&]:[--ry:calc((0.5_-_var(--lx))*2*var(--lean))]',
-  'tw:[.folder.is-open_.is-focused_&]:[--rise:0%]',
-  'tw:[.folder.is-open_.is-focused_&]:[--grow:1]',
-  'tw:[.folder.is-open_.is-focused_&]:[--shine:var(--on)]',
+  '[.folder.is-open_.is-focused_&]:[--lean:5deg]',
+  '[.folder.is-open_.is-focused_&]:[--rx:calc((var(--ly)_-_0.5)*2*var(--lean))]',
+  '[.folder.is-open_.is-focused_&]:[--ry:calc((0.5_-_var(--lx))*2*var(--lean))]',
+  '[.folder.is-open_.is-focused_&]:[--rise:0%]',
+  '[.folder.is-open_.is-focused_&]:[--grow:1]',
+  '[.folder.is-open_.is-focused_&]:[--shine:var(--on)]',
 ].join(' ')
 
 /**
@@ -104,17 +104,17 @@ const ROOT_CLASS = [
  * rasterised again at that moment — the very flicker this fixes.
  */
 const BADGE_CLASS = [
-  'tw:absolute tw:top-0 tw:left-0 tw:@container tw:overflow-hidden tw:will-change-transform',
+  'absolute top-0 left-0 @container overflow-hidden will-change-transform',
   // BEYOND THE FRAME: sized and rounded off --k, not a spacing/radius token.
-  'tw:w-[calc(100%*var(--k))] tw:h-[calc(100%*var(--k))] tw:rounded-[calc(3cqw*var(--k))]',
+  'w-[calc(100%*var(--k))] h-[calc(100%*var(--k))] rounded-[calc(3cqw*var(--k))]',
   // BEYOND THE FRAME: stock white, deliberately not the page's own
   // --background token, since the badge does not follow the site's theme.
-  'tw:bg-[#fdfdfd] tw:origin-top-left',
-  'tw:[transform:scale3d(calc(1/var(--k)),calc(1/var(--k)),calc(1/var(--k)))_translate(50%,50%)_translateY(var(--rise))_scale(var(--grow))_rotateX(var(--rx))_rotateY(var(--ry))_translate(-50%,-50%)_translate3d(0,0,0.01px)]',
+  'bg-[#fdfdfd] origin-top-left',
+  '[transform:scale3d(calc(1/var(--k)),calc(1/var(--k)),calc(1/var(--k)))_translate(50%,50%)_translateY(var(--rise))_scale(var(--grow))_rotateX(var(--rx))_rotateY(var(--ry))_translate(-50%,-50%)_translate3d(0,0,0.01px)]',
   // The shadow is fixed rather than following the pointer: box-shadow is a
   // paint property, and repainting the layer the printing lives on every
   // frame for a shadow nobody is looking at is the one thing worth refusing.
-  'tw:[box-shadow:0_0_0_calc(1px*var(--k))_rgb(21_21_21/8%),0_calc(3px*var(--k))_calc(8px*var(--k))_rgb(21_21_21/10%)]',
+  '[box-shadow:0_0_0_calc(1px*var(--k))_rgb(21_21_21/8%),0_calc(3px*var(--k))_calc(8px*var(--k))_rgb(21_21_21/10%)]',
 ].join(' ')
 
 /** First and, where there is one, second initial — the .face__mark treatment,
@@ -366,34 +366,34 @@ export function LanyardFace({ item, presented = false }: { item: LanyardItem; pr
             deliberately, throughout. */}
         {/* The punched slot belongs to the stock, not to the printing. */}
         <span
-          className="tw:absolute tw:top-[5cqw] tw:left-1/2 tw:-translate-x-1/2 tw:w-[12cqw] tw:h-[2.4cqw] tw:rounded-[1.2cqw] tw:bg-[rgb(21_21_21/70%)] tw:[box-shadow:inset_0_0.2cqw_0.2cqw_rgb(21_21_21/35%)]"
+          className="absolute top-[5cqw] left-1/2 -translate-x-1/2 w-[12cqw] h-[2.4cqw] rounded-[1.2cqw] bg-[rgb(21_21_21/70%)] [box-shadow:inset_0_0.2cqw_0.2cqw_rgb(21_21_21/35%)]"
           aria-hidden="true"
         />
 
-        <span className="tw:absolute tw:inset-0 tw:flex tw:flex-col tw:items-center tw:p-[8cqw]">
-          <span className="tw:flex tw:w-full tw:justify-between tw:mt-[4cqw] tw:font-display tw:text-[3cqw] tw:font-medium tw:uppercase tw:tracking-wider tw:text-[#616161]">
+        <span className="absolute inset-0 flex flex-col items-center p-[8cqw]">
+          <span className="flex w-full justify-between mt-[4cqw] font-display text-[3cqw] font-medium uppercase tracking-wider text-[#616161]">
             <span>{badge.org}</span>
             <span>{badge.since}</span>
           </span>
 
           {/* The .face__mark treatment: initials on a dark circle. */}
           <span
-            className="tw:grid tw:w-[34cqw] tw:h-[34cqw] tw:mt-[6cqw] tw:place-items-center tw:rounded-full tw:bg-[#151515] tw:text-[#f9f9f9] tw:font-display tw:text-[12cqw] tw:font-bold tw:tracking-[0]"
+            className="grid w-[34cqw] h-[34cqw] mt-[6cqw] place-items-center rounded-full bg-[#151515] text-[#f9f9f9] font-display text-[12cqw] font-bold tracking-[0]"
             aria-hidden="true"
           >
             {initials(badge.name)}
           </span>
 
-          <span className="tw:mt-[5cqw] tw:font-display tw:text-[9.5cqw] tw:font-bold tw:tracking-snug tw:leading-tight tw:text-center tw:text-balance tw:text-[#151515]">
+          <span className="mt-[5cqw] font-display text-[9.5cqw] font-bold tracking-snug leading-tight text-center text-balance text-[#151515]">
             {badge.name}
           </span>
-          <span className="tw:mt-[1.5cqw] tw:font-display tw:text-[4.6cqw] tw:text-[#616161] tw:text-center">
+          <span className="mt-[1.5cqw] font-display text-[4.6cqw] text-[#616161] text-center">
             {badge.role}
           </span>
 
-          <span className="tw:flex tw:w-full tw:flex-col tw:items-center tw:mt-auto tw:gap-[1.5cqw]">
+          <span className="flex w-full flex-col items-center mt-auto gap-[1.5cqw]">
             <Barcode />
-            <span className="tw:font-sans tw:text-[3cqw] tw:tabular-nums tw:tracking-wide tw:text-[#616161]">
+            <span className="font-sans text-[3cqw] tabular-nums tracking-wide text-[#616161]">
               NO. 0019
             </span>
           </span>
@@ -405,11 +405,11 @@ export function LanyardFace({ item, presented = false }: { item: LanyardItem; pr
             rather than a background-position so following the hand costs a
             matrix each and no repaint. */}
         <span
-          className="tw:absolute tw:top-[-50%] tw:left-[-50%] tw:w-[200%] tw:h-[200%] tw:pointer-events-none tw:[will-change:transform,opacity] tw:[transform:translate(calc((var(--lx)_-_0.5)*50%),calc((var(--ly)_-_0.5)*50%))] tw:mix-blend-multiply tw:opacity-[calc(var(--shine)*0.45)] tw:[mask-image:radial-gradient(closest-side_circle_at_50%_50%,#000_0%,rgb(0_0_0/30%)_40%,transparent_75%)] tw:[-webkit-mask-image:radial-gradient(closest-side_circle_at_50%_50%,#000_0%,rgb(0_0_0/30%)_40%,transparent_75%)] tw:[background-image:linear-gradient(115deg,transparent_20%,rgb(255_110_196/26%)_30%,rgb(120_115_245/26%)_38%,rgb(76_201_240/26%)_46%,rgb(128_237_153/26%)_54%,rgb(249_199_79/26%)_62%,rgb(244_132_95/26%)_70%,transparent_80%)]"
+          className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] pointer-events-none [will-change:transform,opacity] [transform:translate(calc((var(--lx)_-_0.5)*50%),calc((var(--ly)_-_0.5)*50%))] mix-blend-multiply opacity-[calc(var(--shine)*0.45)] [mask-image:radial-gradient(closest-side_circle_at_50%_50%,#000_0%,rgb(0_0_0/30%)_40%,transparent_75%)] [-webkit-mask-image:radial-gradient(closest-side_circle_at_50%_50%,#000_0%,rgb(0_0_0/30%)_40%,transparent_75%)] [background-image:linear-gradient(115deg,transparent_20%,rgb(255_110_196/26%)_30%,rgb(120_115_245/26%)_38%,rgb(76_201_240/26%)_46%,rgb(128_237_153/26%)_54%,rgb(249_199_79/26%)_62%,rgb(244_132_95/26%)_70%,transparent_80%)]"
           aria-hidden="true"
         />
         <span
-          className="tw:absolute tw:top-[-50%] tw:left-[-50%] tw:w-[200%] tw:h-[200%] tw:pointer-events-none tw:[will-change:transform,opacity] tw:[transform:translate(calc((var(--lx)_-_0.5)*50%),calc((var(--ly)_-_0.5)*50%))] tw:mix-blend-hard-light tw:opacity-[var(--shine)] tw:[background-image:radial-gradient(closest-side_circle_at_50%_50%,rgb(255_255_255/70%)_0%,rgb(255_255_255/14%)_22%,rgb(255_255_255/0%)_42%,rgb(38_42_54/20%)_96%)]"
+          className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] pointer-events-none [will-change:transform,opacity] [transform:translate(calc((var(--lx)_-_0.5)*50%),calc((var(--ly)_-_0.5)*50%))] mix-blend-hard-light opacity-[var(--shine)] [background-image:radial-gradient(closest-side_circle_at_50%_50%,rgb(255_255_255/70%)_0%,rgb(255_255_255/14%)_22%,rgb(255_255_255/0%)_42%,rgb(38_42_54/20%)_96%)]"
           aria-hidden="true"
         />
       </span>
@@ -428,7 +428,7 @@ function Barcode() {
 
   return (
     <svg
-      className="tw:block tw:w-[70%] tw:h-[10cqw] tw:fill-[#151515]"
+      className="block w-[70%] h-[10cqw] fill-[#151515]"
       viewBox={`0 0 ${total} ${BARCODE_HEIGHT}`}
       preserveAspectRatio="none"
       aria-hidden="true"
