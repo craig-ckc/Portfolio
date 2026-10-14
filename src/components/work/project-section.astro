@@ -4,10 +4,8 @@
  * the record says goes with them.
  *
  * Taken out of the route because the shape is the same on every project and the
- * record is what varies — a heading, some prose, and either no image, one
- * image worth the width of the column, or a pair side by side. The count is the
- * page's only decision about media, so it is made here rather than left to the
- * figure.
+ * record sets the sequence of full-width frames and pairs. On mobile every
+ * frame stacks.
  */
 import type { WorkSection } from '../../content/work'
 import ProjectFigure from './project-figure.astro'
@@ -18,10 +16,6 @@ interface Props {
 
 const { section } = Astro.props
 const media = section.media ?? []
-/* A pair of frames side by side on a phone is two thumbnails, so the grid drops
-   to one column below the sm breakpoint; a single image keeps the wide shape
-   either way. */
-const single = media.length === 1
 ---
 
 <section class="mt-[calc(var(--spacing-4xl)+var(--spacing-xs))] motion-safe:animate-project-fade-up">
@@ -35,8 +29,15 @@ const single = media.length === 1
 
   {
     media.length > 0 && (
-      <div class:list={['grid grid-cols-1 gap-sm', !single && 'sm:grid-cols-2']}>
-        {media.map((item) => <ProjectFigure media={item} wide={single} />)}
+      <div class="grid grid-cols-1 gap-sm sm:grid-cols-2">
+        {media.map((item) => {
+          const wide = item.layout !== 'half'
+          return (
+            <div class:list={[wide && 'sm:col-span-2']}>
+              <ProjectFigure media={item} wide={wide} />
+            </div>
+          )
+        })}
       </div>
     )
   }
