@@ -116,11 +116,25 @@ const mailto = (subject: string) => `mailto:${email}?subject=${encodeURIComponen
  * links for a visitor whose JavaScript never arrives. The dialog cancels that
  * navigation once it is live, and leaves a modified click alone, so
  * cmd-clicking still opens Cal in its own tab. */
+/* Cal saves any utm_* on the booking page's URL against the booking it makes,
+   so these are how a booking in Cal says it came from here. `utm_medium` is
+   left to each door: the embed in the dialog, or the plain link. */
+const bookingAttribution = {
+  utm_source: 'craigchihururu.com',
+  utm_campaign: 'start-a-project',
+} as const
+
+const bookingUrl = 'https://cal.com/craig-chihururu/30min'
+
 export const booking = {
   link: 'craig-chihururu/30min',
   namespace: '30min',
   origin: 'https://app.cal.com',
-  href: 'https://cal.com/craig-chihururu/30min',
+  attribution: { ...bookingAttribution, utm_medium: 'embed' },
+  /** The booking page, unmarked, for anything that is not a click from this
+      site — the structured data, where a search engine is the one pointing. */
+  url: bookingUrl,
+  href: `${bookingUrl}?${new URLSearchParams({ ...bookingAttribution, utm_medium: 'link' })}`,
   /** Both read off the event type above ("30 min meeting", on Google Meet), so
       no line of copy can claim a length or a place Cal will not actually book.
       Change the event in Cal and these two change with it. */

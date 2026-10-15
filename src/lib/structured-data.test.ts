@@ -206,11 +206,11 @@ describe('the service on offer', () => {
 
     expect(offer.availableChannel).toMatchObject({
       '@type': 'ServiceChannel',
-      serviceUrl: booking.href,
+      serviceUrl: booking.url,
     })
     expect(offer.potentialAction).toMatchObject({
       '@type': 'ReserveAction',
-      target: booking.href,
+      target: booking.url,
     })
   })
 

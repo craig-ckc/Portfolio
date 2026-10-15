@@ -5,6 +5,7 @@ const embed: CalEmbed = {
   link: 'craig-chihururu/30min',
   namespace: '30min',
   origin: 'https://app.cal.com',
+  attribution: { utm_source: 'craigchihururu.com', utm_medium: 'embed' },
 }
 
 describe('calEmbedOptions', () => {
@@ -30,5 +31,11 @@ describe('calEmbedOptions', () => {
      takes. Cal saying it again beside that is the duplication this hides. */
   it('leaves the event description to the dialog', () => {
     expect(calEmbedOptions(embed, 'light').ui.hideEventTypeDetails).toBe(true)
+  })
+
+  it('passes the attribution through to the booking page', () => {
+    const { config } = calEmbedOptions(embed, 'light').inline
+
+    expect(config).toMatchObject({ utm_source: 'craigchihururu.com', utm_medium: 'embed' })
   })
 })

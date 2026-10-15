@@ -165,12 +165,12 @@ export function structuredData(site: URL, page: PageInfo, article?: ArticleInfo)
     availableChannel: {
       '@type': 'ServiceChannel',
       name: `Book a ${booking.minutes}-minute call`,
-      serviceUrl: booking.href,
+      serviceUrl: booking.url,
     },
     potentialAction: {
       '@type': 'ReserveAction',
       name: hero.cta.label,
-      target: booking.href,
+      target: booking.url,
     },
   }
 

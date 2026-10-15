@@ -45,6 +45,8 @@ export type CalEmbed = {
   link: string
   namespace: string
   origin: string
+  /** utm_* parameters Cal records against the booking. */
+  attribution?: Readonly<Record<string, string>>
 }
 
 /**
@@ -83,8 +85,9 @@ export function calEmbedOptions(embed: CalEmbed, theme: Theme) {
       calLink: embed.link,
       /* `useSlotsViewOnSmallScreen` is what stops the month grid being squeezed
          into a phone: below Cal's own breakpoint it shows the next available
-         times as a list instead. */
-      config: { layout: 'month_view', useSlotsViewOnSmallScreen: 'true', theme },
+         times as a list instead. Cal forwards the config to the booking page
+         as its query string, which is how the attribution reaches it. */
+      config: { ...embed.attribution, layout: 'month_view', useSlotsViewOnSmallScreen: 'true', theme },
     },
     ui: {
       theme,
