@@ -1,0 +1,33 @@
+---
+import type { OutlineEntry } from '../../lib/article-outline'
+
+interface Props { entries: OutlineEntry[] }
+const { entries } = Astro.props
+---
+
+<nav class="article-outline" aria-label="Article sections" data-article-outline data-visible="false">
+  <ol class="article-outline__links">
+    {entries.map((entry) => (
+      <li>
+        <a class="article-outline__link" href={`#${entry.id}`} aria-label={entry.title} data-outline-link data-preview={entry.preview}>
+          <span class="article-outline__mark" aria-hidden="true"></span>
+        </a>
+      </li>
+    ))}
+  </ol>
+  <aside class="article-outline__preview" aria-hidden="true" data-outline-preview>
+    <div data-outline-preview-content>
+      <div class="article-outline__preview-heading">
+        <strong data-outline-title></strong>
+      </div>
+      <p data-outline-description></p>
+    </div>
+  </aside>
+</nav>
+
+<script>
+  import { setupArticleOutline } from '../../lib/article-outline-controller'
+  const nav = document.querySelector<HTMLElement>('[data-article-outline]')
+  const body = document.querySelector<HTMLElement>('[data-article-body]')
+  if (nav && body) setupArticleOutline(nav, body)
+</script>

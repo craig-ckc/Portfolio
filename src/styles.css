@@ -149,6 +149,7 @@
 
   /* Container */
   --container-content: 800px;
+  --container-reading: 640px;
   --container-content-wide: 1280px;
 
   --container-caption: 520px;
@@ -389,6 +390,7 @@
 
   /* Container — `max-w-content`, `max-w-page`, and friends. */
   --container-content: 800px;
+  --container-reading: 640px;
   --container-content-wide: 1280px;
   --container-caption: 520px;
   --container-hero: 1040px;
@@ -396,6 +398,7 @@
   --container-page: 1792px;
   --container-page-frame: calc(var(--container-page) + var(--spacing-page-gutter) * 2);
   --container-content-frame: calc(var(--container-content) + var(--spacing-2xl) * 2);
+  --container-reading-frame: calc(var(--container-reading) + var(--spacing-2xl) * 2);
   --container-content-wide-frame: calc(var(--container-content-wide) + var(--spacing-page-gutter) * 2);
   --container-hero-frame: calc(var(--container-hero) + var(--spacing-2xl) * 2);
   --container-inline-safe: calc(100% - var(--spacing-xl) * 2);
@@ -1084,6 +1087,118 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
 
   .hp[data-theme='dark'] .chip:hover {
     filter: brightness(1.04);
+  }
+}
+
+@layer components {
+  .article-outline {
+    position: fixed;
+    z-index: 30;
+    top: 50%;
+    right: clamp(12px, 2vw, 28px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(6px, -50%);
+    transition: opacity 240ms ease, transform 560ms var(--ease-out-quint), visibility 240ms;
+  }
+
+  .article-outline[data-visible='true'] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(0, -50%);
+  }
+
+  .article-outline__links { list-style: none; margin: 0; padding: 0; }
+  .article-outline__link {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 44px;
+    height: 10px;
+    border-radius: var(--radius-sm);
+    outline-offset: 3px;
+  }
+
+  .article-outline__mark {
+    display: block;
+    width: 6px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--neutral-600);
+    transition: width 360ms var(--ease-out-quint), background-color 240ms ease;
+  }
+
+  .article-outline__link[data-complete='true'] .article-outline__mark {
+    width: 6px;
+    background: var(--neutral-700);
+  }
+
+  .article-outline__link[aria-current] .article-outline__mark {
+    background: var(--foreground);
+  }
+
+  .article-outline__link:is(:hover, :focus-visible) .article-outline__mark {
+    width: 26px;
+    background: var(--foreground);
+  }
+
+  .article-outline__link:focus-visible { outline: none; }
+
+  .article-outline__preview {
+    position: absolute;
+    top: var(--preview-y, 50%);
+    right: calc(100% + 8px);
+    width: min(320px, calc(100vw - 88px));
+    padding: 12px;
+    border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--neutral-300) 92%, transparent);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 5%);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(6px, -50%) scale(0.98);
+    transform-origin: right center;
+    transition: top 320ms var(--ease-out-quint), opacity 160ms ease,
+      transform 320ms var(--ease-out-quint), visibility 160ms;
+  }
+
+  .article-outline[data-preview='true'] .article-outline__preview {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%) scale(1);
+  }
+
+  .article-outline__preview-heading { display: flex; align-items: center; gap: 12px; }
+  .article-outline__preview-heading strong {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+  .article-outline__preview p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    margin-top: 6px;
+    color: var(--neutral-700);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .article-outline,
+    .article-outline__links,
+    .article-outline__mark,
+    .article-outline__preview { transition: none; }
   }
 }
 
