@@ -89,7 +89,7 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
 
   if (tracks.length === 0)
     return (
-      <span className="absolute inset-0 rounded-inherit [.card:has(&)]:overflow-visible!" />
+      <span className="absolute inset-0 rounded-[inherit] [.card:has(&)]:overflow-visible!" />
     )
 
   const track = tracks[playing.index] ?? tracks[0]
@@ -102,7 +102,7 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
        element, so it is asserted from here with a :has() variant instead of
        editing the `.card` element's own `overflow-hidden` in
        hero-folder.tsx. */
-    <span className="absolute inset-0 rounded-inherit [.card:has(&)]:overflow-visible!">
+    <span className="absolute inset-0 rounded-[inherit] [.card:has(&)]:overflow-visible!">
       {/* Centred behind the cover at rest, so "shut" and "open but not
           hovered" both read as a plain cover with nothing behind it. Two
           things bring it out: the pointer arriving, and the card being
@@ -159,11 +159,11 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
         </span>
       </span>
 
-      <span className="absolute inset-0 z-2 rounded-inherit overflow-hidden">
+      <span className="absolute inset-0 z-2 rounded-[inherit] overflow-hidden">
         {tracks.map((candidate, index) => (
           <img
             key={candidate.art}
-            className="absolute inset-0 size-full object-cover opacity-0 rounded-inherit [transition:opacity_var(--duration-slow)_var(--ease-standard)] data-[current=true]:opacity-100"
+            className="absolute inset-0 size-full object-cover opacity-0 rounded-[inherit] [transition:opacity_var(--duration-slow)_var(--ease-standard)] data-[current=true]:opacity-100"
             src={candidate.art}
             alt=""
             draggable={false}
@@ -244,7 +244,7 @@ export function DiscFace({ item, presented = false }: { item: DiscItem; presente
         <span className="flex flex-col gap-[1.2cqw] mt-[1.6cqw]">
           <span className="relative h-[2cqw] rounded-full bg-[rgb(249_249_249/18%)] overflow-hidden">
             <span
-              className="absolute inset-y-0 left-0 rounded-inherit bg-[#f9f9f9] [transition:width_var(--duration-fast)_linear]"
+              className="absolute inset-y-0 left-0 rounded-[inherit] bg-[#f9f9f9] [transition:width_var(--duration-fast)_linear]"
               style={{ width: `${progress * 100}%` }}
             />
           </span>

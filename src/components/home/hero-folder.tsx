@@ -993,7 +993,7 @@ export function HeroFolder({ caption }: { caption: string }) {
                 [transition:transform_var(--duration-base)_var(--ease-out-cubic)]
                 [.folder:hover_&,.folder:has(:focus-visible)_&]:[transition:transform_var(--duration-slow)_var(--ease-spring-out)]
                 [.folder:hover_&,.folder:has(:focus-visible)_&]:[transition-delay:calc(var(--i,0)_*_40ms)]
-                focus-visible:outline-offset-2xs
+                focus-visible:outline-offset-[6px]
                 folder-item-fan folder-slot-layout
                 [.folder.is-open.folder_&]:[transform:translate(var(--out-x,0px),var(--out-y,0px))_translate(var(--drag-x,0px),var(--drag-y,0px))_translateY(-50%)_scale(var(--out-scale,1))_rotate(calc(var(--slot-r,0deg)_+_var(--drag-r,0deg)))_translateY(50%)]
                 [.folder.is-open_&]:z-[calc(10+var(--raised,0))] [.folder.is-open_&]:cursor-grab [.folder.is-open_&]:touch-none
@@ -1207,7 +1207,7 @@ export function HeroFolder({ caption }: { caption: string }) {
             open, which takes it out of both the tab order and the pointer's
             way in one word. */}
         <button
-          className="folder__open absolute inset-0 z-6 p-0 rounded-lg cursor-pointer focus-visible:outline-offset-2xs"
+          className="folder__open absolute inset-0 z-6 p-0 rounded-lg cursor-pointer focus-visible:outline-offset-[6px]"
           type="button"
           ref={openRef}
           inert={stage === 'open'}

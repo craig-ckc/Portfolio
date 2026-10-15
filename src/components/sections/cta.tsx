@@ -71,7 +71,7 @@ export function Cta() {
           have no token behind them, same as the equivalent heading in
           project-page.css. */}
       <h2
-        className="pt-2xl whitespace-pre-line font-display text-display-cta font-bold tracking-snug leading-tight text-center text-balance"
+        className="pt-2xl whitespace-pre-line font-display text-display-cta font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight text-center text-balance"
         id="cta-title"
       >
         {cta.title}

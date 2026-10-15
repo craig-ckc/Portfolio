@@ -50,7 +50,7 @@ const shareUrl = new URL(`/writing/${article.slug}`, Astro.site).href
       class="mx-auto flex max-w-content-frame flex-col items-center px-md text-center sm:px-2xl"
     >
       <h1
-        class="font-display text-3xl font-semibold tracking-tight leading-tight sm:text-4xl motion-safe:animate-article-rise"
+        class="font-display text-3xl font-semibold [font-variation-settings:'wght'_600] tracking-tight leading-tight sm:text-4xl motion-safe:animate-article-rise"
       >
         {article.title}
       </h1>
@@ -100,7 +100,7 @@ const shareUrl = new URL(`/writing/${article.slug}`, Astro.site).href
           const paired = media.length > 1
           return (
             <section class="mt-4xl">
-              <h2 class="mb-md font-display text-lg font-semibold tracking-snug leading-snug text-balance">
+              <h2 class="mb-md font-display text-lg font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-snug text-balance">
                 {section.heading}
               </h2>
 

@@ -39,7 +39,7 @@ export function Work() {
               </div>
 
               <div className="flex flex-col gap-3xs">
-                <h2 className="font-display text-base font-semibold tracking-snug leading-tight underline decoration-transparent decoration-1 underline-offset-hairline transition-[text-decoration-color] duration-320 ease-out-cubic group-hover:decoration-current group-focus-visible:decoration-current">
+                <h2 className="font-display text-base font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight underline decoration-transparent decoration-1 underline-offset-[3px] transition-[text-decoration-color] duration-320 ease-out-cubic group-hover:decoration-current group-focus-visible:decoration-current">
                   {entry.title}
                 </h2>
                 <p className="max-w-copy text-pretty text-neutral-700 font-display text-body tracking-snug leading-normal">

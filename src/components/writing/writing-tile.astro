@@ -75,11 +75,11 @@ const { href, image, title, description, featured = false } = Astro.props
   >
     {
       featured ? (
-        <h2 class="font-display text-2xl font-semibold tracking-snug leading-tight text-balance sm:text-3xl">
+        <h2 class="font-display text-2xl font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight text-balance sm:text-3xl">
           {title}
         </h2>
       ) : (
-        <h3 class="font-display text-md font-semibold tracking-snug leading-snug text-balance">
+        <h3 class="font-display text-md font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-snug text-balance">
           {title}
         </h3>
       )

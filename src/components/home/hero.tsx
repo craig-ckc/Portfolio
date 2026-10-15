@@ -9,14 +9,15 @@ export function Hero() {
       id="top"
       aria-labelledby="hero-title"
     >
-      {/* Row above 1200px, stacked below it — the frame's own break. The
-          fluid column gap is exposed as the `gap-hero-column` theme utility. */}
-      <div className="flex flex-1 flex-col items-start gap-4xl lg:flex-row lg:items-center lg:justify-between lg:gap-hero-column">
+      {/* Row above 1200px, stacked below it — the frame's own break. The gap
+          is `--spacing-hero-gap`, clamp(2xl, 5vw, 5xl), so it shrinks with the
+          viewport rather than jumping between two fixed values. */}
+      <div className="flex flex-1 flex-col items-start gap-4xl lg:flex-row lg:items-center lg:justify-between lg:gap-hero-gap">
         <div className="flex w-full min-w-0 max-w-none flex-1 flex-col self-stretch justify-between gap-xl lg:w-auto lg:max-w-hero">
           {/* BEYOND THE FRAME: 4.8vw lands on the frame's 92px at 1920 and
               scales down from there. */}
           <h1
-            className="font-display text-display-hero font-bold tracking-snug leading-tight text-balance text-neutral-700"
+            className="font-display text-display-hero font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight text-balance text-neutral-700"
             id="hero-title"
           >
             I help <span className="text-foreground">brands</span> build <span className="text-foreground">websites</span> worth visiting and <span className="text-foreground">apps</span> worth using.
@@ -37,8 +38,8 @@ export function Hero() {
           </div>
         </div>
 
-          {/* The folder column uses the same fluid width token as the row gap,
-              keeping both sides of the hero on one measured rhythm. */}
+        {/* The folder column is `--spacing-hero-column`, min(--container-content,
+            38%): a share of the row rather than a fixed width. */}
         <div className="flex w-full flex-none flex-col items-start self-stretch justify-end gap-2xs lg:w-hero-column lg:items-center">
           <HeroFolder caption={hero.objectCaption} />
           {/* Sparkle (src/components/icons.tsx) takes no className, so its

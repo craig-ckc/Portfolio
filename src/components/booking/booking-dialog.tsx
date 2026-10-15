@@ -210,7 +210,7 @@ export function BookingDialog() {
               breakpoints rather than jumping between two fixed scale steps —
               there is no token for a fluid size. */}
           <h2
-            className="pt-sm font-display text-display-dialog font-bold tracking-snug leading-tight"
+            className="pt-sm font-display text-display-dialog font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight"
             id="booking-title"
           >
             {bookingDialog.title}
