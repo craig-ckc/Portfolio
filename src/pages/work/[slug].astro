@@ -28,6 +28,7 @@ import PageShell from '../../layouts/page-shell.astro'
 import ProjectFigure from '../../components/work/project-figure.astro'
 import ProjectLiveLink from '../../components/work/project-live-link.astro'
 import ProjectSection from '../../components/work/project-section.astro'
+import ProjectGallery from '../../components/work/project-gallery.astro'
 import { Cta } from '../../components/sections/cta'
 import { work, type WorkEntry } from '../../content/work'
 
@@ -57,6 +58,7 @@ const description = entry.description
        var(--background), which is `bg-background` at each call site.) */
   }
   <article
+    data-project-gallery-source
     class="[--project-rule:rgb(21_21_21/10%)] dark:[--project-rule:rgb(255_255_255/12%)] [--project-box-rule:rgb(21_21_21/6%)] dark:[--project-box-rule:rgb(255_255_255/8%)] [--project-pill-border:rgb(21_21_21/10%)] dark:[--project-pill-border:rgb(255_255_255/14%)] [--project-pill-shadow:0_1px_2px_rgb(0_0_0/4%),0_4px_12px_rgb(0_0_0/4%)] dark:[--project-pill-shadow:0_1px_2px_rgb(0_0_0/24%),0_4px_16px_rgb(0_0_0/32%)]"
   >
     {
@@ -75,7 +77,7 @@ const description = entry.description
               the clamp keeps it from going stark on a short laptop screen or
               huge on an ultrawide monitor. */}
           <div class="h-full">
-            <ProjectFigure media={entry.cover} fill loading="eager" />
+            <ProjectFigure media={entry.cover} fill loading="eager" lightbox={false} />
           </div>
           {/* Fades the foot of the cover into the page background rather than
               cutting to it, so the link sitting on the fade is readable over
@@ -141,5 +143,6 @@ const description = entry.description
     </div>
   </article>
 
+  <ProjectGallery title={entry.title} />
   <Cta />
 </PageShell>
