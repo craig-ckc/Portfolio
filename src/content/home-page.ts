@@ -444,21 +444,10 @@ export const contact = {
   href: mailto('Hello'),
 } as const
 
-/* Sits between the hero and the work list.
- *
- * Written to do three things: lead with the design-plus-code background rather
- * than restating the job title from the hero, name design engineering as the
- * direction of travel, and place the AI work as a means to that rather than as
- * a badge. No dashes anywhere, per Craig.
- *
- * Grounded in his own sources: the practice framing on
- * craigchihururu.netlify.app, and product/mobile/web work on dribbble.com/craigkc
- * (Qwirkers, Recast). Deliberately NOT claiming the computer science degree that
- * data-broker sites list, since nothing he publishes himself corroborates it.
- */
+/* Craig's statement between the hero and the work list. */
 export const statement = {
   body:
-    "I tend to stay with an idea longer than my job title requires. I’ll work out the interface and keep going until it’s running in the browser, then spend probably too long making the details feel right. That overlap between design and engineering is where I do my best work, and AI is one of the things I’m testing there, seeing how much more of the original intent I can keep intact from design through implementation.",
+    "I'm a designer and developer at **11&1**, where I work on websites and digital products. I enjoy shaping how things look, how they work, and all the small decisions in between.\n\nPreviously, I focused more on **brand and interface design**. These days, I'm equally interested in engineering, building **my own products**, and exploring what **AI** makes possible.",
 } as const
 
 export const footer = {
