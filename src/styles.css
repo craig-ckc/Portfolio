@@ -606,6 +606,11 @@
    keeps the three timings in sync wherever the contact label is reused. */
 @utility transition-contact-label {
   transition: var(--effect-transition-contact-label);
+
+  /* Give the opening wipe more time; closing keeps the original timings. */
+  .group:is(:hover, :focus-visible) & {
+    transition-duration: var(--duration-slow), var(--duration-slow), var(--duration-base);
+  }
 }
 
 @utility rotate-sun {
@@ -846,41 +851,45 @@
     0 calc(3px * var(--k)) calc(8px * var(--k)) rgb(21 21 21 / 10%);
 }
 
-/* Shared between src/components/sections/cta.tsx and
-   src/components/writing/article-share.astro — a row of round icon buttons.
-   A bundle, not separate utilities, because it needs `& a`/`& svg` nesting
-   and a hover state on the anchor rather than the row itself. */
-@utility social {
-  display: flex;
+/* One icon-button treatment for social links and gallery controls. */
+@utility icon-button {
+  display: inline-flex;
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
+  padding: 0;
+  flex-shrink: 0;
   align-items: center;
-  gap: var(--spacing-xs);
+  justify-content: center;
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-md);
+  background: var(--neutral-300);
+  color: var(--neutral-700);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
 
-  & a {
-    display: inline-flex;
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-md);
-    background: var(--neutral-300);
-    color: var(--neutral-700);
-    transition:
-      background var(--duration-fast) var(--ease-standard),
-      color var(--duration-fast) var(--ease-standard),
-      transform var(--duration-fast) var(--ease-standard);
-  }
-
-  & a:hover {
+  &:hover:not(:disabled) {
     color: var(--foreground);
     transform: translateY(-1px);
   }
+
+  &:disabled { opacity: .25; cursor: default; }
 
   & svg {
     width: 16px;
     height: 16px;
   }
+}
+
+/* Shared icon rows in the footer and article sharing controls. */
+@utility social {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+
+  & a { @apply icon-button; }
 }
 
 /* The footer's still/video dither backdrop layer — shared between the two
@@ -1047,7 +1056,8 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
      shadow holds on hover too: this button has never swapped shadows under
      the pointer, only brightened. */
   .chip.chip-cta {
-    padding: var(--spacing-xs) var(--spacing-lg);
+    /* Match the 32px social controls, accounting for the text line and borders. */
+    padding: calc((var(--spacing-2xl) - 1lh - 2px) / 2) var(--spacing-lg);
     border-radius: var(--radius-sm);
     background-image: linear-gradient(in oklab 180deg, oklab(31.1% 0 0) 0%, oklab(22.5% 0 0) 100%);
     box-shadow:
