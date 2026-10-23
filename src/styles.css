@@ -1327,6 +1327,9 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
 }
 
 @layer components {
+  .experiment-preview-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; pointer-events: none; transition: opacity 180ms ease-out; }
+  [data-experiment-card][data-preview-playing='true'] .experiment-preview-video { opacity: 1; }
+
   /* Independent WebGL field. CSS owns only its region and accessible fallback;
      image transforms, depth blur, and the three fade layers live in shaders. */
   .project-field { position: relative; width: 100%; height: 100%; min-height: 0; container-type: size; isolation: isolate; }

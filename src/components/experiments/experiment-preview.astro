@@ -14,7 +14,9 @@ const columns = [
 ]
 ---
 
-{experiment.slug === 'infinite-field' ? (
+{experiment.cover?.src ? (
+  <img class="block h-full w-full object-cover" src={experiment.cover.src} alt={experiment.cover.alt ?? ''} loading="lazy" decoding="async" />
+) : experiment.slug === 'infinite-field' ? (
   <div class="relative h-full overflow-hidden bg-background" aria-hidden="true">
     <div class="absolute inset-0 overflow-hidden [mask-image:radial-gradient(circle_closest-side,#000_35%,transparent_100%)]">
       <div class="absolute -inset-y-[20%] inset-x-[5%] grid grid-cols-3 items-center gap-[8%]">
@@ -31,4 +33,20 @@ const columns = [
   </div>
 ) : (
   <div class="h-full bg-neutral-300" aria-hidden="true"></div>
+)}
+
+{experiment.previewVideo && (
+  <video
+    class="experiment-preview-video"
+    data-experiment-video
+    data-src={experiment.previewVideo}
+    poster={experiment.cover?.src || undefined}
+    preload="none"
+    muted
+    loop
+    playsinline
+    disablepictureinpicture
+    aria-hidden="true"
+    tabindex="-1"
+  />
 )}
