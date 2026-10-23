@@ -2,11 +2,9 @@
 /**
  * The writing list, at /writing.
  *
- * Every piece is a card within a card: its image is the whole card, and a
- * small pane of the homepage folder's frosted glass sits inside it carrying
- * the words. The featured piece leads, wide, with its title, subtitle and a
- * way in; every article, including the feature, follows in a grid. No
- * categories, no dates — those wait on the article's own page.
+ * The featured piece leads with a title, description and CTA; every article
+ * follows in a grid. The featured card keeps an inset glass panel at the
+ * bottom left; the grid uses the shared card's progressive blur overlay.
  */
 import PageShell from "../layouts/page-shell.astro";
 import { Cta } from "../components/sections/cta";
@@ -39,10 +37,6 @@ const featured =
       <section
         class:list={[
           "w-full mx-auto px-page-gutter",
-          /* The frosted-glass tint the tiles inside read from — was
-             .writing__featured in writing.css, now declared where it cascades
-             from instead of on a class of its own. */
-          "[--writing-glass-top:rgb(255_255_255/18%)] [--writing-glass-bottom:rgb(255_255_255/8%)] [--writing-glass-edge:rgb(255_255_255/22%)]",
           "max-w-content-wide-frame",
           "py-hero-top",
         ]}
@@ -95,7 +89,7 @@ const featured =
         </h2>
         {/* Three across at the work list's width, two on a tablet, one on a
             phone. */}
-        <div class="[--writing-glass-top:rgb(255_255_255/18%)] [--writing-glass-bottom:rgb(255_255_255/8%)] [--writing-glass-edge:rgb(255_255_255/22%)] grid grid-cols-1 gap-xl sm:grid-cols-2 md:grid-cols-3">
+        <div class="grid grid-cols-1 gap-xl sm:grid-cols-2 md:grid-cols-3">
           {sortedArticles.map((article) => (
             <WritingTile
               href={writingPath(article.slug)}

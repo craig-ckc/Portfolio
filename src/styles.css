@@ -615,11 +615,6 @@
   transform: rotate(var(--rotate-sun));
 }
 
-@utility writing-glass {
-  background-image: linear-gradient(180deg, var(--writing-glass-top), var(--writing-glass-bottom));
-  backdrop-filter: blur(26px) saturate(140%);
-}
-
 @utility project-cover-fade {
   background-image: linear-gradient(to bottom, transparent, var(--background));
 }
@@ -1327,6 +1322,34 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
 }
 
 @layer components {
+  /* One clip for the completed image, tint and blur, rather than separately
+     antialiasing the card background and each composited overlay. */
+  .content-card__surface {
+    clip-path: inset(0 round var(--radius-lg));
+  }
+
+  .content-card__inset {
+    border: 1px solid rgb(255 255 255 / 22%);
+    background-image: linear-gradient(180deg, rgb(255 255 255 / 18%), rgb(255 255 255 / 8%));
+    -webkit-backdrop-filter: blur(26px) saturate(140%);
+    backdrop-filter: blur(26px) saturate(140%);
+  }
+
+  /* The component samples an eased curve for a light tint over the blur. */
+  .content-card__backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--card-tint);
+  }
+
+  .content-card__blur {
+    -webkit-backdrop-filter: blur(var(--card-blur));
+    backdrop-filter: blur(var(--card-blur));
+    -webkit-mask-image: var(--card-mask);
+    mask-image: var(--card-mask);
+  }
+
   .experiment-preview-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; pointer-events: none; transition: opacity 180ms ease-out; }
   [data-experiment-card][data-preview-playing='true'] .experiment-preview-video { opacity: 1; }
 

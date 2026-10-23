@@ -1,0 +1,86 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+interface Props extends HTMLAttributes<'a'> {
+  href: string
+  /** An inset glass panel is available for larger editorial cards. */
+  variant?: 'overlay' | 'inset'
+}
+
+const { class: className, variant = 'overlay', ...attributes } = Astro.props
+
+// Smoothstep has a flat tangent at both ends: both the tint and the blur
+// ease into the image instead of revealing the edge of a linear fade.
+const ease = (t: number) => t * t * (3 - 2 * t)
+
+function maskStops(start: number, end: number) {
+  return Array.from({ length: 17 }, (_, index) => {
+    const t = index / 16
+    const position = (start + (end - start) * t) * 100
+    return `rgb(0 0 0 / ${ease(t).toFixed(4)}) ${position.toFixed(3)}%`
+  })
+}
+
+// Overlapping eased fades build up the blur without seams between bands.
+// Gaussian variances add, so each layer supplies only the additional blur
+// needed to reach the eased curve's next radius, up to 96px at the bottom.
+const blurLayers = Array.from({ length: 8 }, (_, index) => {
+  const position = (index + 1) / 8
+  const radius = 96 * ease(position)
+  const previousRadius = 96 * ease(index / 8)
+  const stops = maskStops(Math.max(0, (index - 1) / 8), position)
+  return {
+    blur: Math.sqrt(radius ** 2 - previousRadius ** 2).toFixed(2),
+    mask: `linear-gradient(to bottom, ${stops.join(', ')})`,
+  }
+})
+
+const tintStops = Array.from({ length: 17 }, (_, index) => {
+  const t = index / 16
+  return `rgb(0 0 0 / ${(0.14 * ease(t)).toFixed(4)}) ${t * 100}%`
+}).join(', ')
+---
+
+{/* Supply full-bleed artwork in the media slot and any bottom content in the
+    default slot. A CTA should be a span: the entire card is already a link. */}
+<a
+  {...attributes}
+  class:list={[
+    'content-card group relative grid min-h-80 rounded-lg text-white',
+    className,
+  ]}
+>
+  {/* All painted layers share one rounded clip. Keeping the fallback inside
+      it avoids a second antialiased background edge beneath the blur. The
+      outer link stays unclipped so its keyboard focus ring remains visible. */}
+  <div class="content-card__surface relative isolate grid min-h-0 items-end">
+    <div
+      class="absolute inset-0"
+    >
+      {/* Keep the transition bounds stable while the artwork zooms inside. */}
+      <div class="absolute -inset-px bg-neutral-600 transition-transform duration-760 ease-out-quart motion-safe:group-hover:scale-103 motion-safe:group-focus-visible:scale-103 will-change-transform">
+        <slot name="media" />
+      </div>
+    </div>
+
+    <div class:list={['relative', variant === 'inset' ? 'p-sm sm:p-2xl' : 'p-lg sm:p-xl']}>
+      {variant === 'overlay' && (
+        <div
+          class="content-card__backdrop pointer-events-none absolute -inset-x-0.5 -top-4xl -bottom-0.5"
+          style={{ '--card-tint': `linear-gradient(to bottom, ${tintStops})` }}
+          aria-hidden="true"
+        >
+          {blurLayers.map(({ blur, mask }) => (
+            <div class="content-card__blur absolute inset-0" style={{ '--card-blur': `${blur}px`, '--card-mask': mask }} />
+          ))}
+        </div>
+      )}
+      <div class:list={[
+        'relative min-w-0',
+        variant === 'inset' && 'content-card__inset max-w-caption rounded-md p-lg sm:p-2xl',
+      ]}>
+        <slot />
+      </div>
+    </div>
+  </div>
+</a>

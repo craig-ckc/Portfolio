@@ -1,22 +1,5 @@
 ---
-/**
- * One tile in the writing list: an image is the whole card, and a pane of
- * the homepage folder's frosted glass sits over it carrying the words. The
- * featured piece leads wide, its pane top-left holding the title, the
- * subtitle and a way in; every other tile — including the feature, again,
- * once it repeats in the grid below — carries only its title, pane pinned to
- * the bottom edge.
- *
- * The glass itself: the homepage folder's frost — the same blur and
- * saturation as .folder__frost in home-page.css — with a light tint rather
- * than the folder's near-opaque one. The folder's front sits on the page, so
- * its tint follows the page; this pane sits on a photograph in either
- * appearance, so it stays the same in both — clear enough for the picture to
- * show through, white type on it. Opaque, it would read as a black box
- * pasted on the image rather than glass over it. --writing-glass-* are
- * declared as arbitrary-property utilities on the sections that hold these
- * tiles, in src/pages/writing.astro.
- */
+import ContentCard from '../content-card.astro'
 import type { WorkMedia } from '../../content/work'
 
 interface Props {
@@ -25,54 +8,30 @@ interface Props {
   title: string
   /** Only read for the featured tile: every other pane keeps to a title. */
   description?: string
-  /**
-   * The lead card: wide, its image the homepage hero's own height, its pane
-   * set top-left and holding more than a title. Every other tile is the
-   * homepage work row's height, title-only, pane pinned to the bottom edge.
-   */
+  /** The lead card keeps its inset panel and includes a description and CTA. */
   featured?: boolean
 }
 
 const { href, image, title, description, featured = false } = Astro.props
 ---
 
-<a class="group relative isolate block overflow-hidden rounded-lg" href={href}>
-  <div
-    class:list={[
-      'w-full bg-neutral-600',
-      /* The homepage work tile's height, half the featured card's — a height
-         of its own rather than 100%, because the tile has none until its
-         image gives it one. */
-      featured ? 'h-160' : 'h-80',
-    ]}
-  >
-    {
-      image.src && (
-        /* Held on its own compositor layer from the start, not only while it
-           moves. Keeping the layer through the zoom avoids a pixel re-snap
-           when the transition ends. */
-        <img
-          class="h-full w-full object-cover transition-transform duration-760 ease-out-quart group-hover:scale-103 will-change-transform"
-          src={image.src}
-          alt={image.alt ?? ''}
-          loading={featured ? undefined : 'lazy'}
-        />
-      )
-    }
-  </div>
+<ContentCard
+  href={href}
+  variant={featured ? 'inset' : 'overlay'}
+  class={featured ? 'min-h-160' : undefined}
+>
+  {image.src && (
+    <img
+      slot="media"
+      class="h-full w-full object-cover"
+      src={image.src}
+      alt={image.alt ?? ''}
+      loading={featured ? undefined : 'lazy'}
+      decoding="async"
+    />
+  )}
 
-  {/* The inner card, set in from the outer card's edge by its own padding and
-      rounded one step tighter, so the two corners sit concentric. Pinned to
-      the bottom edge everywhere except the featured tile from the tablet
-      breakpoint up, where it moves top-left and widens to the caption
-      measure so its lines stay short. */}
-  <div
-    class:list={[
-      'absolute right-sm bottom-sm left-sm flex flex-col items-start rounded-md border border-(--writing-glass-edge) p-lg text-white writing-glass',
-      featured &&
-        'sm:top-2xl sm:right-auto sm:bottom-auto sm:left-2xl sm:max-w-caption sm:p-2xl',
-    ]}
-  >
+  <div class="flex max-w-caption flex-col items-start">
     {
       featured ? (
         <h2 class="font-display text-2xl font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight text-balance sm:text-3xl">
@@ -95,4 +54,4 @@ const { href, image, title, description, featured = false } = Astro.props
 
     {featured && <span class="chip chip-cta mt-xl">Read article</span>}
   </div>
-</a>
+</ContentCard>
