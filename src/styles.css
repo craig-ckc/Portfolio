@@ -38,6 +38,82 @@
    them there. One site, one rule for what a hover is. */
 @custom-variant hover (&:hover);
 
+/* Native navigation is opted into early in Base. These animations leave
+   ordinary navigation intact when the browser cannot provide snapshots. */
+::view-transition { background: var(--transition-background, var(--background)); }
+::view-transition-group(root) { animation: none; z-index: 0; }
+::view-transition-old(root) { animation: page-leave 150ms var(--ease-standard) both; }
+::view-transition-new(root) { animation: page-enter 380ms 80ms var(--ease-out-quart) both; }
+
+::view-transition-group(shared-media) {
+  z-index: 1;
+  animation-duration: 640ms;
+  animation-timing-function: var(--ease-out-quint);
+}
+
+::view-transition-image-pair(shared-media) {
+  overflow: hidden;
+  animation: shared-media-radius 640ms var(--ease-out-quint) both;
+}
+
+::view-transition-old(shared-media),
+::view-transition-new(shared-media) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(shared-media) { animation: none; opacity: 1; }
+::view-transition-new(shared-media) { animation: page-appear 220ms var(--ease-standard) both; }
+
+/* Recreate the cover fade on the moving image pair itself. The captured
+   static gradient is excluded so it cannot flash in at the final position. */
+::view-transition-group(shared-gradient) { display: none; }
+html[data-transition-mask='cover']::view-transition-image-pair(shared-media) {
+  mask-image: linear-gradient(to bottom, #000 var(--transition-mask-start), transparent 100%);
+  animation-name: shared-media-radius, shared-cover-mask;
+}
+html[data-transition-kind='close'][data-transition-mask='cover']::view-transition-image-pair(shared-media) {
+  animation-name: shared-media-radius, shared-cover-mask-return;
+}
+
+::view-transition-group(shared-caption) { animation: none; z-index: 2; }
+::view-transition-old(shared-caption) { animation: page-leave 120ms var(--ease-standard) both; }
+::view-transition-new(shared-caption) { animation: page-appear 160ms 480ms var(--ease-standard) both; }
+
+::view-transition-group(site-nav) { animation: none; z-index: 3; }
+/* Hold the already-painted navbar while the next document hydrates. */
+::view-transition-old(site-nav) { animation: none; opacity: 1; }
+::view-transition-new(site-nav) { animation: none; opacity: 0; }
+::view-transition-new(site-nav):only-child { opacity: 1; }
+html[data-nav-enter]::view-transition-new(site-nav) { opacity: 1; animation: nav-enter 420ms var(--ease-out-quint) both; }
+html[data-nav-exit]::view-transition-old(site-nav) { opacity: 1; animation: nav-leave 240ms var(--ease-out-quart) both; }
+
+html[data-transition-kind='open']::view-transition-new(root) { animation-delay: 240ms; }
+html[data-transition-kind='close']::view-transition-old(root) { animation: page-return-leave 180ms var(--ease-standard) both; }
+html[data-transition-kind='close']::view-transition-new(root) { animation: page-appear 320ms 180ms var(--ease-out-quart) both; }
+
+@keyframes page-leave { from { opacity: 1; } to { opacity: 0; } }
+@keyframes page-appear { from { opacity: 0; } to { opacity: 1; } }
+@keyframes page-enter { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes page-return-leave { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(16px); } }
+@keyframes nav-enter { from { transform: translateY(-72px); } to { transform: translateY(0); } }
+@keyframes nav-leave { from { transform: translateY(0); } to { transform: translateY(-72px); } }
+@keyframes shared-media-radius { from { border-radius: var(--shared-from-radius, 8px); } to { border-radius: var(--shared-to-radius, 0px); } }
+@property --transition-mask-start { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+@keyframes shared-cover-mask { from { --transition-mask-start: 100%; } to { --transition-mask-start: 55%; } }
+@keyframes shared-cover-mask-return { from { --transition-mask-start: 55%; } to { --transition-mask-start: 100%; } }
+
+@layer utilities {
+  /* Snapshots must contain the settled content, not an initial load-in's
+     invisible frame. Keep this flag after the transition to avoid replaying
+     those load-ins when the snapshots are removed. */
+  html[data-navigation-entered] [class*='animate-project-fade-up'],
+  html[data-navigation-entered] [class*='animate-article-rise'] { animation: none; }
+}
+
 /* ==========================================================================
    Tokens
    ========================================================================== */
@@ -1437,4 +1513,10 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
   .tc-transfer textarea { resize: vertical; width: 100%; min-height: 100px; max-height: 160px; padding: 8px; border: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent); border-radius: 4px; background: var(--background); color: inherit; font-family: monospace; font-size: 10px; line-height: 1.5; }
   .tc-launcher { position: fixed; z-index: 70; right: 20px; bottom: 24px; display: flex; align-items: center; gap: 9px; min-height: 40px; padding: 10px 14px; border: 0; border-radius: 8px; background: var(--foreground); color: var(--background); box-shadow: 0 3px 15px #0002; font: inherit; font-size: 12px; cursor: pointer; }
   @media (max-width: 599px) { .tc-panel__footer { padding-bottom: max(56px, env(safe-area-inset-bottom)); } .tc-launcher { right: 12px; bottom: 60px; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none; }
 }

@@ -23,12 +23,17 @@ interface Props {
    * a narrow column.
    */
   paired?: boolean
+  transitionKey?: string
 }
 
-const { media, eager = false, cover = false, paired = false } = Astro.props
+const { media, eager = false, cover = false, paired = false, transitionKey } = Astro.props
 ---
 
 <div
+  data-transition-key={transitionKey}
+  data-transition-role={transitionKey ? 'detail' : undefined}
+  data-transition-source={transitionKey ? `${transitionKey}-detail` : undefined}
+  data-transition-frame={transitionKey ? '' : undefined}
   class:list={[
     'overflow-hidden rounded-md bg-neutral-600',
     cover ? 'aspect-16/9' : paired ? 'aspect-16/10 sm:aspect-square' : 'aspect-16/10',

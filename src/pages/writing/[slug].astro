@@ -79,7 +79,7 @@ const outline = articleOutline(article)
         <figure
           class="mx-auto mt-4xl mb-0 max-w-hero-frame px-md sm:px-2xl motion-safe:animate-article-rise motion-safe:[animation-delay:var(--duration-fast)]"
         >
-          <Frame media={article.cover} eager cover />
+          <Frame media={article.cover} eager cover transitionKey={`writing-${article.slug}`} />
         </figure>
       )
     }

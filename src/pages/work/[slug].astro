@@ -76,7 +76,7 @@ const description = entry.description
               proportion (roughly 42% of a 964px viewport) at any window height;
               the clamp keeps it from going stark on a short laptop screen or
               huge on an ultrawide monitor. */}
-          <div class="h-full">
+          <div class="h-full" data-transition-key={`work-${entry.slug}`} data-transition-role="detail" data-transition-source={`work-${entry.slug}-detail`} data-transition-frame>
             <ProjectFigure media={entry.cover} fill loading="eager" lightbox={false} />
           </div>
           {/* Fades the foot of the cover into the page background rather than
@@ -85,6 +85,7 @@ const description = entry.description
           <div
             class="absolute right-0 bottom-0 left-0 h-[45%] project-cover-fade pointer-events-none"
             aria-hidden="true"
+            data-transition-gradient
           />
           {entry.live && (
             <div class="absolute right-md bottom-xl left-md flex justify-center sm:right-page-gutter sm:left-page-gutter">

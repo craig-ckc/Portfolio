@@ -13,6 +13,8 @@ import '../styles.css'
 import { canonicalUrl, requireSite } from '../lib/sitemap'
 import { SHARE_IMAGE } from '../lib/share-image'
 import { serializeJsonLd, structuredData, type ArticleInfo } from '../lib/structured-data'
+import { pageTransitionPlan } from '../lib/page-transition-plan'
+import { setupPageTransitions } from '../lib/page-transitions'
 
 interface Props {
   title?: string
@@ -43,12 +45,25 @@ const shareImage = new URL(SHARE_IMAGE.src, site).href
 /* Structured data, built from the same canonical URL, title and description
    the og: tags use, so the two descriptions of the page agree. */
 const jsonLd = serializeJsonLd(structuredData(site, { url: canonical, title, description }, article))
+// Inline the compiled, self-contained functions so native transition events
+// are registered synchronously, without another render-blocking request.
+const transitionScript = `(${setupPageTransitions.toString()})(${pageTransitionPlan.toString()});`
 ---
 
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {/* Wait for the initial page markup before capturing its transition.
+        This adds no request and does not wait for image downloads. */}
+    <link rel="expect" blocking="render" href="#page-ready" />
+    {/* Declare the native navigation opt-in before any external CSS can load. */}
+    <style is:inline>
+      @media (prefers-reduced-motion: no-preference) {
+        @view-transition { navigation: auto; }
+      }
+    </style>
+    <script is:inline set:html={transitionScript} />
     {/* Two hand-tuned SVGs per appearance rather than one scaling file: the 16
         and 32 artboards have their own paths so the glyph stays crisp at tab
         size. The pairing is the browser's appearance, not the site's own

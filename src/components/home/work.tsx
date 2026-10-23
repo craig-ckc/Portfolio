@@ -19,6 +19,10 @@ export function Work() {
                   <div
                     className={`relative h-auto aspect-work-image overflow-hidden rounded-md bg-neutral-600 md:h-80 md:aspect-auto ${index > 0 ? 'hidden md:block' : ''}`}
                     key={`${entry.slug}-${index}`}
+                    data-transition-key={index === 0 ? `work-${entry.slug}` : undefined}
+                    data-transition-role={index === 0 ? 'thumbnail' : undefined}
+                    data-transition-source={index === 0 ? `work-${entry.slug}-home` : undefined}
+                    data-transition-frame={index === 0 ? '' : undefined}
                   >
                     {tile.src ? (
                       <img

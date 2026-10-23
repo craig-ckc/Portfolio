@@ -13,6 +13,7 @@ export default defineConfig({
   // with a 308 to this host, so it is the only one of the three that serves the
   // site rather than pointing at it.
   site: 'https://www.craigchihururu.com',
+  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   // The hero studies have moved into the experiments collection.
   redirects: {
     '/options': '/experiments',

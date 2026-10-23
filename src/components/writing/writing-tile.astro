@@ -10,15 +10,18 @@ interface Props {
   description?: string
   /** The lead card keeps its inset panel and includes a description and CTA. */
   featured?: boolean
+  transitionKey: string
 }
 
-const { href, image, title, description, featured = false } = Astro.props
+const { href, image, title, description, featured = false, transitionKey } = Astro.props
 ---
 
 <ContentCard
   href={href}
   variant={featured ? 'inset' : 'overlay'}
   class={featured ? 'min-h-160' : undefined}
+  transitionKey={transitionKey}
+  transitionId={`${transitionKey}-${featured ? 'feature' : 'grid'}`}
 >
   {image.src && (
     <img

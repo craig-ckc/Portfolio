@@ -58,6 +58,7 @@ const { title, description, homeHref = '#top', article } = Astro.props
         scrolls past it. */}
     <main class="relative z-[2] bg-background">
       <slot />
+      <span id="page-ready" hidden />
     </main>
     <Footer client:visible />
 
