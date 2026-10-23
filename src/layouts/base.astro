@@ -2,10 +2,8 @@
 // Document shell, replacing index.html's static <head> plus the CSS imports
 // that used to live in src/main.tsx. Astro supports CSS imports straight from
 // frontmatter, so all of it collapses into one file.
-import '@fontsource/manrope/latin-400.css'
-import '@fontsource/manrope/latin-500.css'
-import '@fontsource/manrope/latin-600.css'
-import '@fontsource/manrope/latin-700.css'
+import '@fontsource/almarai/latin-400.css'
+import '@fontsource/almarai/latin-700.css'
 // Lenis asserts `scroll-behavior: auto` itself; this used to be imported from
 // inside src/lib/smooth-scroll.ts, but that module now runs client-side only
 // (via a page-level <script>) and no longer executes at import time under

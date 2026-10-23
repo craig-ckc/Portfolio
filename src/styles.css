@@ -22,11 +22,6 @@
  *   beat Lenis's own unlayered stylesheet.
  */
 
-/* Satoshi is not a Google font. Loaded from Fontshare, the official source.
-   Self-host into public/fonts later if you want to drop the third-party
-   request. First in the file: an @import has to precede every other rule. */
-@import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap');
-
 /* Theme and utilities without the preflight reset — see the note above. */
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
@@ -74,8 +69,8 @@
   --neutral-100: #f9f9f8;
 
   /* Font family */
-  --font-display: 'Satoshi Variable', 'Satoshi', system-ui, sans-serif;
-  --font-sans: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Almarai', system-ui, sans-serif;
+  --font-sans: 'Almarai', system-ui, sans-serif;
 
   /* Font size */
   --text-2xs: 13px;
@@ -299,8 +294,8 @@
   --color-footer: #0b0b0b;
 
   /* Font family */
-  --font-display: 'Satoshi Variable', 'Satoshi', system-ui, sans-serif;
-  --font-sans: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Almarai', system-ui, sans-serif;
+  --font-sans: 'Almarai', system-ui, sans-serif;
 
   /* Font size */
   --text-2xs: 13px;

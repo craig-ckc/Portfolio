@@ -8,12 +8,12 @@ export function Statement() {
   return (
     <section className="mx-auto flex w-full max-w-page-frame flex-col items-center px-page-gutter py-section-y" id="about">
       {/* BEYOND THE FRAME: 1.67vw lands on the frame's 32px at 1920. */}
-      <div className="w-full max-w-work space-y-lg font-display text-display-statement font-normal tracking-snug leading-normal text-pretty">
+      <div className="w-full max-w-work space-y-lg font-display text-display-statement font-normal tracking-snug leading-normal text-pretty text-neutral-600">
         {statement.body.split('\n\n').map((paragraph) => (
           <p key={paragraph}>
             {paragraph.split(/(\*\*[^*]+\*\*)/g).map((part, index) => (
               part.startsWith('**')
-                ? <strong className="font-bold [font-variation-settings:'wght'_700]" key={index}>{part.slice(2, -2)}</strong>
+                ? <strong className="font-normal text-foreground" key={index}>{part.slice(2, -2)}</strong>
                 : part
             ))}
           </p>

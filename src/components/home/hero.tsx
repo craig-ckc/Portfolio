@@ -17,7 +17,7 @@ export function Hero() {
           {/* BEYOND THE FRAME: 4.8vw lands on the frame's 92px at 1920 and
               scales down from there. */}
           <h1
-            className="font-display text-display-hero font-bold [font-variation-settings:'wght'_700] tracking-snug leading-tight text-balance text-neutral-700"
+            className="font-display text-display-hero font-normal tracking-snug leading-tight text-balance text-neutral-600"
             id="hero-title"
           >
             I help <span className="text-foreground">brands</span> build <span className="text-foreground">websites</span> worth visiting and <span className="text-foreground">apps</span> worth using.
