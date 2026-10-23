@@ -11,14 +11,13 @@ export function Work() {
                 links to the same page would have a screen reader announce the
                 project twice on the way past it.
 
-                `group` here (not on the article) so both the tile zoom and
-                the title underline below key off the same hover/focus target:
-                the row's single link. */}
+                `group` on the link lets the tiles zoom when the whole
+                project row is hovered. */}
             <a className="group flex flex-col gap-md" href={workPath(entry.slug)}>
               <div className="grid grid-cols-1 gap-md md:grid-cols-2">
                 {entry.tiles.map((tile, index) => (
                   <div
-                    className="relative h-auto aspect-work-image overflow-hidden rounded-md bg-neutral-600 md:h-80 md:aspect-auto"
+                    className={`relative h-auto aspect-work-image overflow-hidden rounded-md bg-neutral-600 md:h-80 md:aspect-auto ${index > 0 ? 'hidden md:block' : ''}`}
                     key={`${entry.slug}-${index}`}
                   >
                     {tile.src ? (
@@ -39,7 +38,7 @@ export function Work() {
               </div>
 
               <div className="flex flex-col gap-3xs">
-                <h2 className="font-display text-base font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight underline decoration-transparent decoration-1 underline-offset-[3px] transition-[text-decoration-color] duration-320 ease-out-cubic group-hover:decoration-current group-focus-visible:decoration-current">
+                <h2 className="font-display text-base font-semibold [font-variation-settings:'wght'_600] tracking-snug leading-tight">
                   {entry.title}
                 </h2>
                 <p className="max-w-copy text-pretty text-neutral-700 font-display text-body tracking-snug leading-normal">

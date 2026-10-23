@@ -8,10 +8,8 @@
  * homepage tiles fall back to, so an unfinished project page and an unfinished
  * homepage row look unfinished in the same way.
  *
- * The shape is the caller's decision rather than this file's, because it comes
- * from where the figure sits: the cover fills the hero it is dropped into, and
- * a lone image beside a section's prose is worth more wide than square. Two
- * props cover both without this component having to know what a hero is.
+ * Every section image uses the same 16/10 frame, whether it fills a row or
+ * shares one. The cover fills its hero container instead.
  */
 import type { WorkMedia } from '../../content/work'
 
@@ -24,12 +22,6 @@ interface Props {
    */
   fill?: boolean
   /**
-   * A 16/10 frame rather than the page's square. A single image beside a
-   * section's prose has the column's width to spend, and that reads better
-   * wide than square.
-   */
-  wide?: boolean
-  /**
    * The cover is the one image above the fold and the page's largest asset, so
    * it is the one image not deferred. Everything else waits until the reader is
    * on their way to it.
@@ -40,7 +32,7 @@ interface Props {
   lightbox?: boolean
 }
 
-const { media, fill = false, wide = false, loading = 'lazy', label = 'Project image', lightbox = true } = Astro.props
+const { media, fill = false, loading = 'lazy', label = 'Project image', lightbox = true } = Astro.props
 const Frame = lightbox ? 'button' : 'div'
 ---
 
@@ -54,9 +46,7 @@ const Frame = lightbox ? 'button' : 'div'
     class:list={[
       'relative block w-full p-0 overflow-hidden border rounded-lg bg-neutral-600',
       lightbox && 'project-image-trigger cursor-zoom-in',
-      /* Three mutually exclusive shapes, so exactly one of these is ever on the
-         element and the base utilities above never have to be overridden. */
-      fill ? 'h-full aspect-auto border-0 rounded-none' : wide ? 'aspect-16/10' : 'aspect-square',
+      fill ? 'h-full aspect-auto border-0 rounded-none' : 'aspect-16/10',
       !fill && 'border-(--project-box-rule)',
     ]}
   >

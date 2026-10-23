@@ -31,10 +31,10 @@ const media = section.media ?? []
     media.length > 0 && (
       <div class="grid grid-cols-1 gap-sm sm:grid-cols-2">
         {media.map((item, index) => {
-          const wide = item.layout !== 'half'
+          const fullWidth = item.layout !== 'half'
           return (
-            <div class:list={[wide && 'sm:col-span-2']}>
-              <ProjectFigure media={item} wide={wide} label={`${section.heading}, image ${index + 1}`} />
+            <div class:list={[fullWidth && 'sm:col-span-2']}>
+              <ProjectFigure media={item} label={`${section.heading}, image ${index + 1}`} />
             </div>
           )
         })}
