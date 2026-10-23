@@ -18,12 +18,14 @@ interface Props {
   title?: string
   description?: string
   article?: ArticleInfo
+  noindex?: boolean
 }
 
 const {
   title = 'Craig Chihururu | Designer + Developer',
   description = 'Craig Chihururu is a designer and developer helping brands build thoughtful websites and digital products.',
   article,
+  noindex = false,
 } = Astro.props
 
 /* Absolute URLs, built from the one origin in astro.config.mjs. A crawler or
@@ -82,6 +84,7 @@ const jsonLd = serializeJsonLd(structuredData(site, { url: canonical, title, des
     />
     <meta name="author" content="Craig Chihururu" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#1d4fff" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>

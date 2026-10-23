@@ -5,9 +5,10 @@ import ThemeResolver from '../components/layout/theme-resolver.astro'
 interface Props {
   title: string
   description: string
+  fullBleed?: boolean
 }
 
-const { title, description } = Astro.props
+const { title, description, fullBleed = false } = Astro.props
 ---
 
 <Base title={`${title} | Craig Chihururu`} description={description}>
@@ -15,10 +16,13 @@ const { title, description } = Astro.props
     <ThemeResolver />
     <main class="min-h-svh">
       <section
-        class="experiment-grid relative flex min-h-svh items-center justify-center overflow-hidden bg-background px-xl py-5xl sm:px-4xl"
+        class:list={[
+          'experiment-grid relative isolate flex min-h-svh items-center justify-center overflow-hidden bg-background',
+          !fullBleed && 'px-xl py-5xl sm:px-4xl',
+        ]}
         aria-labelledby="experiment-title"
       >
-        <h1 class="absolute bottom-0 left-1/2 max-w-inline-safe -translate-x-1/2 truncate rounded-t-md border border-b-0 border-neutral-600/50 bg-background px-lg py-sm font-display text-body font-semibold tracking-snug" id="experiment-title" >
+        <h1 class="absolute bottom-0 left-1/2 z-10 max-w-inline-safe -translate-x-1/2 truncate rounded-t-md border border-b-0 border-neutral-600/50 bg-background px-lg py-sm font-display text-body font-semibold tracking-snug" id="experiment-title">
           {title}
         </h1>
         <a
@@ -31,7 +35,7 @@ const { title, description } = Astro.props
           </svg>
         </a>
 
-        <div class="w-full max-w-work">
+        <div class:list={['z-0 w-full', fullBleed ? 'absolute inset-0' : 'relative max-w-work']}>
           <slot />
         </div>
       </section>

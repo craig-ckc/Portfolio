@@ -13,6 +13,11 @@ export default defineConfig({
   // with a 308 to this host, so it is the only one of the three that serves the
   // site rather than pointing at it.
   site: 'https://www.craigchihururu.com',
+  // The hero studies have moved into the experiments collection.
+  redirects: {
+    '/options': '/experiments',
+    '/options/infinite-field': '/experiments/infinite-field',
+  },
   integrations: [react()],
   vite: {
     // Tailwind v4's official Vite integration: it compiles the @theme and

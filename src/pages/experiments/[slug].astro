@@ -1,6 +1,7 @@
 ---
 import { experiments } from '../../content/experiments'
 import ExperimentShell from '../../layouts/experiment-shell.astro'
+import { InfiniteFieldExperiment } from '../../components/experiments/infinite-field-experiment'
 
 export function getStaticPaths() {
   return experiments.map((experiment) => ({
@@ -12,6 +13,14 @@ export function getStaticPaths() {
 const { experiment } = Astro.props
 ---
 
-<ExperimentShell title={experiment.title} description={experiment.description}>
-  <div class="mx-auto aspect-4/3 w-full max-w-experiment rounded-lg bg-neutral-300" aria-hidden="true"></div>
+<ExperimentShell
+  title={experiment.title}
+  description={experiment.description}
+  fullBleed={experiment.slug === 'infinite-field'}
+>
+  {experiment.slug === 'infinite-field' ? (
+    <InfiniteFieldExperiment client:load />
+  ) : (
+    <div class="mx-auto aspect-4/3 w-full max-w-experiment rounded-lg bg-neutral-300" aria-hidden="true"></div>
+  )}
 </ExperimentShell>
