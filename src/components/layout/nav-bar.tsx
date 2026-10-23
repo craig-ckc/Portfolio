@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { contact } from '../../content/home-page'
 import { AppearanceGlyph } from '../icons'
+import { setupNavbar } from '../../lib/navbar-controller'
 import {
   appliedTheme,
   applyTheme,
@@ -48,6 +49,8 @@ export function NavBar({
   useEffect(() => {
     setTheme(appliedTheme(navRef.current))
     setChosen(readStoredTheme() !== null)
+    const frame = navRef.current?.closest<HTMLElement>('[data-site-nav]')
+    if (frame) return setupNavbar(frame)
   }, [])
 
   // Only while the toggle has never been used: until then the system is the
@@ -80,12 +83,7 @@ export function NavBar({
 
   return (
     <nav
-      // Out of the way while the folder's contents are out (see the note this
-      // rule used to carry in nav.css). Keyed off the folder's own class, not
-      // the page's data-scatter attribute — that attribute stays on for the
-      // whole return, so the navbar would come back only once the cards were
-      // home, a beat later than the fault this is fixing.
-      className="absolute top-0 inset-x-0 z-50 flex items-center justify-between p-md transition-opacity duration-(--veil-clear) ease-standard [.hp:has(.folder.is-open)_&]:opacity-0 [.hp:has(.folder.is-open)_&]:duration-(--veil-fade)"
+      className="flex items-center justify-between p-md"
       aria-label="Primary"
       ref={navRef}
     >

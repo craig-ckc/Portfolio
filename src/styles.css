@@ -1322,6 +1322,19 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
 }
 
 @layer components {
+  .site-nav {
+    position: absolute;
+    --nav-duration: var(--duration-base);
+    --nav-opacity-duration: var(--veil-clear);
+    transition-property: translate, opacity;
+    transition-duration: var(--nav-duration), var(--nav-opacity-duration);
+    transition-timing-function: var(--ease-out-quart), var(--ease-standard);
+  }
+
+  .site-nav[data-nav-state] { position: fixed; translate: 0 var(--nav-offset, 0px); }
+  .site-nav[data-nav-state='flow'] { --nav-duration: 0ms; }
+  .hp:has(.folder.is-open) .site-nav { --nav-opacity-duration: var(--veil-fade); }
+
   /* One clip for the completed image, tint and blur, rather than separately
      antialiasing the card background and each composited overlay. */
   .content-card__surface {

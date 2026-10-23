@@ -49,7 +49,11 @@ const { title, description, homeHref = '#top', article } = Astro.props
         static `data-theme="light"` above stays as the answer for a visitor
         with no JavaScript at all. */}
     <ThemeResolver />
-    <NavBar client:load homeHref={homeHref} />
+    {/* The browser owns this transition/scroll frame; React owns its controls.
+        Early snapshot styling must not mutate a not-yet-hydrated React node. */}
+    <div class="site-nav top-0 inset-x-0 z-50 [.hp:has(.folder.is-open)_&]:opacity-0" data-site-nav>
+      <NavBar client:load homeHref={homeHref} />
+    </div>
     {/* Opaque and above the footer — the footer is fixed and revealed as this
         scrolls past it. */}
     <main class="relative z-[2] bg-background">
