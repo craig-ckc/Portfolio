@@ -67,6 +67,9 @@
 
 ::view-transition-old(shared-media) { animation: none; opacity: 1; }
 ::view-transition-new(shared-media) { animation: page-appear 220ms var(--ease-standard) both; }
+/* A missing return target must fade with the outgoing page, rather than hold
+   an unmoving cover for the full duration of a two-image morph. */
+::view-transition-old(shared-media):only-child { animation: page-leave 150ms var(--ease-standard) both; }
 
 /* Recreate the cover fade on the moving image pair itself. The captured
    static gradient is excluded so it cannot flash in at the final position. */

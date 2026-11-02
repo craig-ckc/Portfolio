@@ -149,7 +149,10 @@ export function setupPageTransitions(planFor: (from: string, to: string, navigat
     const navigationType = event.activation?.navigationType ?? (clicked ? 'push' : 'traverse')
     const plan = target ? planFor(location.href, target, navigationType) : { kind: 'generic' as const, key: null }
     const sourceId = plan.kind === 'open' ? historyState().portfolioTransitionSource : remembered?.sourceId
-    const source = sourceFor(plan, plan.kind === 'open' ? 'thumbnail' : 'detail', sourceId)
+    // A canvas field (or another link without a capturable thumbnail) opens
+    // with the page fade. Its return must not extract a stranded cover image.
+    const source = plan.kind === 'close' && remembered?.shared === false
+      ? null : sourceFor(plan, plan.kind === 'open' ? 'thumbnail' : 'detail', sourceId)
     const handoff: Handoff = {
       from: location.href, to: target, navigationType, shared: !!source,
       sourceId, radius: radius(source), navVisible: navVisible(), created: Date.now(),
@@ -183,8 +186,10 @@ export function setupPageTransitions(planFor: (from: string, to: string, navigat
     const source = handoffMatches && handoff?.shared !== false
       ? sourceFor(plan, plan.kind === 'open' ? 'detail' : 'thumbnail', sourceId) : null
 
-    if (source && plan.kind === 'open' && handoff?.sourceId) {
-      history.replaceState({ ...historyState(), portfolioTransitionReturn: { sourceId: handoff.sourceId, overviewUrl: from } }, '')
+    if (plan.kind === 'open') {
+      history.replaceState({ ...historyState(), portfolioTransitionReturn: {
+        sourceId: handoff?.sourceId, overviewUrl: from, shared: !!source,
+      } }, '')
     }
     prepare(transition, plan, source)
     root.style.setProperty('--shared-from-radius', handoff?.radius ?? (plan.kind === 'open' ? '8px' : '0px'))
