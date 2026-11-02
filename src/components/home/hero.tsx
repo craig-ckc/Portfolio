@@ -13,7 +13,7 @@ export function Hero() {
           is `--spacing-hero-gap`, clamp(2xl, 5vw, 5xl), so it shrinks with the
           viewport rather than jumping between two fixed values. */}
       <div className="flex flex-1 flex-col items-start gap-4xl lg:flex-row lg:items-center lg:justify-between lg:gap-hero-gap">
-        <div className="flex w-full min-w-0 max-w-none flex-1 flex-col self-stretch gap-xl lg:w-auto lg:max-w-hero">
+        <div className="relative z-10 flex w-full min-w-0 max-w-none flex-1 flex-col self-stretch gap-xl lg:w-auto lg:max-w-hero">
           {/* BEYOND THE FRAME: 4.8vw lands on the frame's 92px at 1920 and
               scales down from there. */}
           <h1
@@ -37,10 +37,10 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Keep the field sized to its column, with definite bounds for the
-            canvas when the hero stacks on narrower screens. */}
-        <div className="flex w-full min-w-0 flex-none items-center self-stretch justify-center lg:w-hero-column">
-          <div className="relative aspect-square w-full max-w-content">
+        {/* Keep the field in the same flow on smaller screens. On desktop its
+            column anchors a larger absolute canvas without squeezing the copy. */}
+        <div className="flex w-full min-w-0 flex-none items-center self-stretch justify-center lg:relative lg:w-hero-column">
+          <div className="relative aspect-square w-full max-w-content lg:absolute lg:top-[calc(50%_-_var(--spacing-lg))] lg:-right-lg lg:w-[min(48vw,calc(100svh_-_var(--spacing-5xl)),var(--container-hero))] lg:max-w-none lg:-translate-y-1/2">
             <div className="absolute inset-0">
               <InfiniteField
                 images={homeFieldImages}
