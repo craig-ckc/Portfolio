@@ -16,7 +16,7 @@ export const experiments: Experiment[] = [
   {
     slug: 'infinite-field',
     title: 'Infinite Field',
-    description: 'A draggable WebGL project gallery with layered fades, edge blur, and live controls.',
+    description: 'A draggable WebGL image gallery with layered fades, edge blur, and live controls.',
     cover: { src: '', alt: '' },
     previewVideo: '',
   },

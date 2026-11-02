@@ -1,11 +1,11 @@
 import { DEFAULT_FIELD_SETTINGS, type ProjectFieldSettings } from './project-field-settings'
 
 export type FieldImage = {
-  src: string
+  src?: string
   width: number
   height: number
   title: string
-  href: string
+  href?: string
 }
 
 export type FieldTile = { image: number; x: number; y: number; width: number; height: number }

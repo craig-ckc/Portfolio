@@ -1,6 +1,6 @@
 ---
 import type { Experiment } from '../../content/experiments'
-import { projectPreviews } from '../../content/project-previews'
+import { experimentFieldImages } from '../../content/infinite-field-experiment'
 
 interface Props {
   experiment: Experiment
@@ -8,9 +8,9 @@ interface Props {
 
 const { experiment } = Astro.props
 const columns = [
-  { projects: [3, 0, 2], className: '-translate-y-[8%] scale-90 opacity-80 blur-[1px]' },
-  { projects: [2, 1, 0], className: 'scale-110' },
-  { projects: [0, 3, 1], className: 'translate-y-[8%] scale-90 opacity-80 blur-[1px]' },
+  { images: [3, 0, 2], className: '-translate-y-[8%] scale-90 opacity-80 blur-[1px]' },
+  { images: [5, 1, 4], className: 'scale-110' },
+  { images: [0, 3, 5], className: 'translate-y-[8%] scale-90 opacity-80 blur-[1px]' },
 ]
 ---
 
@@ -22,8 +22,8 @@ const columns = [
       <div class="absolute -inset-y-[20%] inset-x-[5%] grid grid-cols-3 items-center gap-[8%]">
         {columns.map((column) => (
           <div class:list={['flex flex-col gap-5', column.className]}>
-            {column.projects.map((index) => {
-              const image = projectPreviews[index]
+            {column.images.map((index) => {
+              const image = experimentFieldImages[index]
               return <img class="block h-auto w-full rounded" src={image.src} width={image.width} height={image.height} alt="" loading="lazy" />
             })}
           </div>

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { DEFAULT_FIELD_SETTINGS, FIELD_SETTING_LIMITS, serializeFieldSettings, type NumericFieldSetting, type ProjectFieldSettings } from '../../lib/project-field-settings'
+import { FIELD_SETTING_LIMITS, serializeFieldSettings, type NumericFieldSetting, type ProjectFieldSettings } from '../../lib/project-field-settings'
 import { PanelSection, SliderControl, SwitchControl, ToolcraftPanel } from '../toolcraft/controls'
 
 type Control = { key: NumericFieldSetting; name: string; step: number; unit?: string; factor?: number }
@@ -32,8 +32,8 @@ const sections: { title: string; open?: boolean; controls: Control[] }[] = [
   ] },
 ]
 
-export function ProjectFieldControls({ settings, onChange, onClose }: {
-  settings: Readonly<ProjectFieldSettings>; onChange: (settings: ProjectFieldSettings) => void; onClose: () => void
+export function ProjectFieldControls({ settings, defaults, onChange, onClose }: {
+  settings: Readonly<ProjectFieldSettings>; defaults: Readonly<ProjectFieldSettings>; onChange: (settings: ProjectFieldSettings) => void; onClose: () => void
 }) {
   const [copyFallback, setCopyFallback] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -51,7 +51,7 @@ export function ProjectFieldControls({ settings, onChange, onClose }: {
   return (
     <ToolcraftPanel title="Field controls" onClose={onClose} footer={<>
       <div className="tc-actions">
-        <button type="button" onClick={() => { onChange({ ...DEFAULT_FIELD_SETTINGS }); setCopied(false); setCopyFallback(null) }}>Reset</button>
+        <button type="button" onClick={() => { onChange({ ...defaults }); setCopied(false); setCopyFallback(null) }}>Reset</button>
         <button type="button" onClick={() => void copy()}>{copied ? 'Copied' : 'Copy settings'}</button>
       </div>
       {copyFallback && <div className="tc-transfer">
@@ -68,7 +68,7 @@ export function ProjectFieldControls({ settings, onChange, onClose }: {
         {section.controls.map((control) => {
           const factor = control.factor ?? 1
           const [min, max] = FIELD_SETTING_LIMITS[control.key]
-          return <SliderControl key={control.key} name={control.name} value={settings[control.key] * factor} min={min * factor} max={max * factor} step={control.step} unit={control.unit} baseValue={DEFAULT_FIELD_SETTINGS[control.key] * factor}
+          return <SliderControl key={control.key} name={control.name} value={settings[control.key] * factor} min={min * factor} max={max * factor} step={control.step} unit={control.unit} baseValue={defaults[control.key] * factor}
             disabled={control.key === 'driftSpeed' && !settings.autoDrift}
             onValueChange={(value) => { onChange({ ...settings, [control.key]: value / factor }); setCopied(false) }} />
         })}

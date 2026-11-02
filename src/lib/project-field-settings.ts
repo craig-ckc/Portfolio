@@ -22,7 +22,7 @@ export type ProjectFieldSettings = {
 
 export type NumericFieldSetting = Exclude<keyof ProjectFieldSettings, 'autoDrift'>
 
-/** The original hero treatment is the baseline for reset and unconfigured fields. */
+/** Engine defaults for unconfigured consumers; each page owns its explicit preset. */
 export const DEFAULT_FIELD_SETTINGS: Readonly<ProjectFieldSettings> = Object.freeze({
   imageSize: .285,
   spacing: .4,
@@ -65,8 +65,6 @@ export const FIELD_SETTING_LIMITS = {
   inertia: [0, .98],
   dragSpeed: [.5, 2],
 } as const satisfies Record<NumericFieldSetting, readonly [number, number]>
-
-export const FIELD_SETTINGS_KEY = 'portfolio.infinite-field.v1'
 
 /** All paths into the renderer (props, storage, and import) use the same bounds. */
 export function normalizeFieldSettings(value: unknown): ProjectFieldSettings {

@@ -31,13 +31,15 @@ const tileVertex = `
 `
 const tileFragment = `
   uniform sampler2D uImage;
+  uniform bool uHasImage;
+  uniform vec3 uPlaceholderColor;
   varying vec2 vUv;
   varying vec2 vSize;
   void main() {
     vec2 d = abs(vUv - .5) * vSize - vSize * .5 + 4.;
     float distance = length(max(d, 0.)) + min(max(d.x, d.y), 0.) - 4.;
     float alpha = 1. - smoothstep(-.75, .75, distance);
-    vec4 image = texture2D(uImage, vUv);
+    vec4 image = uHasImage ? texture2D(uImage, vUv) : vec4(uPlaceholderColor, 1.);
     alpha *= image.a;
     gl_FragColor = vec4(image.rgb * alpha, alpha);
   }
@@ -99,6 +101,11 @@ export async function createProjectField(
 ): Promise<ProjectFieldController> {
   let settings = normalizeFieldSettings(initialSettings)
   const loaded = await Promise.allSettled(images.map(async (image) => {
+    if (!image.src) {
+      const texture = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1)
+      texture.needsUpdate = true
+      return texture
+    }
     const texture = await new THREE.TextureLoader().loadAsync(image.src)
     texture.colorSpace = THREE.SRGBColorSpace
     return texture
@@ -109,11 +116,14 @@ export async function createProjectField(
     throw new Error('Project field images unavailable')
   }
   // Decode the actual source dimensions rather than cropping to a gallery preset.
-  const sources = images.map((image, index) => ({
-    ...image,
-    width: textures[index].image.naturalWidth || image.width,
-    height: textures[index].image.naturalHeight || image.height,
-  }))
+  const sources = images.map((image, index) => {
+    const source = textures[index].image
+    return {
+      ...image,
+      width: 'naturalWidth' in source ? source.naturalWidth || image.width : image.width,
+      height: 'naturalHeight' in source ? source.naturalHeight || image.height : image.height,
+    }
+  })
   const resources: { dispose: () => void }[] = [...textures]
   const cleanups: (() => void)[] = []
   let frame = 0
@@ -142,6 +152,7 @@ export async function createProjectField(
     }, { signal: events.signal })
 
     const scene = new THREE.Scene()
+    const placeholderColor = new THREE.Color(getComputedStyle(root).getPropertyValue('--neutral-600').trim())
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, .1, 10)
     camera.position.z = 1
     const pan = { x: 0, y: 0, vx: 0, vy: 0 }
@@ -160,10 +171,10 @@ export async function createProjectField(
       uInnerFade: { value: settings.innerFade }, uInnerStrength: { value: settings.innerStrength },
       uMaskOffset: { value: settings.maskOffset },
     }
-    const meshes = textures.map((texture) => {
+    const meshes = textures.map((texture, index) => {
       const material = new THREE.ShaderMaterial({
         vertexShader: tileVertex, fragmentShader: tileFragment,
-        uniforms: { ...shared, uImage: { value: texture } },
+        uniforms: { ...shared, uImage: { value: texture }, uHasImage: { value: !!images[index].src }, uPlaceholderColor: { value: placeholderColor } },
         transparent: true, premultipliedAlpha: true, depthTest: false, depthWrite: false,
       })
       resources.push(material)
@@ -209,16 +220,17 @@ export async function createProjectField(
       const image = hit?.image ?? -1
       if (image === hovered) return
       hovered = image
-      if (hit) {
-        link.href = images[image].href
-        link.title = images[image].title
-        link.dataset.project = images[image].title
+      const target = hit ? images[image] : undefined
+      if (target?.href) {
+        link.href = target.href
+        link.title = target.title
+        link.dataset.project = target.title
       } else {
         link.removeAttribute('href')
         link.removeAttribute('title')
         delete link.dataset.project
       }
-      link.style.cursor = drag ? 'grabbing' : hit ? 'pointer' : 'grab'
+      link.style.cursor = drag ? 'grabbing' : target?.href ? 'pointer' : 'grab'
     }
     function invalidate() {
       if (!frame && !disposed && visible && !document.hidden) frame = requestAnimationFrame(draw)
@@ -310,6 +322,13 @@ export async function createProjectField(
     const observer = new ResizeObserver(resize)
     observer.observe(surface)
     cleanups.push(() => observer.disconnect())
+    const themeObserver = new MutationObserver(() => {
+      placeholderColor.setStyle(getComputedStyle(root).getPropertyValue('--neutral-600').trim())
+      invalidate()
+    })
+    const themeRoot = root.closest('[data-theme]')
+    if (themeRoot) themeObserver.observe(themeRoot, { attributes: true, attributeFilter: ['data-theme'] })
+    cleanups.push(() => themeObserver.disconnect())
     const intersection = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting
       if (visible) { previous = performance.now(); invalidate() }
@@ -363,7 +382,7 @@ export async function createProjectField(
       // Preserve the originally pressed project for a click. A moving field
       // may have carried another tile under the cursor in the meantime.
       if (suppressClick) updateLink()
-      link.style.cursor = hovered >= 0 ? 'pointer' : 'grab'
+      link.style.cursor = images[hovered]?.href ? 'pointer' : 'grab'
       previous = performance.now()
       invalidate()
     }
@@ -402,7 +421,7 @@ export async function createProjectField(
     link.addEventListener('pointerleave', () => { if (!drag) { pointer = null; updateLink() } }, { signal: events.signal })
     link.addEventListener('dragstart', (event) => event.preventDefault(), { signal: events.signal })
     link.addEventListener('click', (event) => {
-      if (suppressClick || hovered < 0) event.preventDefault()
+      if (suppressClick || !images[hovered]?.href) event.preventDefault()
     }, { signal: events.signal })
     root.addEventListener('keydown', (event) => {
       if (event.target !== root || drag) return
