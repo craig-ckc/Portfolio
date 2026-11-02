@@ -1,5 +1,6 @@
 import { getLenis } from './smooth-scroll'
 import { closestImage, imageReturnScroll } from './project-gallery-layout'
+import { setupGalleryDrag } from './project-gallery-drag'
 
 /** One native dialog per project. The page remains the source of image order and content. */
 export function setupProjectGallery(source: HTMLElement, dialog: HTMLDialogElement) {
@@ -23,6 +24,13 @@ export function setupProjectGallery(source: HTMLElement, dialog: HTMLDialogEleme
   let opening: Promise<void> = Promise.resolve()
   let scrollFrame = 0
   let wasLenisStopped = false
+  const drag = setupGalleryDrag(track, {
+    signal, reducedMotion,
+    enabled: () => phase === 'open',
+    positions: () => slides.map((_, index) => centredScroll(index)),
+    onTarget: (index) => { destination = index },
+    onRest: () => { destination = null },
+  })
 
   function hide(element: HTMLElement) {
     if (!hidden.has(element)) hidden.set(element, element.style.visibility)
@@ -58,7 +66,7 @@ export function setupProjectGallery(source: HTMLElement, dialog: HTMLDialogEleme
 
   function imageCopy(trigger: HTMLElement) {
     const image = trigger.querySelector('img')?.cloneNode(true) as HTMLImageElement | undefined
-    if (image) image.loading = 'eager'
+    if (image) { image.loading = 'eager'; image.draggable = false }
     return image
   }
 
@@ -107,6 +115,7 @@ export function setupProjectGallery(source: HTMLElement, dialog: HTMLDialogEleme
 
   function moveTo(index: number) {
     if (phase !== 'open') return
+    drag.cancel()
     const target = Math.max(0, Math.min(triggers.length - 1, index))
     destination = target
     track.scrollTo({ left: centredScroll(target), behavior: reducedMotion.matches ? 'instant' : 'smooth' })
@@ -137,6 +146,7 @@ export function setupProjectGallery(source: HTMLElement, dialog: HTMLDialogEleme
   }
 
   function releasePage() {
+    drag.cancel()
     restoreHidden()
     clearAnimations()
     if (!wasLenisStopped) getLenis()?.start()
@@ -197,6 +207,7 @@ export function setupProjectGallery(source: HTMLElement, dialog: HTMLDialogEleme
     const start = current.getBoundingClientRect()
     phase = 'closing'
     dialog.dataset.phase = phase
+    drag.cancel()
     // Stop any in-flight smooth scroll before measuring the departing strip.
     track.scrollTo({ left: track.scrollLeft, behavior: 'instant' })
     hide(trigger)
@@ -250,7 +261,7 @@ export function setupProjectGallery(source: HTMLElement, dialog: HTMLDialogEleme
     if (phase !== 'open' || scrollFrame) return
     scrollFrame = requestAnimationFrame(() => { scrollFrame = 0; if (phase === 'open') describe(nearest()) })
   }, { signal, passive: true })
-  track.addEventListener('scrollend', () => { destination = null }, { signal })
+  track.addEventListener('scrollend', () => { if (!track.dataset.galleryMotion) destination = null }, { signal })
   track.addEventListener('touchstart', () => { destination = null }, { signal, passive: true })
 
   window.addEventListener('wheel', (event) => {
@@ -272,6 +283,7 @@ export function setupProjectGallery(source: HTMLElement, dialog: HTMLDialogEleme
   }, { signal, passive: true })
   window.addEventListener('resize', () => {
     if (phase === 'closed') return
+    drag.cancel()
     sizeTrack()
     track.scrollLeft = centredScroll(active)
   }, { signal })

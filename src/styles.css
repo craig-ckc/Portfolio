@@ -1342,8 +1342,15 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     outline-offset: -3px;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
+  .project-gallery__track[data-gallery-motion],
+  .project-gallery[data-phase='opening'] .project-gallery__track,
+  .project-gallery[data-phase='closing'] .project-gallery__track { scroll-snap-type: none; }
+  .project-gallery__track[data-gallery-motion='dragging'] { cursor: grabbing; }
   .project-gallery__track::-webkit-scrollbar { display: none; }
   .project-gallery[data-phase='opening'] .project-gallery__track,
   .project-gallery[data-phase='closing'] .project-gallery__track { overflow: hidden; }
