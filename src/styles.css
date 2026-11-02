@@ -1477,6 +1477,8 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
 @layer components {
   /* Toolcraft docks to the viewport and inherits the active experiment theme. */
   .tc-panel { position: fixed; z-index: 70; inset: 8px 8px 8px auto; width: min(300px, calc(100vw - 88px)); height: calc(100dvh - 16px); display: flex; flex-direction: column; overflow: hidden; isolation: isolate; border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent); border-radius: var(--radius-lg); background: var(--background); color: var(--foreground); font-size: 12px; line-height: 1.5; }
+  .tc-panel[data-collapsed] { bottom: auto; height: auto; }
+  .tc-panel[data-collapsed] .tc-panel__header { border-bottom: 0; }
   .tc-panel button, .tc-panel input, .tc-panel textarea { font: inherit; }
   .tc-panel button { cursor: pointer; }
   .tc-panel button:focus-visible, .tc-launcher:focus-visible { outline: 2px solid var(--foreground); outline-offset: 2px; }

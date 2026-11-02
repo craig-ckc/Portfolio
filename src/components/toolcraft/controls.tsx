@@ -20,7 +20,7 @@ export function ToolcraftPanel({ children, title, onClose, footer }: {
   const [collapsed, setCollapsed] = useState(false)
   const id = useId()
   return (
-    <aside className="tc-panel" aria-labelledby={id} data-toolcraft-panel>
+    <aside className="tc-panel" aria-labelledby={id} data-toolcraft-panel data-collapsed={collapsed ? '' : undefined}>
       <header className="tc-panel__header">
         <div><h2 id={id}>{title}</h2></div>
         <button type="button" className="tc-icon-button" aria-label={collapsed ? 'Expand field controls' : 'Collapse field controls'} aria-expanded={!collapsed} onClick={() => setCollapsed(!collapsed)}>
