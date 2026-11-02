@@ -19,7 +19,19 @@ export default defineConfig({
     '/options': '/experiments',
     '/options/infinite-field': '/experiments/infinite-field',
   },
-  integrations: [react()],
+  integrations: [
+    react(),
+    {
+      name: 'isolated-vite-cache',
+      hooks: {
+        // `astro check` runs a production sync server. Its optimizer must not
+        // replace the dependency files used by an already-running dev server.
+        'astro:config:setup': ({ command, updateConfig }) => {
+          updateConfig({ vite: { cacheDir: `node_modules/.vite/${command}` } })
+        },
+      },
+    },
+  ],
   vite: {
     // Tailwind v4's official Vite integration: it compiles the @theme and
     // @custom-variant rules in src/styles.css and generates utilities on
