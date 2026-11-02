@@ -26,24 +26,27 @@ linkedInShare.searchParams.set('url', url)
     Share this article
   </h2>
 
-  <div class="flex flex-wrap items-center justify-center gap-sm">
-    <div class="social">
-      <a href={xShare.href} target="_blank" rel="noreferrer" aria-label="Share this article on X">
-        <XLogo />
-      </a>
+  <div class="social">
+    <a href={xShare.href} target="_blank" rel="noreferrer" aria-label="Share this article on X">
+      <XLogo />
+    </a>
 
-      <a
-        href={linkedInShare.href}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Share this article on LinkedIn"
-      >
-        <LinkedInLogo />
-      </a>
-    </div>
+    <a
+      href={linkedInShare.href}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Share this article on LinkedIn"
+    >
+      <LinkedInLogo />
+    </a>
 
-    <button class="chip chip-cta" type="button" data-copy-link data-url={url}>
-      <span data-copy-label>Copy link</span>
+    <button class="icon-button" type="button" aria-label="Copy link" title="Copy link" data-copy-link data-url={url}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-copy-icon>
+        <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+      </svg>
+      <svg class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-copied-icon>
+        <path d="m5 12 4 4L19 6" />
+      </svg>
     </button>
   </div>
 
@@ -52,26 +55,36 @@ linkedInShare.searchParams.set('url', url)
 
 <script>
   const copyButton = document.querySelector<HTMLButtonElement>('[data-copy-link]')
-  const copyLabel = copyButton?.querySelector<HTMLElement>('[data-copy-label]')
+  const copyIcon = copyButton?.querySelector<SVGSVGElement>('[data-copy-icon]')
+  const copiedIcon = copyButton?.querySelector<SVGSVGElement>('[data-copied-icon]')
   const copyStatus = document.querySelector<HTMLElement>('[data-copy-status]')
+  let resetTimer: number | undefined
 
   copyButton?.addEventListener('click', async () => {
     const url = copyButton.dataset.url
-    if (!url || !copyLabel || !copyStatus) return
+    if (!url || !copyIcon || !copiedIcon || !copyStatus) return
+
+    window.clearTimeout(resetTimer)
+    const setFeedback = (label: string, copied = false) => {
+      copyButton.ariaLabel = label
+      copyButton.title = label
+      copyIcon.classList.toggle('hidden', copied)
+      copiedIcon.classList.toggle('hidden', !copied)
+    }
 
     try {
       if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable')
       await navigator.clipboard.writeText(url)
 
-      copyLabel.textContent = 'Copied'
+      setFeedback('Link copied', true)
       copyStatus.textContent = 'Article link copied to the clipboard.'
     } catch {
-      copyLabel.textContent = 'Copy failed'
+      setFeedback('Copy failed')
       copyStatus.textContent = 'The article link could not be copied. Copy it from the address bar instead.'
     }
 
-    window.setTimeout(() => {
-      copyLabel.textContent = 'Copy link'
+    resetTimer = window.setTimeout(() => {
+      setFeedback('Copy link')
     }, 2400)
   })
 </script>

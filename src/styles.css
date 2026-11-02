@@ -1120,8 +1120,8 @@ html.lenis.lenis-stopped:not(.lenis-autoToggle) {
   }
 
   /* The larger chip: the primary action on a page — the hero's "Start your
-     project", the writing page's "Read article", the article share row's
-     copy link. Written as `.chip.chip-cta`, after `.chip:hover`, so its own
+     project" and the writing page's "Read article". Written as
+     `.chip.chip-cta`, after `.chip:hover`, so its own
      shadow holds on hover too: this button has never swapped shadows under
      the pointer, only brightened. */
   .chip.chip-cta {
